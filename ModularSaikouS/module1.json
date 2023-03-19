@@ -1,0 +1,5 @@
+{
+    "moduleName": "Gogoanime",
+    "moduleVersion": "0.0.1",
+    "js": "var fetchInfo = async function(message) { let data = await fetch('https://example.com/data.json').data}"
+}
