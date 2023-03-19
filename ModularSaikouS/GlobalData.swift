@@ -12,6 +12,9 @@ class GlobalData: ObservableObject {
     @Published var jsSource: String?
     @Published var arg: String?
     @Published var url: String?
+    @Published var module: Module?
+    
+    @Published var reloadPlease: Bool = false
     
     @Published var moduleText: String?
     @Published var moduleData: InfoData?

@@ -7,22 +7,20 @@
 
 import SwiftUI
 
-struct Module: Codable, Hashable {
-    var moduleName: String
-    var moduleVersion: String
-    var js: String
-    var website: String
-}
-
 struct ModuleSelector: View{
     @StateObject var globalData: GlobalData
     let buttonHeight: CGFloat = 55
     @State var availableModules: [Module] = []
     
     func loadData(module: Module)  {
+        print("loading data")
         globalData.jsSource = module.js
         globalData.selectedModule = module.moduleName
         globalData.url = module.website
+        
+        globalData.module = module
+        
+        globalData.reloadPlease = true
     }
     
     var body: some View{

@@ -10,14 +10,46 @@ import WebKit
 import Kingfisher
 import Shimmer
 
+struct APIResponse: Codable {
+    let title: Title
+    let image: String
+}
+
+struct Title: Codable {
+    let romaji: String
+}
+
 struct ContentView: View {
     @StateObject var viewModel: HomeViewModel = HomeViewModel()
+    @StateObject var globalData: GlobalData = GlobalData()
+    
+    func fetchFromApi() {
+        let url = URL(string: globalData.module!.website)!
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data else {
+                print("Error: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            do {
+                print(data)
+                let apiResponse = try JSONDecoder().decode(APIResponse.self, from: data)
+                
+                let title = apiResponse.title.romaji
+                let img = apiResponse.image
+                globalData.moduleData = InfoData(img: img, title: title)
+            } catch let error {
+                print("Error: \(error.localizedDescription)")
+            }
+        }.resume()
+        
+    }
     
     var body: some View {
         VStack {
-            if viewModel.globalData.moduleData != nil {
+            if globalData.moduleData != nil {
                 VStack {
-                    KFImage(URL(string: viewModel.globalData.moduleData!.img))
+                    KFImage(URL(string: globalData.moduleData!.img))
                         .placeholder({
                             RoundedRectangle(cornerRadius: 12)
                                 .redacted(reason: .placeholder)
@@ -27,54 +59,65 @@ struct ContentView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: 200)
                     
-                    Text(viewModel.globalData.moduleData!.title)
+                    Text(globalData.moduleData!.title)
                         .fontWeight(.bold)
                 }
             }
             
             //Text(globalData.moduleText ?? moduleText)
             if viewModel.htmlString.count > 0 {
-                WebView(htmlString: viewModel.htmlString, javaScript: "myFunction()", globalData: viewModel.globalData)
+                WebView(htmlString: viewModel.htmlString, javaScript: "myFunction()", globalData: globalData)
                     .hidden()
                     .frame(maxWidth: 0, maxHeight: 0)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        .onReceive(viewModel.globalData.$selectedModule) { val in
-            print("changed")
-            viewModel.globalData.moduleData = nil
-            viewModel.htmlString = ""
-            if viewModel.globalData.url != nil && viewModel.globalData.jsSource != nil {
-                let url = URL(string: viewModel.globalData.url!)!
-                let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                    if let error = error {
-                        print("Error: \(error.localizedDescription)")
-                        return
-                    }
+        .onReceive(globalData.$reloadPlease) { newVal in
+            if globalData.module != nil {
+                if globalData.module!.callsApi != nil && globalData.module!.callsApi! {
                     
-                    guard let httpResponse = response as? HTTPURLResponse,
-                          httpResponse.statusCode == 200,
-                          let htmlData = data,
-                          let html = String(data: htmlData, encoding: .utf8) else {
-                        print("Invalid response")
-                        return
-                    }
-                    
-                    DispatchQueue.main.async {
+                    fetchFromApi()
+                } else {
+                    if globalData.reloadPlease {
+                        globalData.moduleData = nil
+                        viewModel.htmlString = ""
+                        print("reload")
+                        let url = URL(string: globalData.module!.website)!
+                        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                            if let error = error {
+                                print("Error: \(error.localizedDescription)")
+                                return
+                            }
+                            
+                            guard let httpResponse = response as? HTTPURLResponse,
+                                  httpResponse.statusCode == 200,
+                                  let htmlData = data,
+                                  let html = String(data: htmlData, encoding: .utf8) else {
+                                print("Invalid response")
+                                return
+                            }
+                            
+                            DispatchQueue.main.async {
+                                print("setting html string")
+                                
+                                viewModel.htmlString = viewModel.injectScriptTag(html, scriptTag: globalData.module!.js)
+                                print(viewModel.htmlString)
+                                globalData.reloadPlease = false
+                            }
+                        }
                         
-                        viewModel.htmlString = viewModel.injectScriptTag(html, scriptTag: viewModel.globalData.jsSource!)
+                        task.resume()
+                        
                     }
                 }
-                
-                task.resume()
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .overlay {
             HStack {
                 Button {
                     viewModel.showModuleSelector.toggle()
                 } label: {
-                    Text(viewModel.globalData.selectedModule == nil ? "No Module" : viewModel.globalData.selectedModule!)
+                    Text(globalData.selectedModule == nil ? "No Module" : globalData.selectedModule!)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .padding(.vertical, 12)
@@ -90,7 +133,7 @@ struct ContentView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
         }
         .overlay {
-            BottomSheet(isShowing: $viewModel.showModuleSelector, content: AnyView(ModuleSelector(globalData: viewModel.globalData)))
+            BottomSheet(isShowing: $viewModel.showModuleSelector, content: AnyView(ModuleSelector(globalData: globalData)))
         }
         .ignoresSafeArea()
     }

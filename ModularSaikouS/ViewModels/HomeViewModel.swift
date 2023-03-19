@@ -1,14 +1,15 @@
 //
-//  HomeViewModel.swift
+//  Homeswift
 //  ModularSaikouS
 //
 //  Created by Inumaki on 19.03.23.
 //
 
 import SwiftUI
+import Combine
+
 
 final class HomeViewModel: ObservableObject {
-    @StateObject var globalData: GlobalData = GlobalData()
     
     @Published var showModuleSelector: Bool = false
     @Published var moduleText: String = ""
