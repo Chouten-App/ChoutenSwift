@@ -9,37 +9,36 @@ import SwiftUI
 
 struct ModuleSelector: View{
     @StateObject var globalData: GlobalData
+    
     let buttonHeight: CGFloat = 55
+    
     @State var availableModules: [Module] = []
     
     func loadData(module: Module)  {
         print("loading data")
-        globalData.jsSource = module.js
-        globalData.selectedModule = module.moduleName
-        globalData.url = module.website
-        
         globalData.module = module
-        
         globalData.reloadPlease = true
     }
     
     var body: some View{
-        VStack(alignment: .leading) {
+        VStack(alignment: .center) {
             HStack {
                 Text("Module Selector")
                     .font(.system(size: 20, weight: .bold))
                 
             }
-            .padding(.top, 16)
+            .padding(.top, 40)
             .padding(.bottom, 4)
             
-            Text("Select one of the modules below to get provide this app with data:")
+            Text("Select one of the modules below to provide this app with data:")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(Color("textColor2").opacity(0.7))
                 .padding(.bottom, 24)
+                .padding(.horizontal, 20)
+                .multilineTextAlignment(.center)
             
             ForEach(availableModules, id: \.self) {module in
-                ButtonLarge(label: module.moduleName, background: .pink.opacity(0.95), textColor: .white, action: {
+                ButtonLarge(label: module.name, image: module.metadata.icon, developer: module.metadata.author,version: module.version, background: Color(hex: module.metadata.bgColor ?? "#ff007e"), textColor: Color(hex: module.metadata.fgColor ?? "#ffffff"), action: {
                     // Action will be here
                     loadData(module: module)
                 })
@@ -49,9 +48,15 @@ struct ModuleSelector: View{
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 40)
-        .foregroundColor(.white)
+        #if os(iOS)
+        .frame(maxWidth: .infinity)
+        #elseif os(macOS)
+        .frame(maxWidth: 400, maxHeight: .infinity, alignment: .top)
+        .padding(.leading, 20)
+        #endif
+        .foregroundColor(Color("textColor2"))
         .background {
-            Color(.black)
+            Color("bg")
         }
         .onAppear {
             if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -60,10 +65,16 @@ struct ModuleSelector: View{
                     let jsonFiles = directoryContents.filter { $0.pathExtension == "json" }
                     for fileURL in jsonFiles {
                         let fileData = try Data(contentsOf: fileURL)
+                        print(fileData)
                         // Do something with the file data
-                        let decoded = try? JSONDecoder().decode(Module.self, from: fileData)
-                        if decoded != nil {
-                            availableModules.append(decoded!)
+                        do {
+                            let decoded = try? JSONDecoder().decode(Module.self, from: fileData)
+                            print(decoded)
+                            if decoded != nil {
+                                availableModules.append(decoded!)
+                            }
+                        } catch let error {
+                            print(error.localizedDescription)
                         }
                     }
                 } catch {

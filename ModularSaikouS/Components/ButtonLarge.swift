@@ -6,32 +6,70 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ButtonLarge: View {
     
     var label: String
-    var background: Color = .white
-    var textColor: Color = .black.opacity(0.9)
+    var image: String?
+    var developer: String?
+    var version: String?
+    var background: Color = Color("accentColor1")
+    var textColor: Color = Color("textColor")
     var action: (() -> ())
     
-    let cornorRadius: CGFloat = 8
+    let cornorRadius: CGFloat = 12
     
     var body: some View {
         Button {
             action()
         } label: {
             HStack {
-                Text(label)
-                    .foregroundColor(textColor)
-                    .font(.system(size: 16, weight: .bold))
-                    .lineLimit(1)
+                if image != nil {
+                    KFImage(URL(string: image!))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(minWidth: 40, maxWidth: 40, minHeight: 40, maxHeight: 40)
+                        .cornerRadius(40)
+                } else {
+                    ZStack {
+                        Color(.white).opacity(0.6)
+                            .blur(radius: 6)
+                        
+                        Image(systemName: "questionmark")
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 14)
+                            .foregroundColor(Color("textColor"))
+                    }
+                    .fixedSize()
+                    .cornerRadius(40)
+                    
+                }
+                
+                VStack(alignment: .leading) {
+                    Text(label)
+                        .foregroundColor(textColor)
+                        .font(.system(size: 16, weight: .bold))
+                        .lineLimit(1)
+                    
+                    HStack {
+                        Text(developer ?? "Unknown")
+                            .foregroundColor(textColor.opacity(0.7))
+                            .font(.system(size: 12, weight: .semibold))
+                            .lineLimit(1)
+                        if version != nil {
+                            Text("v\(version!)")
+                                .foregroundColor(textColor.opacity(0.7))
+                                .font(.system(size: 12, weight: .semibold))
+                        }
+                    }
+                }
+                .frame(minHeight: 120)
             }
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-            .overlay(
-                RoundedRectangle(cornerRadius: cornorRadius)
-                    .stroke(.gray.opacity(0.5), lineWidth: 1)
-            )
+            .padding(.leading, 20)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .leading)
         }
+        .buttonStyle(PlainButtonStyle())
         .background(background)
         .cornerRadius(cornorRadius)
     }
@@ -39,8 +77,10 @@ struct ButtonLarge: View {
 
 struct ButtonLarge_Previews: PreviewProvider {
     static var previews: some View {
-        ButtonLarge(label: "Temp", action: {
+        ButtonLarge(label: "Zoro.to", action: {
             
         })
+        .frame(maxHeight: 52)
+        .padding(.horizontal, 20)
     }
 }

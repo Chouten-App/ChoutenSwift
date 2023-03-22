@@ -7,7 +7,10 @@
 
 import Foundation
 
-struct InfoData: Codable {
+struct InfoData: Codable, Hashable {
     let img: String
     let title: String
+    let indicatorText: String?
+    let currentCount: Int?
+    let totalCount: Int?
 }

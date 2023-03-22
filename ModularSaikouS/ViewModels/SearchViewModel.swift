@@ -9,11 +9,12 @@ import SwiftUI
 import Combine
 
 
-final class HomeViewModel: ObservableObject {
+final class SearchViewModel: ObservableObject {
     
     @Published var showModuleSelector: Bool = false
     @Published var moduleText: String = ""
     @Published var htmlString: String = ""
+    @Published var query: String = ""
     
     func injectScriptTag(_ htmlString: String, scriptTag: String) -> String {
         guard let range = htmlString.range(of: "</head>") else {
@@ -25,4 +26,5 @@ final class HomeViewModel: ObservableObject {
         newHTMLString.insert(contentsOf: scriptTag, at: headEndIndex)
         return newHTMLString
     }
+    
 }

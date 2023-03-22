@@ -6,6 +6,7 @@
 //
 import SwiftUI
 
+#if os(iOS)
 extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape( RoundedCorners(radius: radius, corners: corners) )
@@ -22,3 +23,5 @@ struct RoundedCorners: Shape {
         return Path(path.cgPath)
     }
 }
+#elseif os(macOS)
+#endif
