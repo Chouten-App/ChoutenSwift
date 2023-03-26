@@ -29,10 +29,12 @@ struct Module: Hashable, Equatable, Codable {
 
 struct CodeData: Hashable, Equatable, Codable {
     let url: String
-    let callsApi: Bool?
+    let mediaUrl: String?
+    let usesApi: Bool?
     let allowExternalScripts: Bool
     let removeScripts: Bool
     let js: String
+    let mediaJs: String?
 }
 
 struct Metadata: Hashable, Equatable, Codable {

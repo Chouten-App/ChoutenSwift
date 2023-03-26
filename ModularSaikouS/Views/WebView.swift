@@ -9,11 +9,18 @@ import SwiftUI
 import WebKit
 #if os(iOS)
 struct WebView: UIViewRepresentable {
-    let htmlString: String
+    @State var htmlString: String
     let javaScript: String
+    let requestType: String
+    let enableExternalScripts: Bool
     @StateObject var globalData: GlobalData
     
     func makeUIView(context: Context) -> WKWebView {
+        print("MAKING NEW WEBVIEW")
+        print(javaScript)
+        
+        let consoleScript = WKUserScript(source: "console.log = function(log) { window.webkit.messageHandlers.console.postMessage(log); }", injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        
         let divCreationString = """
             let choutenDivElement = document.createElement('div');
             choutenDivElement.setAttribute('id', 'chouten');
@@ -24,6 +31,7 @@ struct WebView: UIViewRepresentable {
         
         let userContentController = WKUserContentController()
         userContentController.addUserScript(divCreation)
+        userContentController.addUserScript(consoleScript)
         
         let scriptHandlerString = """
             window.webkit.messageHandlers.callbackHandler.postMessage(document.getElementById('chouten').innerText);
@@ -38,30 +46,50 @@ struct WebView: UIViewRepresentable {
         let handlerName = "callbackHandler"
         userContentController.add(context.coordinator, name: handlerName)
         
+        
+        class ConsoleMessageHandler: NSObject, WKScriptMessageHandler {
+            func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+                if message.name == "console", let messageBody = message.body as? String {
+                    print("Console log: \(messageBody)")
+                }
+            }
+        }
+
+        let consoleMessageHandler = ConsoleMessageHandler()
+        userContentController.add(consoleMessageHandler, name: "console")
+        
+        
+        
         let configuration = WKWebViewConfiguration()
         configuration.userContentController = userContentController
         
+        let preferences = WKWebpagePreferences()
+        preferences.allowsContentJavaScript = enableExternalScripts // Enable JavaScript
+        configuration.defaultWebpagePreferences = preferences
+        
         let webView = WKWebView(frame: .zero, configuration: configuration)
+        
         webView.navigationDelegate = context.coordinator
         webView.loadHTMLString(htmlString, baseURL: nil)
         
         return webView
     }
     
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        // No need to update the web view
+    func updateUIView(_ webView: WKWebView, context: Context) {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(javaScript: javaScript, globalData: globalData)
+        Coordinator(javaScript: javaScript, requestType: requestType,globalData: globalData)
     }
     
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         let javaScript: String
+        let requestType: String
         var globalData: GlobalData
         
-        init(javaScript: String, globalData: GlobalData) {
+        init(javaScript: String, requestType: String, globalData: GlobalData) {
             self.javaScript = javaScript
+            self.requestType = requestType
             self.globalData = globalData
         }
         
@@ -74,11 +102,34 @@ struct WebView: UIViewRepresentable {
                     let decoder = JSONDecoder()
 
                     if data != nil {
-                        do {
-                            let searchResults = try decoder.decode([InfoData].self, from: data!)
-                            globalData.searchResults = searchResults
-                        } catch {
-                            print(error.localizedDescription)
+                        if requestType == "search" {
+                            do {
+                                let searchResults = try decoder.decode([SearchData].self, from: data!)
+                                globalData.searchResults = searchResults
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                        } else if requestType == "info" {
+                            do {
+                                let info = try decoder.decode(InfoData.self, from: data!)
+                                globalData.infoData = info
+                                globalData.doneInfo = true
+                                print(info)
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                        } else if requestType == "media" {
+                            print("media loading")
+                            print(message)
+                            
+                            do {
+                                let info = try decoder.decode([MediaItem].self, from: data!)
+                                print(info)
+                                globalData.infoData?.mediaList[0] = info
+                                globalData.doneInfo = false
+                            } catch {
+                                print(error.localizedDescription)
+                            }
                         }
                     }
                 }
@@ -97,6 +148,7 @@ struct WebView: UIViewRepresentable {
 struct WebView: NSViewRepresentable {
     let htmlString: String
     let javaScript: String
+    let requestType: String
     @StateObject var globalData: GlobalData
     
     func makeNSView(context: Context) -> WKWebView {
@@ -139,15 +191,17 @@ struct WebView: NSViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(javaScript: javaScript, globalData: globalData)
+        Coordinator(javaScript: javaScript, requestType: requestType, globalData: globalData)
     }
     
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         let javaScript: String
+        let requestType: String
         var globalData: GlobalData
         
-        init(javaScript: String, globalData: GlobalData) {
+        init(javaScript: String, requestType: String, globalData: GlobalData) {
             self.javaScript = javaScript
+            self.requestType = requestType
             self.globalData = globalData
         }
         
@@ -160,11 +214,13 @@ struct WebView: NSViewRepresentable {
                     let decoder = JSONDecoder()
 
                     if data != nil {
-                        do {
-                            let searchResults = try decoder.decode([InfoData].self, from: data!)
-                            globalData.searchResults = searchResults
-                        } catch {
-                            print(error.localizedDescription)
+                        if requestType == "search" {
+                            do {
+                                let searchResults = try decoder.decode([SearchData].self, from: data!)
+                                globalData.searchResults = searchResults
+                            } catch {
+                                print(error.localizedDescription)
+                            }
                         }
                     }
                 }
@@ -182,6 +238,6 @@ struct WebView: NSViewRepresentable {
 
 struct WebView_Previews: PreviewProvider {
     static var previews: some View {
-        WebView(htmlString: "", javaScript: "", globalData: GlobalData())
+        WebView(htmlString: "", javaScript: "", requestType: "", enableExternalScripts: false, globalData: GlobalData())
     }
 }

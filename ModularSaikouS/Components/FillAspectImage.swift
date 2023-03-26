@@ -38,7 +38,7 @@ public struct FillAspectImage: View {
                 .frame(
                     width: proxy.size.width,
                     height: proxy.size.height,
-                    alignment: .center
+                    alignment: .top
                 )
                 .contentShape(Rectangle())
                 .onReceive(timer) {time in

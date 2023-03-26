@@ -2,15 +2,34 @@
 //  InfoData.swift
 //  ModularSaikouS
 //
-//  Created by Inumaki on 19.03.23.
+//  Created by Inumaki on 24.03.23.
 //
 
 import Foundation
 
-struct InfoData: Codable, Hashable {
-    let img: String
-    let title: String
-    let indicatorText: String?
-    let currentCount: Int?
-    let totalCount: Int?
+struct InfoData: Codable {
+    let id: String
+    let titles: Titles
+    let altTitles: [String]
+    let description: String
+    let poster: String
+    let banner: String?
+    let status: String?
+    let totalMediaCount: Int?
+    let mediaType: String
+    let seasons: [String]
+    var mediaList: [[MediaItem]]
+}
+
+struct MediaItem: Codable {
+    let id: String
+    let number: Int
+    let title: String?
+    let description: String?
+    let image: String?
+}
+
+struct Titles: Codable {
+    let primary: String
+    let secondary: String?
 }

@@ -15,13 +15,14 @@ struct MaterialToggleStyle: ToggleStyle {
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(configuration.isOn ? Color(hex: "#5388C3") : Color("bg2"))
-                    .frame(maxWidth: 28, maxHeight: 16)
+                    .frame(maxWidth: 38, maxHeight: 16)
                     .animation(.spring(response: 0.3), value: configuration.isOn)
                 
                 Circle()
                     .fill(configuration.isOn ? Color("accentColor1") : Color("accentColor1"))
                     .frame(maxWidth: 24, maxHeight: 24)
-                    .offset(x: configuration.isOn ? 16 :  -16)
+                    
+                    .offset(x: configuration.isOn ? 8 :  -8)
                     .animation(.spring(response: 0.3), value: configuration.isOn)
             }
             

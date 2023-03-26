@@ -37,6 +37,47 @@ struct ModuleSelector: View{
                 .padding(.horizontal, 20)
                 .multilineTextAlignment(.center)
             
+            Button(action: {
+                
+            }, label: {
+                HStack {
+                    ZStack {
+                        Image(systemName: "arrow.down")
+                            .font(.system(size: 16, weight: .heavy))
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 14)
+                            .foregroundColor(Color("textColor2"))
+                    }
+                    .fixedSize()
+                    .cornerRadius(40)
+                    
+                    VStack(alignment: .leading) {
+                        Text("Import Module")
+                            .foregroundColor(Color("textColor2"))
+                            .font(.system(size: 16, weight: .bold))
+                            .lineLimit(1)
+                        
+                        HStack {
+                            Text("Import Module from URL")
+                                .foregroundColor(Color("textColor2").opacity(0.7))
+                                .font(.system(size: 12, weight: .semibold))
+                                .lineLimit(1)
+                            
+                        }
+                    }
+                    .frame(minHeight: 120)
+                }
+                .padding(.leading, 20)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .leading)
+            })
+            .background(.clear)
+            .cornerRadius(12)
+            .frame(height: buttonHeight)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(style: StrokeStyle(lineWidth: 1, dash: [7]))
+            )
+            
             ForEach(availableModules, id: \.self) {module in
                 ButtonLarge(label: module.name, image: module.metadata.icon, developer: module.metadata.author,version: module.version, background: Color(hex: module.metadata.bgColor ?? "#ff007e"), textColor: Color(hex: module.metadata.fgColor ?? "#ffffff"), action: {
                     // Action will be here
@@ -48,12 +89,12 @@ struct ModuleSelector: View{
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 40)
-        #if os(iOS)
+#if os(iOS)
         .frame(maxWidth: .infinity)
-        #elseif os(macOS)
+#elseif os(macOS)
         .frame(maxWidth: 400, maxHeight: .infinity, alignment: .top)
         .padding(.leading, 20)
-        #endif
+#endif
         .foregroundColor(Color("textColor2"))
         .background {
             Color("bg")

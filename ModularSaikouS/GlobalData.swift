@@ -17,8 +17,11 @@ class GlobalData: ObservableObject {
     @Published var reloadPlease: Bool = false
     
     @Published var moduleText: String?
-    @Published var moduleData: InfoData?
-    @Published var searchResults: [InfoData] = []
+    @Published var moduleData: SearchData?
+    @Published var searchResults: [SearchData] = []
+    @Published var infoData: InfoData? = nil
+    
+    @Published var doneInfo: Bool = false
     
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleSharedJson(_:)), name: .sharedJson, object: nil)
