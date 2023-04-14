@@ -38,21 +38,11 @@ public struct FillAspectImage: View {
                 .frame(
                     width: proxy.size.width,
                     height: proxy.size.height,
-                    alignment: .top
+                    alignment: .center
                 )
                 .contentShape(Rectangle())
-                .onReceive(timer) {time in
-                    animLeft.toggle()
-                        if(animLeft) {
-                            self.offset = (imageWidth / 2 - (proxy.size.width / 2))
-                        } else {
-                            self.offset = -(imageWidth / 2 - (proxy.size.width / 2))
-                        }
-                    
-                }
                 .clipped()
                 .animation(.easeInOut(duration: 0.5), value: finishedLoading)
-                
         }
     }
 }

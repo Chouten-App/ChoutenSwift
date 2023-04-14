@@ -20,6 +20,8 @@ class GlobalData: ObservableObject {
     @Published var moduleData: SearchData?
     @Published var searchResults: [SearchData] = []
     @Published var infoData: InfoData? = nil
+    @Published var nextUrl: String? = nil
+    @Published var mediaConsumeLink: String? = nil
     
     @Published var doneInfo: Bool = false
     

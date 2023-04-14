@@ -14,7 +14,7 @@ struct Module: Hashable, Equatable, Codable {
     let version: String
     let updateUrl: String
     let metadata: Metadata
-    let code: [String: [String: CodeData]]
+    let code: [String: [String: [CodeData]]]
     static func == (lhs: Module, rhs: Module) -> Bool {
         return lhs.type == rhs.type &&
             lhs.subtypes == rhs.subtypes &&
@@ -26,15 +26,29 @@ struct Module: Hashable, Equatable, Codable {
     }
 }
 
-
 struct CodeData: Hashable, Equatable, Codable {
-    let url: String
-    let mediaUrl: String?
+    let request: Request
+    let separator: String?
+    let javascript: Javascript
+}
+
+struct Javascript: Hashable, Equatable,  Codable {
     let usesApi: Bool?
     let allowExternalScripts: Bool
     let removeScripts: Bool
-    let js: String
-    let mediaJs: String?
+    let code: String
+}
+
+struct Request: Hashable, Equatable, Codable {
+    let url: String
+    let type: String
+    let headers: [Header]
+    let body: String?
+}
+
+struct Header: Hashable, Equatable, Codable {
+    let key: String
+    let value: String
 }
 
 struct Metadata: Hashable, Equatable, Codable {

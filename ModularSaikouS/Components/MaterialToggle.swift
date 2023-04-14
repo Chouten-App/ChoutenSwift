@@ -25,6 +25,9 @@ struct MaterialToggleStyle: ToggleStyle {
                     .offset(x: configuration.isOn ? 8 :  -8)
                     .animation(.spring(response: 0.3), value: configuration.isOn)
             }
+            .onTapGesture {
+                configuration.isOn.toggle()
+            }
             
             configuration.label
                 .font(.system(size: 16, weight: .bold))

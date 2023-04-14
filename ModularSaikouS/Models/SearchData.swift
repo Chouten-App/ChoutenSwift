@@ -8,7 +8,7 @@
 import Foundation
 
 struct SearchData: Codable, Hashable {
-    let id: String
+    let url: String
     let img: String
     let title: String
     let indicatorText: String?

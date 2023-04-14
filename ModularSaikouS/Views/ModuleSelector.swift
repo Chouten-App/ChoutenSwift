@@ -109,10 +109,10 @@ struct ModuleSelector: View{
                         print(fileData)
                         // Do something with the file data
                         do {
-                            let decoded = try? JSONDecoder().decode(Module.self, from: fileData)
+                            let decoded = try JSONDecoder().decode(Module.self, from: fileData)
                             print(decoded)
                             if decoded != nil {
-                                availableModules.append(decoded!)
+                                availableModules.append(decoded)
                             }
                         } catch let error {
                             print(error.localizedDescription)

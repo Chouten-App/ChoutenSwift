@@ -23,7 +23,7 @@ struct LogsDisplay: View {
                 HStack {
                     Text("[14:32:46] :")
                         .fontWeight(.bold)
-                    Text("This is a log.")
+                    Text("This is an Error!")
                         .lineLimit(6)
                         .padding(.leading, -5)
                 }
@@ -40,7 +40,7 @@ struct LogsDisplay: View {
                 HStack(alignment: .top) {
                     Text("[14:32:46] :")
                         .fontWeight(.bold)
-                    Text("This is a way looooooooooooooooooooonger log.")
+                    Text("This is a way looooooooooooooooooooooonger log.")
                         .lineLimit(6)
                         .padding(.leading, -5)
                 }
