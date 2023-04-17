@@ -27,6 +27,12 @@ final class PlayerViewModel: ObservableObject {
     @Published var id: String = ""
     @Published var episodeNumber: Int = 1
     
+    // Initialize a boolean to track whether the video is buffering
+    var isBuffering = false
+
+    // Initialize a variable to store the seeked time
+    @Published var seekedTime: CMTime? = nil
+    
     private var subscriptions: Set<AnyCancellable> = []
     private var errorsubscriptions: Set<AnyCancellable> = []
     private var timeObserver: Any?
@@ -55,7 +61,6 @@ final class PlayerViewModel: ObservableObject {
             let bufferedTimeRanges = self.player.currentItem?.loadedTimeRanges
             guard let firstRange = bufferedTimeRanges?.first?.timeRangeValue else { return }
             let bufferedDuration = firstRange.start + firstRange.duration
-            let bufferedPercentage = Float(CMTimeGetSeconds(bufferedDuration) / (self.duration ?? 1.0))
             self.buffered = CMTimeGetSeconds(bufferedDuration)
         }
         .store(in: &subscriptions)
@@ -65,7 +70,18 @@ final class PlayerViewModel: ObservableObject {
             .filter({ $0 == false })
             .sink(receiveValue: { [weak self] _ in
                 guard let self = self else { return }
-                self.player.seek(to: CMTime(seconds: self.currentTime, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)
+                self.player.seek(to: CMTime(seconds: self.currentTime, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero) { (completed) in
+                    // Set the isBuffering boolean to true
+                    self.isBuffering = true
+
+                    // Store the seeked time in the seekedTime variable
+                    self.seekedTime = CMTime(seconds: self.currentTime, preferredTimescale: 1)
+                    print(self.seekedTime ?? "")
+
+                    // Start playing the video
+                    self.player.play()
+                }
+                
                 if self.player.rate != 0 {
                     self.player.play()
                 }
@@ -111,7 +127,7 @@ final class PlayerViewModel: ObservableObject {
                 switch sts {
                 case .failed:
                     self?.hasError = true
-                    print(self?.player.error)
+                    print(self?.player.error ?? "")
                 case .readyToPlay:
                     self?.hasError = false
                 case .unknown:
@@ -124,7 +140,7 @@ final class PlayerViewModel: ObservableObject {
     }
     
     func getSubtitleText() {
-        var new = webVTT?.cues.filter {
+        let new = webVTT?.cues.filter {
             $0.timeStart <= currentTime && $0.timeEnd >= currentTime
         }
         

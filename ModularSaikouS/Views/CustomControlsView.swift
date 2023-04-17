@@ -52,6 +52,8 @@ struct CustomControlsView: View {
     @Binding var streamData: VideoData
     @Binding var showUI: Bool
     @ObservedObject var playerVM: PlayerViewModel
+    @Binding var number: Int
+    @ObservedObject var globalData: GlobalData
     @State var progress = 0.25
     @State var isLoading: Bool = false
     @State var showEpisodeSelector: Bool = false
@@ -129,7 +131,7 @@ struct CustomControlsView: View {
                 ZStack(alignment: .bottomTrailing) {
                     HStack {
                         Color.clear
-                            .frame(width: .infinity, height: 300)
+                            .frame(width: proxy.size.width / 3, height: 300)
                             .contentShape(Rectangle())
                             .gesture(
                                 TapGesture(count: 2)
@@ -141,14 +143,14 @@ struct CustomControlsView: View {
                             )
                         
                         Color.clear
-                            .frame(width: .infinity, height: 300)
+                            .frame(width: proxy.size.width / 3, height: 300)
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 showUI = false
                             }
                         
                         Color.clear
-                            .frame(width: .infinity, height: 300)
+                            .frame(width: proxy.size.width / 3, height: 300)
                             .contentShape(Rectangle())
                             .gesture(
                                 TapGesture(count: 2)
@@ -232,30 +234,26 @@ struct CustomControlsView: View {
                             Spacer()
                                 .frame(maxWidth: 12)
                             
-                            /*
-                            if(episodedata != nil) {
-                                VStack {
-                                    Text("\(String(episodedata[episodeIndex].number ?? 0)): \(episodedata[episodeIndex].title ?? "")")
-                                        .foregroundColor(.white)
-                                        .font(.system(size: 16))
-                                        .bold()
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    Text("\(animeData.title.romaji)")
-                                        .foregroundColor(.white.opacity(0.7))
-                                        .font(.system(size: 14))
-                                        .bold()
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                                .frame(maxWidth: .infinity, alignment: .topLeading)
+                            
+                            VStack {
+                                Text("\(String(globalData.infoData!.mediaList[0][number].number)): \(globalData.infoData!.mediaList[0][number].title ?? "")")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 16))
+                                    .bold()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Text("\(globalData.infoData!.titles.primary)")
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.system(size: 14))
+                                    .bold()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                             */
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
                             
                             Spacer()
                             
-                            /*
                             VStack(alignment: .trailing) {
-                                
+                                /*
                                 if isMacos {
                                     HStack(alignment: .bottom) {
                                         Image("episodes")
@@ -349,8 +347,9 @@ struct CustomControlsView: View {
                                     .frame(minHeight: 60, alignment: .bottom)
                                     .zIndex(100)
                                 }
+                                 */
                                 
-                                Text(getProviderName(provider: provider))
+                                Text(globalData.module?.name ?? "")
                                     .foregroundColor(.white)
                                     .font(.system(size: 16))
                                     .bold()
@@ -362,7 +361,7 @@ struct CustomControlsView: View {
                                     .frame(maxWidth: 120, alignment: .trailing)
                             }
                             .frame(maxWidth: 120, alignment: .trailing)
-                             */
+                             
                         }
                         .padding(.horizontal, 40)
                         .padding(.top, 12)
@@ -572,13 +571,13 @@ struct CustomControlsView: View {
                             
                             if(playerVM.duration != nil) {
                                 CustomView(percentage: $playerVM.currentTime, buffered: $playerVM.buffered, isDragging: $playerVM.isEditingCurrentTime, total: playerVM.duration!, isMacos: $isMacos)
-                                    .frame(height: 40)
-                                    .frame(maxHeight: 40)
+                                    .frame(height: 20)
+                                    .frame(maxHeight: 20)
                                     .padding(.bottom, playerVM.isEditingCurrentTime ? 3 : 0 )
                             } else {
                                 CustomView(percentage: Binding.constant(0.0), buffered: .constant(0.0), isDragging: Binding.constant(false), total: 1.0, isMacos: $isMacos)
-                                    .frame(height: 40)
-                                    .frame(maxHeight: 40)
+                                    .frame(height: 20)
+                                    .frame(maxHeight: 20)
                                     .padding(.bottom, 0)
                             }
                         }

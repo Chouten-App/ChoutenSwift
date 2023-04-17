@@ -39,16 +39,11 @@ struct WebView: UIViewRepresentable {
     let javaScript: String
     let requestType: String
     let enableExternalScripts: Bool
-    @StateObject var globalData: GlobalData
+    @ObservedObject var globalData: GlobalData
     @Binding var nextUrl: String
     @Binding var mediaConsumeData: VideoData
     
     func makeUIView(context: Context) -> WKWebView {
-        print("MAKING NEW WEBVIEW")
-        print(javaScript)
-        
-        let consoleScript = WKUserScript(source: "console.log = function(log) { window.webkit.messageHandlers.console.postMessage(log); }", injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-        
         let divCreationString = """
             let choutenDivElement = document.createElement('div');
             choutenDivElement.setAttribute('id', 'chouten');
@@ -59,14 +54,14 @@ struct WebView: UIViewRepresentable {
         
         let userContentController = WKUserContentController()
         userContentController.addUserScript(divCreation)
-        userContentController.addUserScript(consoleScript)
+        
+        let jsInject = WKUserScript(source: javaScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        
+        userContentController.addUserScript(jsInject)
         
         let scriptHandlerString = """
             window.webkit.messageHandlers.callbackHandler.postMessage(document.getElementById('chouten').innerText);
             """
-        
-        let jsInject = WKUserScript(source: javaScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-        userContentController.addUserScript(jsInject)
         
         let scriptHandler = WKUserScript(source: scriptHandlerString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
         userContentController.addUserScript(scriptHandler)
@@ -77,8 +72,13 @@ struct WebView: UIViewRepresentable {
         
         class ConsoleMessageHandler: NSObject, WKScriptMessageHandler {
             func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-                if message.name == "console", let messageBody = message.body as? String {
-                    print("Console log: \(messageBody)")
+                switch message.name {
+                case "error":
+                    // You should actually handle the error :)
+                    let error = (message.body as? [String: Any])?["message"] as? String ?? "unknown"
+                    assertionFailure("JavaScript error: \(error)")
+                default:
+                    assertionFailure("Received invalid message: \(message.name)")
                 }
             }
         }
@@ -145,9 +145,10 @@ struct WebView: UIViewRepresentable {
                             do {
                                 let info = try decoder.decode(DecodableResult<InfoData>.self, from: data!)
                                 globalData.infoData = info.result
-                                globalData.nextUrl = info.nextUrl
+                                globalData.nextUrl = info.nextUrl ?? ""
                                 globalData.doneInfo = true
                                 print(info)
+                                return
                             } catch {
                                 print(error.localizedDescription)
                             }
@@ -157,6 +158,7 @@ struct WebView: UIViewRepresentable {
                                 print(info)
                                 globalData.nextUrl = info.nextUrl ?? ""
                                 globalData.doneInfo = false
+                                return
                             } catch {
                                 print(error.localizedDescription)
                             }
@@ -166,6 +168,7 @@ struct WebView: UIViewRepresentable {
                                 print(info)
                                 globalData.infoData?.mediaList[0] = info
                                 globalData.doneInfo = false
+                                return
                             } catch {
                                 print(error.localizedDescription)
                             }

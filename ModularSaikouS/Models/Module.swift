@@ -8,6 +8,7 @@
 import Foundation
 
 struct Module: Hashable, Equatable, Codable {
+    let id: String
     let type: String
     let subtypes: [String]
     let name: String

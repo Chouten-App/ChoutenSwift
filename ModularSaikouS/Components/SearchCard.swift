@@ -42,10 +42,11 @@ struct SearchCard: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(minWidth: 110, maxWidth: 110, minHeight: 160, maxHeight: 160)
                         .cornerRadius(12)
+                        /*
                         .if(animation != nil) { view in
                             // We only apply this background color if shouldApplyBackground is true
                             view.matchedGeometryEffect(id: title, in: animation!)
-                        }
+                        }*/
                     
                     if hasIndicator {
                         Text(indicatorText!)

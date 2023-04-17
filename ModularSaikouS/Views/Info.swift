@@ -30,12 +30,13 @@ struct Info: View {
     @State var showFullDescription: Bool = false
     
     @Environment(\.presentationMode) var presentationMode
-    @Environment(\.presenter) var presenter
     
     @State var showHeader: Bool = false
     @State var showRealHeader: Bool = false
     @State var nextUrl: String = ""
     @State var currentJsIndex = 0
+    
+    @State var navigating: Bool = false
     
     var body: some View {
         GeometryReader {proxy in
@@ -138,7 +139,7 @@ struct Info: View {
                                 Text(globalData.infoData!.description)
                                     .foregroundColor(Color("textColor2").opacity(0.7))
                                     .font(.subheadline)
-                                    .lineLimit(showFullDescription ? 100 : 9)
+                                    .lineLimit(showFullDescription ? nil : 9)
                                     .animation(.spring(response: 0.3), value: showFullDescription)
                                 
                                 Text("See \(showFullDescription ? "less" : "more")")
@@ -220,7 +221,7 @@ struct Info: View {
                             ScrollView {
                                 VStack(spacing: 20) {
                                     ForEach(0..<globalData.infoData!.mediaList[0].count, id: \.self) {index in
-                                        NavigationLink(destination: WatchPage(url: globalData.infoData!.mediaList[0][index].url, globalData: globalData)) {
+                                        NavigationLink(destination: WatchPage(url: globalData.infoData!.mediaList[0][index].url, number: index, globalData: globalData)) {
                                             VStack(spacing: 0) {
                                                 HStack(spacing: 8) {
                                                     KFImage(URL(string: globalData.infoData!.mediaList[0][index].image ?? globalData.infoData!.poster))
@@ -238,6 +239,7 @@ struct Info: View {
                                                                 .font(.subheadline)
                                                                 .fontWeight(.semibold)
                                                                 .lineLimit(2)
+                                                                .multilineTextAlignment(.leading)
                                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                                             
                                                             /*
@@ -284,13 +286,17 @@ struct Info: View {
                                             }
                                             .cornerRadius(12)
                                             
-                                        }
+                                        }.simultaneousGesture(TapGesture().onEnded {
+                                            print("Hello world!")
+                                            navigating = true
+                                        })
                                     }
                                 }
                                 .padding(.bottom, 60)
                             }
                             .padding(.top, 12)
                             .frame(maxHeight: 700)
+                            
                         }
                         .animation(.spring(response: 0.3), value: showFullDescription)
                         .padding(.horizontal, 20)
@@ -627,8 +633,8 @@ struct Info: View {
             Color("bg")
         }
         .background {
-            if viewModel.htmlString.count > 0 {
-                WebView(htmlString: viewModel.htmlString, javaScript: globalData.module!.code["anime"]!["info"]![currentJsIndex].javascript.code, requestType: "info", enableExternalScripts: globalData.module!.code["anime"]!["info"]![currentJsIndex].javascript.allowExternalScripts, globalData: globalData, nextUrl: $nextUrl, mediaConsumeData: .constant(VideoData(sources: [], subtitles: [])))
+            if !navigating && viewModel.htmlString.count > 0 {
+                WebView(htmlString: viewModel.htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.code, requestType: "info", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.allowExternalScripts, globalData: globalData, nextUrl: $nextUrl, mediaConsumeData: .constant(VideoData(sources: [], subtitles: [])))
                     .hidden()
                     .frame(maxWidth: 0, maxHeight: 0)
             }
@@ -636,9 +642,8 @@ struct Info: View {
         .ignoresSafeArea()
         .onAppear {
             viewModel.htmlString = ""
-            print("reload")
             Task {
-                if self.url != nil && self.url.count > 0{
+                if self.url.count > 0 {
                     do {
                         print(self.url)
                         let url = URL(string: self.url)!
@@ -650,10 +655,13 @@ struct Info: View {
                             print("Invalid response")
                             return
                         }
-                        
-                        print("setting html string")
-                        
-                        viewModel.htmlString = html
+                        if globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.usesApi == true {
+                            viewModel.htmlString = """
+                            <div id=\"json-result\" data-json=\"\(html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'"))\">UNRELATED</div>
+                        """
+                        } else {
+                            viewModel.htmlString = html
+                        }
                     } catch {
                         print("Error: \(error.localizedDescription)")
                     }
@@ -661,15 +669,19 @@ struct Info: View {
             }
         }
         .onReceive(globalData.$nextUrl) { next in
+            print("next: \(next)")
+            print("global: \(globalData.nextUrl)")
+            //if navigating { return }
             if next != nil && next!.count > 0 {
                 viewModel.htmlString = ""
                 Task {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                         Task {
                             do {
-                                if currentJsIndex < globalData.module!.code["anime"]!["info"]!.count - 1 {
+                                if currentJsIndex < globalData.module!.code[globalData.module!.subtypes[0]]!["info"]!.count - 1 {
                                     currentJsIndex += 1
                                 }
+                                print(next)
                                 let (data, response) = try await URLSession.shared.data(from: URL(string: next!)!)
                                 
                                 guard let httpResponse = response as? HTTPURLResponse,
@@ -678,12 +690,11 @@ struct Info: View {
                                     print("Invalid response")
                                     return
                                 }
-                                if globalData.module!.code["anime"]!["info"]![currentJsIndex].javascript.usesApi != nil && globalData.module!.code["anime"]!["info"]![currentJsIndex].javascript.usesApi! == true {
+                                if globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.usesApi != nil && globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.usesApi! == true {
                                     print("API!!!")
                                     let cleaned = html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "&#39;", with: "").replacingOccurrences(of: "\"", with: "'")
                                     //print(cleaned)
                                     viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
-                                    print(viewModel.htmlString)
                                 } else {
                                     viewModel.htmlString = html
                                 }
@@ -694,6 +705,9 @@ struct Info: View {
                     }
                 }
             }
+        }
+        .onDisappear {
+            globalData.nextUrl = ""
         }
     }
 }

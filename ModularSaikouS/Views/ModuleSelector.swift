@@ -9,15 +9,39 @@ import SwiftUI
 
 struct ModuleSelector: View{
     @StateObject var globalData: GlobalData
+    @Binding var showPopup: Bool
     
     let buttonHeight: CGFloat = 55
     
     @State var availableModules: [Module] = []
+    @State var availableJsons: [URL] = []
+    
+    @FetchRequest(sortDescriptors: []) var userInfo: FetchedResults<UserInfo>
+    @Environment(\.managedObjectContext) var moc
     
     func loadData(module: Module)  {
         print("loading data")
         globalData.module = module
         globalData.reloadPlease = true
+        print(module.id)
+        if userInfo.count > 0 {
+            print("updating")
+            do {
+                userInfo[0].selectedModuleId = module.id
+                try! moc.save()
+            } catch let error {
+                print(error)
+            }
+        } else {
+            print("adding")
+            do {
+                let info = UserInfo(context: moc)
+                info.selectedModuleId = module.id
+                try! moc.save()
+            } catch let error {
+                print(error)
+            }
+        }
     }
     
     var body: some View{
@@ -38,7 +62,7 @@ struct ModuleSelector: View{
                 .multilineTextAlignment(.center)
             
             Button(action: {
-                
+                showPopup = true
             }, label: {
                 HStack {
                     ZStack {
@@ -78,8 +102,8 @@ struct ModuleSelector: View{
                     .stroke(style: StrokeStyle(lineWidth: 1, dash: [7]))
             )
             
-            ForEach(availableModules, id: \.self) {module in
-                ButtonLarge(label: module.name, image: module.metadata.icon, developer: module.metadata.author,version: module.version, background: Color(hex: module.metadata.bgColor ?? "#ff007e"), textColor: Color(hex: module.metadata.fgColor ?? "#ffffff"), action: {
+            ForEach(Array(zip(availableModules.indices, availableModules)), id: \.0) { index, module in
+                ButtonLarge(fileurl: availableJsons[index], label: module.name, image: module.metadata.icon, developer: module.metadata.author,version: module.version, background: Color(hex: module.metadata.bgColor), textColor: Color(hex: module.metadata.fgColor), action: {
                     // Action will be here
                     loadData(module: module)
                 })
@@ -97,13 +121,14 @@ struct ModuleSelector: View{
 #endif
         .foregroundColor(Color("textColor2"))
         .background {
-            Color("bg")
+            Color("bg2")
         }
         .onAppear {
             if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                 do {
                     let directoryContents = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [])
                     let jsonFiles = directoryContents.filter { $0.pathExtension == "json" }
+                    availableJsons = jsonFiles
                     for fileURL in jsonFiles {
                         let fileData = try Data(contentsOf: fileURL)
                         print(fileData)
@@ -128,6 +153,6 @@ struct ModuleSelector: View{
 
 struct ModuleSelector_Previews: PreviewProvider {
     static var previews: some View {
-        ModuleSelector(globalData: GlobalData())
+        ModuleSelector(globalData: GlobalData(), showPopup: .constant(true))
     }
 }

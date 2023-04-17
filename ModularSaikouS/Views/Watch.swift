@@ -49,16 +49,14 @@ struct GaugeProgressStyle: ProgressViewStyle {
 
 struct WatchPage: View {
     let url: String
-    @StateObject var globalData: GlobalData
+    let number: Int
+    @ObservedObject var globalData: GlobalData
     @State var htmlString = ""
     @State var nextUrl: String = ""
     @State var mediaConsumeData: VideoData = VideoData(sources: [], subtitles: [])
     @State var mediaSubtitleLink: String = ""
     
     @State var currentJsIndex = 0
-    
-    @Environment(\.presentationMode) var presentation
-    @State private var isPresented = false
     
     private var isIOS16: Bool {
         guard #available(iOS 16, *) else {
@@ -69,7 +67,7 @@ struct WatchPage: View {
     
     var body: some View {
         ZStack {
-            CustomPlayerWithControls(streamData: $mediaConsumeData)
+            CustomPlayerWithControls(streamData: $mediaConsumeData, number: number, globalData: globalData)
                 .navigationBarBackButtonHidden(true)
                 .contentShape(Rectangle())
                 .ignoresSafeArea(.all)
@@ -92,6 +90,7 @@ struct WatchPage: View {
             }
         }
         .onAppear {
+            print("WATCH")
             Task {
                 do {
                     let (data, response) = try await URLSession.shared.data(from: URL(string: url)!)
@@ -104,13 +103,12 @@ struct WatchPage: View {
                     }
                     
                     htmlString = "<div id=\"json-result\" data-json=\"\(html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'"))\">UNRELATED</div>"
-                    
                     print(htmlString)
                 } catch let error {
                     print(error)
                 }
             }
-            
+            print("why")
         }
         .onChange(of: nextUrl) { _ in
             if nextUrl.count > 0 {
@@ -147,14 +145,19 @@ struct WatchPage: View {
                         }
                     }
                 }
+            } else {
+                print("hm")
             }
+        }
+        .onDisappear {
+            print("bye bye")
         }
     }
 }
 
 struct WatchPage_Previews: PreviewProvider {
     static var previews: some View {
-        WatchPage(url: "", globalData: GlobalData())
+        WatchPage(url: "", number: 1, globalData: GlobalData())
     }
 }
 

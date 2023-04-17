@@ -7,36 +7,50 @@
 
 import SwiftUI
 
+enum readDirection {
+    case rtl
+    case ltr
+    case vertical
+}
+
 struct NextChapterDisplay: View {
     let currentChapter: String
     let nextChapter: String
     let status: String
     
+    @State var direction: readDirection = readDirection.rtl
+    
+    let errored = Color(hex: "#E5554C")
+    let ready = Color(hex: "#2B994A")
+    
     var body: some View {
-        ZStack {
+        ZStack(alignment: direction == .rtl ? .leading : .trailing) {
             Color(.black)
             
+            LinearGradient(stops: [Gradient.Stop(color: Color(hex: "#5a68c7").opacity(0.4), location: 0.0), Gradient.Stop(color: .clear, location: 1.0)], startPoint: direction == .rtl ? .leading : direction == .ltr ? .trailing : .bottom, endPoint: direction == .rtl ? .trailing : direction == .ltr ? .leading : .top)
+                .frame(maxWidth: direction != .vertical ? 160 : .infinity, maxHeight: direction == .vertical ? 40 : .infinity)
+            
             VStack {
-                Spacer()
-                
-                Text("Chapter Complete")
-                    .font(.system(size: 20, weight: .bold))
-                
-                Text(currentChapter)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.7))
-                
-                Spacer()
-                
-                Image("continueReading")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxHeight: 160)
-                
-                Spacer()
-                
-                VStack {
+                if direction != .vertical {
+                    Spacer()
                     
+                    Text("Chapter Complete")
+                        .font(.system(size: 20, weight: .bold))
+                    
+                    Text(currentChapter)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.7))
+                    
+                    Spacer()
+                    
+                    Image("continueReading")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxHeight: 160)
+                    
+                    Spacer()
+                }
+                VStack {
                     Text("NEXT UP")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white.opacity(0.7))
@@ -45,31 +59,20 @@ struct NextChapterDisplay: View {
                         .font(.system(size: 20, weight: .bold))
                     
                     Spacer()
-                        .frame(maxHeight: 12)
-                    
-                    Image(systemName: "chevron.left.circle.fill")
-                        .foregroundColor(.white.opacity(0.7))
-                        .font(.system(size: 24))
-                    
-                    Spacer()
-                        .frame(maxHeight: 20)
-                    
-                    Text(status)
-                        .foregroundColor(status == "Ready" ? Color(hex: "#2B994A") : Color(hex: "#E5554C"))
-                        .fontWeight(.semibold)
-                    
-                    Image(systemName: status == "Ready" ? "checkmark.circle.fill" : "xmark.circle.fill")
-                        .foregroundColor(status == "Ready" ? Color(hex: "#2B994A") : Color(hex: "#E5554C"))
-                    
-                    Spacer()
                         .frame(maxHeight: 30)
                     
                     Text("Thanks to Mantton for the UI Idea")
                         .font(.system(size: 12))
                     
                 }
-                Spacer()
+                if direction == .vertical {
+                    Spacer()
+                        .frame(maxHeight: 120)
+                } else {
+                    Spacer()
+                }
             }
+            .frame(maxWidth: .infinity)
         }
         .foregroundColor(.white)
         .ignoresSafeArea()

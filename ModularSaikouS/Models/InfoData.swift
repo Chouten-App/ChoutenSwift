@@ -23,7 +23,7 @@ struct InfoData: Codable {
 
 struct MediaItem: Codable {
     let url: String
-    let number: Int
+    let number: Double
     let title: String?
     let description: String?
     let image: String?

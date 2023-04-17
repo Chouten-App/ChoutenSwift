@@ -78,6 +78,9 @@ CellContent : View
     fileprivate let itemSpacing: ItemSpacing
     fileprivate let rawCustomize: RawCustomize?
     fileprivate let rtl: Bool
+    @Binding var scrollIndex: Double
+    @Binding var seeking: Bool
+    
     
     init(
         collections: Collections,
@@ -86,7 +89,9 @@ CellContent : View
         itemSpacing: ItemSpacing = ItemSpacing(mainAxisSpacing: 0, crossAxisSpacing: 0),
         rawCustomize: RawCustomize? = nil,
         contentForData: @escaping ContentForData,
-        rtl: Bool)
+        rtl: Bool,
+        scrollIndex: Binding<Double>,
+        seeking: Binding<Bool>)
     {
         self.collections = collections
         self.scrollDirection = scrollDirection
@@ -95,6 +100,8 @@ CellContent : View
         self.rawCustomize = rawCustomize
         self.contentForData = contentForData
         self.rtl = rtl
+        self._scrollIndex = scrollIndex
+        self._seeking = seeking
     }
     
     func makeCoordinator() -> Coordinator {
@@ -115,6 +122,15 @@ CellContent : View
         uiViewController.layout.scrollDirection = self.scrollDirection
         self.rawCustomize?(uiViewController.collectionView)
         uiViewController.collectionView.reloadData()
+        
+        if seeking {
+            // Get the IndexPath of the item you want to scroll to
+            let indexPathToScrollTo = IndexPath(item: (Int)(scrollIndex), section: 0)
+
+            // Scroll the UICollectionView to the desired index
+            uiViewController.collectionView.scrollToItem(at: indexPathToScrollTo, at: .centeredHorizontally, animated: false)
+        }
+        
     }
 }
 
@@ -130,7 +146,9 @@ extension CollectionView {
         itemSpacing: ItemSpacing = ItemSpacing(mainAxisSpacing: 0, crossAxisSpacing: 0),
         rawCustomize: RawCustomize? = nil,
         contentForData: @escaping ContentForData,
-        rtl: Bool) where Collections == [Collection]
+        rtl: Bool,
+        scrollIndex: Binding<Double>,
+        seeking: Binding<Bool>) where Collections == [Collection]
     {
         self.init(
             collections: [collection],
@@ -139,7 +157,9 @@ extension CollectionView {
             itemSpacing: itemSpacing,
             rawCustomize: rawCustomize,
             contentForData: contentForData,
-            rtl: rtl)
+            rtl: rtl,
+            scrollIndex: scrollIndex,
+            seeking: seeking)
     }
 }
 
@@ -255,7 +275,12 @@ extension CollectionView {
         }
         
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
-            print(viewController?.collectionView.visibleCurrentCellIndexPath)
+            if viewController != nil {
+                let visibleRect = CGRect(origin: viewController!.collectionView.contentOffset, size: viewController!.collectionView.bounds.size)
+                let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
+                guard let indexPath = viewController!.collectionView.indexPathForItem(at: visiblePoint) else { return }
+                view.scrollIndex = Double(indexPath.row + 1)
+            }
         }
     }
 }
@@ -355,12 +380,6 @@ struct MyCustomCell : View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            let userinfo: [String: Int] = ["currentPage": data.page]
-            NotificationCenter.default.post(Notification(name: .currentPage,
-                                                         object: nil,
-                                                         userInfo: userinfo))
-        }
     }
 }
 
@@ -375,12 +394,71 @@ struct ChapterManager: Codable {
     var next: [mangaImages]?
 }
 
+struct Seekbar: View {
+    
+    @Binding var percentage: Double // or some value binded
+    @Binding var buffered: Double
+    @Binding var isDragging: Bool
+    var total: Double
+    @Binding var isMacos: Bool
+    @State var barHeight: CGFloat = 6
+    
+    
+    var body: some View {
+        GeometryReader { geometry in
+            // TODO: - there might be a need for horizontal and vertical alignments
+            ZStack(alignment: .bottomLeading) {
+                
+                Rectangle()
+                    .foregroundColor(.white.opacity(0.4)).frame(height: barHeight, alignment: .bottom).cornerRadius(12)
+                
+                Rectangle()
+                    .foregroundColor(.white.opacity(0.4))
+                    .frame(width: geometry.size.width * CGFloat(self.buffered / total)).frame(height: barHeight, alignment: .bottom).cornerRadius(12)
+                
+                Rectangle()
+                    .foregroundColor(Color("accentColor1"))
+                    .frame(width: geometry.size.width * CGFloat(self.percentage / total)).frame(height: barHeight, alignment: .bottom).cornerRadius(12)
+            }.frame(maxHeight: .infinity, alignment: .center)
+                .cornerRadius(12)
+                .overlay {
+                    Color.clear
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .contentShape(Rectangle())
+                        .gesture(DragGesture(minimumDistance: 0)
+                            .onEnded({ value in
+                                self.percentage = min(max(0, Double(value.location.x / geometry.size.width * total)), total)
+                                self.isDragging = false
+                                self.barHeight = isMacos ? 12 : 6
+                            })
+                            .onChanged({ value in
+                                    self.isDragging = true
+                                    self.barHeight = isMacos ? 18 : 10
+                                    print(value)
+                                    // TODO: - maybe use other logic here
+                                    self.percentage = min(max(0, Double(value.location.x / geometry.size.width * total)), total)
+                                })
+                        )
+                }
+                .animation(.spring(response: 0.3), value: self.isDragging)
+            
+        }
+    }
+}
+
+enum ReadMode {
+    case rtl
+    case ltr
+    case vertical
+}
+
 struct TESTING: View {
     
     @State var images: [mangaImages]? = nil
     @State var items: [MyCustomData]? = nil
     @State var rtl: Bool = true
-    @State var scrollIndex: Int = 0
+    @State var vertical: Bool = false
+    @State var scrollIndex: Double = 1
     var notificationChanged = NotificationCenter.default.publisher(for: .currentPage)
     
     func getImages(id: String, provider: String) async -> [mangaImages]? {
@@ -407,6 +485,13 @@ struct TESTING: View {
         return nil
     }
     
+    @State var isDragging = false
+    @State var showUI = false
+    @State var showSettings = false
+    @State var readMode: ReadMode = .rtl
+    
+    @Namespace var animation
+    
     var body: some View {
         GeometryReader {proxy in
             ZStack(alignment: .center) {
@@ -424,31 +509,167 @@ struct TESTING: View {
                                     collectionView.showsVerticalScrollIndicator = false
                                 },
                                 contentForData: MyCustomCell.init,
-                                rtl: rtl)
+                                rtl: rtl,
+                                scrollIndex: $scrollIndex,
+                                seeking: $isDragging)
                             .frame(height: proxy.size.height)
                             .flipsForRightToLeftLayoutDirection(rtl)
                             .environment(\.layoutDirection, rtl ? .rightToLeft : .leftToRight)
                         }
                     }
                 }
+                .onTapGesture {
+                    showUI.toggle()
+                }
                 
                 VStack {
-                    ZStack {
-                        Color(hex: "#ff91A6FF")
+                    //top part
+                    HStack {
+                        Button(action: {
+                            //self.presentationMode.wrappedValue.dismiss()
+                        }, label: {
+                            ZStack {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+                            .fixedSize()
+                        })
                         
-                        Text("\(scrollIndex) / \(images?.count ?? 1)")
-                            .padding(.vertical, 6)
-                            .padding(.horizontal, 12)
+                        Spacer()
+                            .frame(maxWidth: 12)
+                        
+                        
+                        VStack {
+                            Text("1: Tragedy")
+                                .bold()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Text("Tokyo Ghoul")
+                                .font(.subheadline)
+                                .bold()
+                                .opacity(0.7)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "gear")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(.white)
+                            .onTapGesture {
+                                showSettings.toggle()
+                            }
+                         
                     }
-                    .fixedSize()
-                    .cornerRadius(8)
-                    .padding(.bottom, 60)
-                    .onReceive(notificationChanged) { note in
-                        self.scrollIndex = note.userInfo!["currentPage"]! as! Int
+                    .opacity(showUI ? 1.0 : 0.0)
+                    
+                    Spacer()
+                    
+                    // bottom part
+                    VStack {
+                        Seekbar(percentage: $scrollIndex, buffered: .constant(0.0), isDragging: $isDragging, total: (Double)(images?.count ?? 1), isMacos: .constant(false))
+                            .frame(maxHeight: 18)
+                            .flipsForRightToLeftLayoutDirection(rtl)
+                            .environment(\.layoutDirection, rtl ? .rightToLeft : .leftToRight)
+                        
+                        HStack {
+                            Text("Page \((Int)(scrollIndex))")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                            Spacer()
+                            Text("\(images?.count ?? 1) Pages")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                        }
+                        .offset(y: -6)
+                    }
+                    .opacity(showUI ? 1.0 : 0.0)
+                }
+                .foregroundColor(Color("textColor2"))
+                .padding(.horizontal, 20)
+                .padding(.vertical, 60)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                .background {
+                    Color.black.opacity(showUI ? 0.4 : 0.0)
+                        .allowsHitTesting(false)
+                }
+                .animation(.spring(response: 0.3), value: showUI)
+                .onReceive(notificationChanged) { note in
+                    self.scrollIndex = (Double)(note.userInfo!["currentPage"]! as! Int)
+                }
+            }
+            .popup(isPresented: $showSettings, isHorizontal: false) {
+                VStack(alignment: .leading) {
+                    Text("Settings")
+                        .font(.title3)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 12)
+                    
+                    Text("Reading Mode")
+                    // read modes
+                    HStack {
+                        Text("Right To Left")
+                            .frame(maxWidth: (proxy.size.width - 40) / 3, maxHeight: .infinity)
+                            .background {
+                                if readMode == .rtl {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color("bg2"))
+                                        .matchedGeometryEffect(id: "readmode", in: animation)
+                                }
+                            }
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.3)) {
+                                    readMode = .rtl
+                                }
+                            }
+                        
+                        Text("Left To Right")
+                            .frame(maxWidth: (proxy.size.width - 40) / 3, maxHeight: .infinity)
+                            .background {
+                                if readMode == .ltr {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color("bg2"))
+                                        .matchedGeometryEffect(id: "readmode", in: animation)
+                                }
+                            }
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.3)) {
+                                    readMode = .ltr
+                                }
+                            }
+                        
+                        Text("Vertical")
+                            .frame(maxWidth: (proxy.size.width - 40) / 3, maxHeight: .infinity)
+                            .background {
+                                if readMode == .vertical {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color("bg2"))
+                                        .matchedGeometryEffect(id: "readmode", in: animation)
+                                }
+                            }
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.3)) {
+                                    readMode = .vertical
+                                }
+                            }
+                    }
+                    .padding(4)
+                    .frame(maxHeight: 40)
+                    .background {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color("bg"))
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                .padding(.horizontal, 20)
+                .frame(maxWidth: proxy.size.width, maxHeight: 360, alignment: .topLeading)
+                .background {
+                    Color("bg2")
+                }
+                .cornerRadius([.topLeading, .topTrailing], 20)
             }
+            .ignoresSafeArea()
         }
         .ignoresSafeArea()
         .onAppear {

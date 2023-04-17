@@ -101,11 +101,12 @@ struct BottomSheet: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .ignoresSafeArea()
         .animation(.spring(response: 0.3), value: isShowing)
+        
     }
 }
 
 struct CustomBottomSheet_Previews: PreviewProvider {
     static var previews: some View {
-        BottomSheet(isShowing: .constant(true), content: AnyView(ModuleSelector(globalData: GlobalData())))
+        BottomSheet(isShowing: .constant(true), content: AnyView(ModuleSelector(globalData: GlobalData(), showPopup: .constant(true))))
     }
 }

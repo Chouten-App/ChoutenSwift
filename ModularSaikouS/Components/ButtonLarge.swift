@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct ButtonLarge: View {
-    
+    var fileurl: URL
     var label: String
     var image: String?
     var developer: String?
@@ -65,8 +65,27 @@ struct ButtonLarge: View {
                     }
                 }
                 .frame(minHeight: 120)
+                
+                Spacer()
+                
+                Button {
+                    print(fileurl)
+                    do {
+                        try FileManager.default.removeItem(at: fileurl)
+                    } catch let error {
+                        print(error)
+                    }
+                } label: {
+                    Image(systemName: "trash.fill")
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background {
+                            Circle()
+                                .fill(Color(hex: "#f3767b"))
+                        }
+                }
             }
-            .padding(.leading, 20)
+            .padding(.horizontal, 20)
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .leading)
         }
         .buttonStyle(PlainButtonStyle())
@@ -77,7 +96,7 @@ struct ButtonLarge: View {
 
 struct ButtonLarge_Previews: PreviewProvider {
     static var previews: some View {
-        ButtonLarge(label: "Zoro.to", action: {
+        ButtonLarge(fileurl: URL(string: "")!, label: "Zoro.to", action: {
             
         })
         .frame(maxHeight: 52)

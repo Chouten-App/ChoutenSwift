@@ -69,14 +69,18 @@ struct CustomVideoPlayer: UIViewRepresentable {
 
 struct CustomPlayerWithControls: View {
     @Binding var streamData: VideoData
+    @State var number: Int
+    @ObservedObject var globalData: GlobalData
     @State var doneLoading = false
     @State var showUI: Bool = true
     @State var resIndex: Int = 0
     
     @StateObject private var playerVM = PlayerViewModel()
     
-    init(streamData: Binding<VideoData>) {
+    init(streamData: Binding<VideoData>, number: Int, globalData: GlobalData) {
         self._streamData = streamData
+        self.number = number
+        self.globalData = globalData
         // we need this to use Picture in Picture
         let audioSession = AVAudioSession.sharedInstance()
         do {
@@ -94,61 +98,59 @@ struct CustomPlayerWithControls: View {
     }
     
     var body: some View {
-        if streamData.sources.count > 0 {
-            ZStack {
-                Color(.black)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .edgesIgnoringSafeArea(.all)
-                    .ignoresSafeArea(.all)
-                
-                VStack {
-                    VStack {
-                        ZStack {
-                            CustomVideoPlayer(playerVM: playerVM, showUI: showUI)
-                                .overlay(
-                                    HStack {
-                                        Color.clear
-                                            .frame(width: .infinity, height: .infinity)
-                                            .contentShape(Rectangle())
-                                            .gesture(
-                                                TapGesture(count: 2)
-                                                    .onEnded({ playerVM.player.seek(to: CMTime(seconds: playerVM.currentTime - 15, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)})
-                                                    .exclusively(before:
-                                                                    TapGesture()
-                                                        .onEnded({showUI = true})
-                                                                )
-                                            )
-                                        
-                                        Color.clear
-                                            .frame(width: .infinity, height: .infinity)
-                                            .contentShape(Rectangle())
-                                            .onTapGesture {
-                                                showUI = true
-                                            }
-                                        
-                                        Color.clear
-                                            .frame(width: .infinity, height: .infinity)
-                                            .contentShape(Rectangle())
-                                            .gesture(
-                                                TapGesture(count: 2)
-                                                    .onEnded({ playerVM.player.seek(to: CMTime(seconds: playerVM.currentTime + 15, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)})
-                                                    .exclusively(before:
-                                                                    TapGesture()
-                                                        .onEnded({showUI = true})
-                                                                )
-                                            )
-                                        
+        GeometryReader {proxy in
+            if streamData.sources.count > 0 {
+                ZStack {
+                    Color(.black)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .edgesIgnoringSafeArea(.all)
+                        .ignoresSafeArea(.all)
+                    
+                    CustomVideoPlayer(playerVM: playerVM, showUI: showUI)
+                        .overlay(
+                            HStack {
+                                Color.clear
+                                    .frame(width: proxy.size.width, height: proxy.size.height)
+                                    .contentShape(Rectangle())
+                                    .gesture(
+                                        TapGesture(count: 2)
+                                            .onEnded({ playerVM.player.seek(to: CMTime(seconds: playerVM.currentTime - 15, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)})
+                                            .exclusively(before:
+                                                            TapGesture()
+                                                .onEnded({showUI = true})
+                                                        )
+                                    )
+                                
+                                Color.clear
+                                    .frame(width: proxy.size.width, height: proxy.size.height)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        showUI = true
                                     }
-                                )
-                                .overlay(CustomControlsView(streamData: $streamData, showUI: $showUI, playerVM: playerVM), alignment: .bottom)
-                        }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                            .edgesIgnoringSafeArea(.all)
-                            .ignoresSafeArea(.all)
-                    }
+                                
+                                Color.clear
+                                    .frame(width: proxy.size.width, height: proxy.size.height)
+                                    .contentShape(Rectangle())
+                                    .gesture(
+                                        TapGesture(count: 2)
+                                            .onEnded({ playerVM.player.seek(to: CMTime(seconds: playerVM.currentTime + 15, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)})
+                                            .exclusively(before:
+                                                            TapGesture()
+                                                .onEnded({showUI = true})
+                                                        )
+                                    )
+                                
+                            }
+                        )
+                        .overlay(CustomControlsView(streamData: $streamData, showUI: $showUI, playerVM: playerVM, number: $number, globalData: globalData)
+                            .padding(.horizontal, 20), alignment: .bottom)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea(.all)
+                .prefersHomeIndicatorAutoHidden(true)
                 .task {
-                    playerVM.setCurrentItem(AVPlayerItem(url:  URL(string: streamData.sources[0].file ?? "/")!))
+                    playerVM.setCurrentItem(AVPlayerItem(url:  URL(string: streamData.sources[0].file)!))
                     if(streamData.subtitles.count > 0) {
                         var content: String
                         var index = 0
@@ -188,18 +190,14 @@ struct CustomPlayerWithControls: View {
                 }
                 .onReceive(playerVM.$currentTime) { newValue in
                 }
-                
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .edgesIgnoringSafeArea(.all)
-            .ignoresSafeArea(.all)
-        }
-        else {
-            ZStack {
-                Color(.black)
-                    .ignoresSafeArea()
-                ProgressView()
-                    .progressViewStyle(GaugeProgressStyle())
+            else {
+                ZStack {
+                    Color(.black)
+                        .ignoresSafeArea()
+                    ProgressView()
+                        .progressViewStyle(GaugeProgressStyle())
+                }
             }
         }
     }
