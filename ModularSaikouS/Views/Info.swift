@@ -38,286 +38,573 @@ struct Info: View {
     
     @State var navigating: Bool = false
     
+    func forTrailingZero(temp: Double) -> String {
+        var tempVar = String(format: "%g", temp)
+        return tempVar
+    }
+    
     var body: some View {
         GeometryReader {proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 if globalData.infoData != nil {
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .bottom, spacing: 0) {
-                            HStack {
-                                Text(globalData.infoData!.titles.primary)
-                                    .foregroundColor(Color("textColor2"))
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .lineLimit(1)
-                                    .multilineTextAlignment(.leading)
-                            }
-                            .padding(12)
-                            .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, maxHeight: 110, alignment: .bottomLeading)
-                            .background {
-                                Color("bg2")
-                            }
-                            .padding(.bottom, -60)
-                            
-                            
-                            ZStack(alignment: .bottomLeading) {
-                                GeometryReader {reader in
-                                    FillAspectImage(
-                                        url: URL(string: globalData.infoData!.banner ?? globalData.infoData!.poster),
-                                        doesAnimateHorizontal: proxy.size.width < 900
-                                    )
-                                    .blur(radius: globalData.infoData!.banner != nil ? 0.0 : 6.0)
-                                    .overlay {
-                                        LinearGradient(stops: [
-                                            Gradient.Stop(color: Color("bg").opacity(0.9), location: 0.0),
-                                            Gradient.Stop(color: Color("bg").opacity(0.4), location: 1.0),
-                                        ], startPoint: .bottom, endPoint: .top)
-                                    }
-                                    .frame(
-                                        width: reader.size.width,
-                                        height: reader.size.height + (reader.frame(in: .global).minY > 0 ? reader.frame(in: .global).minY : 0),
-                                        alignment: .top
-                                    )
-                                    .contentShape(Rectangle())
-                                    .clipped()
-                                    .offset(y: reader.frame(in: .global).minY <= 0 ? 0 : -reader.frame(in: .global).minY)
-                                    
+                    if globalData.module?.subtypes[0] == "anime" {
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .bottom, spacing: 0) {
+                                HStack {
+                                    Text(globalData.infoData!.titles.primary)
+                                        .foregroundColor(Color("textColor2"))
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .lineLimit(1)
+                                        .multilineTextAlignment(.leading)
                                 }
-                                .frame(height: 280)
+                                .padding(12)
+                                .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, maxHeight: 110, alignment: .bottomLeading)
+                                .background {
+                                    Color("bg2")
+                                }
+                                .padding(.bottom, -60)
+                                
+                                
+                                ZStack(alignment: .bottomLeading) {
+                                    GeometryReader {reader in
+                                        FillAspectImage(
+                                            url: URL(string: globalData.infoData!.banner ?? globalData.infoData!.poster),
+                                            doesAnimateHorizontal: proxy.size.width < 900
+                                        )
+                                        .blur(radius: globalData.infoData!.banner != nil ? 0.0 : 6.0)
+                                        .overlay {
+                                            LinearGradient(stops: [
+                                                Gradient.Stop(color: Color("bg").opacity(0.9), location: 0.0),
+                                                Gradient.Stop(color: Color("bg").opacity(0.4), location: 1.0),
+                                            ], startPoint: .bottom, endPoint: .top)
+                                        }
+                                        .frame(
+                                            width: reader.size.width,
+                                            height: reader.size.height + (reader.frame(in: .global).minY > 0 ? reader.frame(in: .global).minY : 0),
+                                            alignment: .top
+                                        )
+                                        .contentShape(Rectangle())
+                                        .clipped()
+                                        .offset(y: reader.frame(in: .global).minY <= 0 ? 0 : -reader.frame(in: .global).minY)
+                                        
+                                    }
+                                    .frame(height: 280)
+                                    .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width)
+                                    
+                                    HStack(alignment: .bottom) {
+                                        KFImage(URL(string: globalData.infoData!.poster))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(maxWidth: 120, maxHeight: 180)
+                                            .cornerRadius(12)
+                                            .if(animation != nil) { view in
+                                                // We only apply this background color if shouldApplyBackground is true
+                                                view.matchedGeometryEffect(id: title, in: animation!)
+                                            }
+                                        
+                                        VStack(alignment: .leading) {
+                                            Text(globalData.infoData!.titles.secondary ?? "")
+                                                .font(.caption)
+                                                .fontWeight(.heavy)
+                                                .foregroundColor(Color("textColor2").opacity(0.7))
+                                            Text(globalData.infoData!.titles.primary)
+                                                .font(.title2)
+                                                .fontWeight(.bold)
+                                                .foregroundColor(Color("textColor2"))
+                                                .lineLimit(3)
+                                            
+                                            VStack(alignment: .leading, spacing: 8) {
+                                                Text(globalData.infoData!.status ?? "")
+                                                    .foregroundColor(Color("accentColor1"))
+                                                    .fontWeight(.bold)
+                                                
+                                                Text("\(globalData.infoData!.totalMediaCount ?? 0) \(globalData.infoData!.mediaType)")
+                                                    .foregroundColor(Color("textColor2"))
+                                                    .font(.subheadline)
+                                                    .fontWeight(.bold)
+                                            }
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.bottom, 8)
+                                            .padding(.top, 4)
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                    }
+                                    .padding(.horizontal, 20)
+                                    .padding(.bottom, -60)
+                                    .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width)
+                                }
                                 .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width)
+                            }
+                            .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, alignment: .bottom)
+                            .offset(x: showHeader ? proxy.size.width/2 : -proxy.size.width/2)
+                            .animation(.spring(response: 0.3), value: showHeader)
+                            
+                            VStack(alignment: .leading) {
+                                VStack(alignment: .leading) {
+                                    Text(globalData.infoData!.description)
+                                        .foregroundColor(Color("textColor2").opacity(0.7))
+                                        .font(.subheadline)
+                                        .lineLimit(showFullDescription ? nil : 9)
+                                        .animation(.spring(response: 0.3), value: showFullDescription)
+                                    
+                                    Text("See \(showFullDescription ? "less" : "more")")
+                                        .foregroundColor(Color("accentColor1"))
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .padding(.top, 4)
+                                        .frame(maxWidth: .infinity, alignment: .trailing)
+                                        .animation(.spring(response: 0.3), value: showFullDescription)
+                                        .onTapGesture {
+                                            showFullDescription.toggle()
+                                        }
+                                }
+                                .animation(.spring(response: 0.3), value: showFullDescription)
+                                
+                                
+                                Toggle(isOn ? "Dubbed" : "Subbed", isOn: $isOn)
+                                    .toggleStyle(MaterialToggleStyle())
                                 
                                 HStack(alignment: .bottom) {
-                                    KFImage(URL(string: globalData.infoData!.poster))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(maxWidth: 120, maxHeight: 180)
-                                        .cornerRadius(12)
-                                        .if(animation != nil) { view in
-                                            // We only apply this background color if shouldApplyBackground is true
-                                            view.matchedGeometryEffect(id: title, in: animation!)
-                                        }
-                                    
-                                    VStack(alignment: .leading) {
-                                        Text(globalData.infoData!.titles.secondary ?? "")
-                                            .font(.caption)
-                                            .fontWeight(.heavy)
-                                            .foregroundColor(Color("textColor2").opacity(0.7))
-                                        Text(globalData.infoData!.titles.primary)
-                                            .font(.title2)
-                                            .fontWeight(.bold)
-                                            .foregroundColor(Color("textColor2"))
-                                            .lineLimit(3)
-                                        
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            Text(globalData.infoData!.status ?? "")
-                                                .foregroundColor(Color("accentColor1"))
-                                                .fontWeight(.bold)
-                                            
-                                            Text("\(globalData.infoData!.totalMediaCount ?? 0) \(globalData.infoData!.mediaType)")
-                                                .foregroundColor(Color("textColor2"))
-                                                .font(.subheadline)
-                                                .fontWeight(.bold)
-                                        }
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .padding(.bottom, 8)
-                                        .padding(.top, 4)
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                }
-                                .padding(.horizontal, 20)
-                                .padding(.bottom, -60)
-                                .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width)
-                            }
-                            .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width)
-                        }
-                        .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, alignment: .bottom)
-                        .offset(x: showHeader ? proxy.size.width/2 : -proxy.size.width/2)
-                        .animation(.spring(response: 0.3), value: showHeader)
-                        
-                        VStack(alignment: .leading) {
-                            VStack(alignment: .leading) {
-                                Text(globalData.infoData!.description)
-                                    .foregroundColor(Color("textColor2").opacity(0.7))
-                                    .font(.subheadline)
-                                    .lineLimit(showFullDescription ? nil : 9)
-                                    .animation(.spring(response: 0.3), value: showFullDescription)
-                                
-                                Text("See \(showFullDescription ? "less" : "more")")
-                                    .foregroundColor(Color("accentColor1"))
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                                    .padding(.top, 4)
-                                    .frame(maxWidth: .infinity, alignment: .trailing)
-                                    .animation(.spring(response: 0.3), value: showFullDescription)
-                                    .onTapGesture {
-                                        showFullDescription.toggle()
-                                    }
-                            }
-                            .animation(.spring(response: 0.3), value: showFullDescription)
-                            
-                            
-                            Toggle(isOn ? "Dubbed" : "Subbed", isOn: $isOn)
-                                .toggleStyle(MaterialToggleStyle())
-                            
-                            HStack(alignment: .bottom) {
-                                Text(globalData.infoData!.mediaType)
-                                    .foregroundColor(Color("accentColor1"))
-                                    .font(.title3)
-                                    .fontWeight(.bold)
-                                    .padding(.bottom, 6)
-                                
-                                Spacer()
-                                
-                                VStack(alignment: .trailing) {
-                                    Text("Source")
-                                        .font(.subheadline)
-                                        .foregroundColor(Color("textColor2"))
-                                        .padding(.trailing, 4)
-                                        .padding(.bottom, -4)
-                                    
-                                    HStack {
-                                        Text("Zoro.to")
-                                            .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(Color("textColor"))
-                                        
-                                        Image(systemName: "chevron.down")
-                                            .font(.caption)
-                                            .foregroundColor(Color("textColor"))
-                                    }
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 20)
-                                    .background {
-                                        Capsule()
-                                            .fill(Color("accentColor1"))
-                                    }
-                                }
-                            }
-                            
-                            if globalData.infoData!.seasons.count > 0 {
-                                HStack {
-                                    Image(systemName: "folder.fill")
-                                        .font(.subheadline)
-                                    
-                                    Text(globalData.infoData!.seasons[0])
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .padding(.vertical, 12)
+                                    Text(globalData.infoData!.mediaType)
+                                        .foregroundColor(Color("accentColor1"))
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .padding(.bottom, 6)
                                     
                                     Spacer()
                                     
-                                    Image(systemName: "chevron.down")
-                                }
-                                .foregroundColor(Color("textColor"))
-                                .padding(.horizontal, 12)
-                                .frame(maxWidth: .infinity, maxHeight: 42, alignment: .leading)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .fill(Color("accentColor1"))
-                                }
-                                .padding(.vertical, 8)
-                            }
-                            
-                            ScrollView {
-                                VStack(spacing: 20) {
-                                    ForEach(0..<globalData.infoData!.mediaList[0].count, id: \.self) {index in
-                                        NavigationLink(destination: WatchPage(url: globalData.infoData!.mediaList[0][index].url, number: index, globalData: globalData)) {
-                                            VStack(spacing: 0) {
-                                                HStack(spacing: 8) {
-                                                    KFImage(URL(string: globalData.infoData!.mediaList[0][index].image ?? globalData.infoData!.poster))
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fill)
-                                                        .frame(maxWidth: 150, maxHeight: 90)
-                                                        .cornerRadius(12)
-                                                    
-                                                    VStack(alignment: .leading) {
-                                                        Spacer()
-                                                        
-                                                        HStack {
-                                                            Text(globalData.infoData!.mediaList[0][index].title ?? "Episode \(globalData.infoData!.mediaList[0][index].number)")
-                                                                .foregroundColor(Color("textColor2"))
-                                                                .font(.subheadline)
-                                                                .fontWeight(.semibold)
-                                                                .lineLimit(2)
-                                                                .multilineTextAlignment(.leading)
-                                                                .frame(maxWidth: .infinity, alignment: .leading)
-                                                            
-                                                            /*
-                                                             Image(systemName: "arrow.down.to.line.compact")
-                                                             .font(.callout)
-                                                             .foregroundColor(Color("textColor"))
-                                                             .padding(8)
-                                                             .background {
-                                                             Circle()
-                                                             .fill(Color("accentColor1"))
-                                                             }
-                                                             */
-                                                        }
-                                                        Spacer()
-                                                        
-                                                        HStack {
-                                                            Text("Episode \(globalData.infoData!.mediaList[0][index].number)")
-                                                                .foregroundColor(Color("textColor2").opacity(0.7))
-                                                                .font(.caption)
-                                                                .fontWeight(.semibold)
-                                                            
-                                                            Spacer()
-                                                            
-                                                            Text("24 mins")
-                                                                .foregroundColor(Color("textColor2").opacity(0.7))
-                                                                .font(.caption)
-                                                                .fontWeight(.semibold)
-                                                        }
-                                                        .padding(.bottom, 6)
-                                                    }
-                                                    .padding(.trailing, 8)
-                                                    .frame(maxWidth: .infinity, maxHeight: 90, alignment: .leading)
-                                                }
-                                                if globalData.infoData!.mediaList[0][index].description != nil {
-                                                    Text(globalData.infoData!.mediaList[0][index].description!)
-                                                        .font(.caption)
-                                                        .foregroundColor(Color("textColor2").opacity(0.7))
-                                                        .lineLimit(4)
-                                                        .padding(12)
-                                                }
-                                            }
-                                            .background {
-                                                Color("bg2")
-                                            }
-                                            .cornerRadius(12)
+                                    VStack(alignment: .trailing) {
+                                        Text("Source")
+                                            .font(.subheadline)
+                                            .foregroundColor(Color("textColor2"))
+                                            .padding(.trailing, 4)
+                                            .padding(.bottom, -4)
+                                        
+                                        HStack {
+                                            Text("Zoro.to")
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color("textColor"))
                                             
-                                        }.simultaneousGesture(TapGesture().onEnded {
-                                            print("Hello world!")
-                                            navigating = true
-                                        })
+                                            Image(systemName: "chevron.down")
+                                                .font(.caption)
+                                                .foregroundColor(Color("textColor"))
+                                        }
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 20)
+                                        .background {
+                                            Capsule()
+                                                .fill(Color("accentColor1"))
+                                        }
                                     }
                                 }
-                                .padding(.bottom, 60)
+                                
+                                if globalData.infoData!.seasons.count > 0 {
+                                    HStack {
+                                        Image(systemName: "folder.fill")
+                                            .font(.subheadline)
+                                        
+                                        Text(globalData.infoData!.seasons[0])
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .padding(.vertical, 12)
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: "chevron.down")
+                                    }
+                                    .foregroundColor(Color("textColor"))
+                                    .padding(.horizontal, 12)
+                                    .frame(maxWidth: .infinity, maxHeight: 42, alignment: .leading)
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(Color("accentColor1"))
+                                    }
+                                    .padding(.vertical, 8)
+                                }
+                                
+                                ScrollView {
+                                    VStack {
+                                        VStack(spacing: 20) {
+                                            ForEach(0..<globalData.infoData!.mediaList[0].count, id: \.self) {index in
+                                                NavigationLink(destination: WatchPage(url: globalData.infoData!.mediaList[0][index].url, number: index, globalData: globalData)) {
+                                                    VStack(spacing: 0) {
+                                                        HStack(spacing: 8) {
+                                                            KFImage(URL(string: globalData.infoData!.mediaList[0][index].image ?? globalData.infoData!.poster))
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fill)
+                                                                .frame(maxWidth: 150, maxHeight: 90)
+                                                                .cornerRadius(12)
+                                                            
+                                                            VStack(alignment: .leading) {
+                                                                Spacer()
+                                                                
+                                                                HStack {
+                                                                    Text(globalData.infoData!.mediaList[0][index].title ?? "Episode \(globalData.infoData!.mediaList[0][index].number)")
+                                                                        .foregroundColor(Color("textColor2"))
+                                                                        .font(.subheadline)
+                                                                        .fontWeight(.semibold)
+                                                                        .lineLimit(2)
+                                                                        .multilineTextAlignment(.leading)
+                                                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                                                    
+                                                                    /*
+                                                                     Image(systemName: "arrow.down.to.line.compact")
+                                                                     .font(.callout)
+                                                                     .foregroundColor(Color("textColor"))
+                                                                     .padding(8)
+                                                                     .background {
+                                                                     Circle()
+                                                                     .fill(Color("accentColor1"))
+                                                                     }
+                                                                     */
+                                                                }
+                                                                Spacer()
+                                                                
+                                                                HStack {
+                                                                    Text("Episode \(forTrailingZero(temp: globalData.infoData!.mediaList[0][index].number))")
+                                                                        .foregroundColor(Color("textColor2").opacity(0.7))
+                                                                        .font(.caption)
+                                                                        .fontWeight(.semibold)
+                                                                    
+                                                                    Spacer()
+                                                                    
+                                                                    Text("24 mins")
+                                                                        .foregroundColor(Color("textColor2").opacity(0.7))
+                                                                        .font(.caption)
+                                                                        .fontWeight(.semibold)
+                                                                }
+                                                                .padding(.bottom, 6)
+                                                            }
+                                                            .padding(.trailing, 8)
+                                                            .frame(maxWidth: .infinity, maxHeight: 90, alignment: .leading)
+                                                        }
+                                                        if globalData.infoData!.mediaList[0][index].description != nil {
+                                                            Text(globalData.infoData!.mediaList[0][index].description!)
+                                                                .font(.caption)
+                                                                .foregroundColor(Color("textColor2").opacity(0.7))
+                                                                .lineLimit(4)
+                                                                .padding(12)
+                                                        }
+                                                    }
+                                                    .background {
+                                                        Color("bg2")
+                                                    }
+                                                    .cornerRadius(12)
+                                                    
+                                                }.simultaneousGesture(TapGesture().onEnded {
+                                                    print("Hello world!")
+                                                    navigating = true
+                                                })
+                                                .disabled(globalData.infoData!.mediaType.lowercased() != "episodes")
+                                            }
+                                        }
+                                        .padding(.bottom, 60)
+                                    }
+                                }
+                                .padding(.top, 12)
+                                .frame(maxHeight: 700)
+                                
                             }
-                            .padding(.top, 12)
-                            .frame(maxHeight: 700)
-                            
+                            .animation(.spring(response: 0.3), value: showFullDescription)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 70)
                         }
-                        .animation(.spring(response: 0.3), value: showFullDescription)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 70)
-                    }
-                    .frame(maxWidth: proxy.size.width)
-                    .background(GeometryReader {
-                        Color.clear.preference(key: ViewOffsetKey.self,
-                                               value: -$0.frame(in: .named("infoscroll")).origin.y)
-                    })
-                    .onPreferenceChange(ViewOffsetKey.self) {
-                        //print("offset >> \($0)")
-                        if($0 >= 110 && $0 < 230) {
-                            showHeader = true
-                            showRealHeader = false
-                        } else if($0 >= 230) {
-                            showHeader = true
-                            showRealHeader = true
-                        } else {
-                            showHeader = false
-                            showRealHeader = false
+                        .frame(maxWidth: proxy.size.width)
+                        .background(GeometryReader {
+                            Color.clear.preference(key: ViewOffsetKey.self,
+                                                   value: -$0.frame(in: .named("infoscroll")).origin.y)
+                        })
+                        .onPreferenceChange(ViewOffsetKey.self) {
+                            //print("offset >> \($0)")
+                            if($0 >= 110 && $0 < 230) {
+                                showHeader = true
+                                showRealHeader = false
+                            } else if($0 >= 230) {
+                                showHeader = true
+                                showRealHeader = true
+                            } else {
+                                showHeader = false
+                                showRealHeader = false
+                            }
+                        }
+                    } else {
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .bottom, spacing: 0) {
+                                HStack {
+                                    Text(globalData.infoData!.titles.primary)
+                                        .foregroundColor(Color("textColor2"))
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .lineLimit(1)
+                                        .multilineTextAlignment(.leading)
+                                }
+                                .padding(12)
+                                .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, maxHeight: 110, alignment: .bottomLeading)
+                                .background {
+                                    Color("bg2")
+                                }
+                                .padding(.bottom, -60)
+                                
+                                
+                                ZStack(alignment: .bottomLeading) {
+                                    GeometryReader {reader in
+                                        FillAspectImage(
+                                            url: URL(string: globalData.infoData!.banner ?? globalData.infoData!.poster),
+                                            doesAnimateHorizontal: proxy.size.width < 900
+                                        )
+                                        .blur(radius: globalData.infoData!.banner != nil ? 0.0 : 6.0)
+                                        .overlay {
+                                            LinearGradient(stops: [
+                                                Gradient.Stop(color: Color("bg").opacity(0.9), location: 0.0),
+                                                Gradient.Stop(color: Color("bg").opacity(0.4), location: 1.0),
+                                            ], startPoint: .bottom, endPoint: .top)
+                                        }
+                                        .frame(
+                                            width: reader.size.width,
+                                            height: reader.size.height + (reader.frame(in: .global).minY > 0 ? reader.frame(in: .global).minY : 0),
+                                            alignment: .top
+                                        )
+                                        .contentShape(Rectangle())
+                                        .clipped()
+                                        .offset(y: reader.frame(in: .global).minY <= 0 ? 0 : -reader.frame(in: .global).minY)
+                                        
+                                    }
+                                    .frame(height: 280)
+                                    .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width)
+                                    
+                                    HStack(alignment: .bottom) {
+                                        KFImage(URL(string: globalData.infoData!.poster))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(maxWidth: 120, maxHeight: 180)
+                                            .cornerRadius(12)
+                                            .if(animation != nil) { view in
+                                                // We only apply this background color if shouldApplyBackground is true
+                                                view.matchedGeometryEffect(id: title, in: animation!)
+                                            }
+                                        
+                                        VStack(alignment: .leading) {
+                                            Text(globalData.infoData!.titles.secondary ?? "")
+                                                .font(.caption)
+                                                .fontWeight(.heavy)
+                                                .foregroundColor(Color("textColor2").opacity(0.7))
+                                            Text(globalData.infoData!.titles.primary)
+                                                .font(.title2)
+                                                .fontWeight(.bold)
+                                                .foregroundColor(Color("textColor2"))
+                                                .lineLimit(3)
+                                            
+                                            VStack(alignment: .leading, spacing: 8) {
+                                                Text(globalData.infoData!.status ?? "")
+                                                    .foregroundColor(Color("accentColor1"))
+                                                    .fontWeight(.bold)
+                                                
+                                                Text("\(globalData.infoData!.totalMediaCount ?? 0) \(globalData.infoData!.mediaType)")
+                                                    .foregroundColor(Color("textColor2"))
+                                                    .font(.subheadline)
+                                                    .fontWeight(.bold)
+                                            }
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.bottom, 8)
+                                            .padding(.top, 4)
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                    }
+                                    .padding(.horizontal, 20)
+                                    .padding(.bottom, -60)
+                                    .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width)
+                                }
+                                .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width)
+                            }
+                            .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, alignment: .bottom)
+                            .offset(x: showHeader ? proxy.size.width/2 : -proxy.size.width/2)
+                            .animation(.spring(response: 0.3), value: showHeader)
+                            
+                            VStack(alignment: .leading) {
+                                VStack(alignment: .leading) {
+                                    Text(globalData.infoData!.description)
+                                        .foregroundColor(Color("textColor2").opacity(0.7))
+                                        .font(.subheadline)
+                                        .lineLimit(showFullDescription ? nil : 9)
+                                        .animation(.spring(response: 0.3), value: showFullDescription)
+                                    
+                                    Text("See \(showFullDescription ? "less" : "more")")
+                                        .foregroundColor(Color("accentColor1"))
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .padding(.top, 4)
+                                        .frame(maxWidth: .infinity, alignment: .trailing)
+                                        .animation(.spring(response: 0.3), value: showFullDescription)
+                                        .onTapGesture {
+                                            showFullDescription.toggle()
+                                        }
+                                }
+                                .animation(.spring(response: 0.3), value: showFullDescription)
+                                
+                                
+                                Toggle(isOn ? "Dubbed" : "Subbed", isOn: $isOn)
+                                    .toggleStyle(MaterialToggleStyle())
+                                
+                                HStack(alignment: .bottom) {
+                                    Text(globalData.infoData!.mediaType)
+                                        .foregroundColor(Color("accentColor1"))
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .padding(.bottom, 6)
+                                    
+                                    Spacer()
+                                    
+                                    VStack(alignment: .trailing) {
+                                        Text("Source")
+                                            .font(.subheadline)
+                                            .foregroundColor(Color("textColor2"))
+                                            .padding(.trailing, 4)
+                                            .padding(.bottom, -4)
+                                        
+                                        HStack {
+                                            Text("Zoro.to")
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color("textColor"))
+                                            
+                                            Image(systemName: "chevron.down")
+                                                .font(.caption)
+                                                .foregroundColor(Color("textColor"))
+                                        }
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 20)
+                                        .background {
+                                            Capsule()
+                                                .fill(Color("accentColor1"))
+                                        }
+                                    }
+                                }
+                                
+                                if globalData.infoData!.seasons.count > 0 {
+                                    HStack {
+                                        Image(systemName: "folder.fill")
+                                            .font(.subheadline)
+                                        
+                                        Text(globalData.infoData!.seasons[0])
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .padding(.vertical, 12)
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: "chevron.down")
+                                    }
+                                    .foregroundColor(Color("textColor"))
+                                    .padding(.horizontal, 12)
+                                    .frame(maxWidth: .infinity, maxHeight: 42, alignment: .leading)
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(Color("accentColor1"))
+                                    }
+                                    .padding(.vertical, 8)
+                                }
+                                
+                                ScrollView {
+                                    VStack {
+                                        VStack(spacing: 20) {
+                                            ForEach(0..<globalData.infoData!.mediaList[0].count, id: \.self) {index in
+                                                NavigationLink(destination: Reader(url: globalData.infoData!.mediaList[0][index].url, globalData: globalData)) {
+                                                    VStack(spacing: 0) {
+                                                        HStack(spacing: 8) {
+                                                            KFImage(URL(string: globalData.infoData!.mediaList[0][index].image ?? globalData.infoData!.poster))
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fill)
+                                                                .frame(maxWidth: 150, maxHeight: 90)
+                                                                .cornerRadius(12)
+                                                            
+                                                            VStack(alignment: .leading) {
+                                                                Spacer()
+                                                                
+                                                                HStack {
+                                                                    Text(globalData.infoData!.mediaList[0][index].title ?? "Chapter \(globalData.infoData!.mediaList[0][index].number)")
+                                                                        .foregroundColor(Color("textColor2"))
+                                                                        .font(.subheadline)
+                                                                        .fontWeight(.semibold)
+                                                                        .lineLimit(2)
+                                                                        .multilineTextAlignment(.leading)
+                                                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                                                    
+                                                                    /*
+                                                                     Image(systemName: "arrow.down.to.line.compact")
+                                                                     .font(.callout)
+                                                                     .foregroundColor(Color("textColor"))
+                                                                     .padding(8)
+                                                                     .background {
+                                                                     Circle()
+                                                                     .fill(Color("accentColor1"))
+                                                                     }
+                                                                     */
+                                                                }
+                                                                Spacer()
+                                                                
+                                                                HStack {
+                                                                    Text("Chapter \(forTrailingZero(temp: globalData.infoData!.mediaList[0][index].number))")
+                                                                        .foregroundColor(Color("textColor2").opacity(0.7))
+                                                                        .font(.caption)
+                                                                        .fontWeight(.semibold)
+                                                                    
+                                                                    Spacer()
+                                                                }
+                                                                .padding(.bottom, 6)
+                                                            }
+                                                            .padding(.trailing, 8)
+                                                            .frame(maxWidth: .infinity, maxHeight: 90, alignment: .leading)
+                                                        }
+                                                        if globalData.infoData!.mediaList[0][index].description != nil {
+                                                            Text(globalData.infoData!.mediaList[0][index].description!)
+                                                                .font(.caption)
+                                                                .foregroundColor(Color("textColor2").opacity(0.7))
+                                                                .lineLimit(4)
+                                                                .padding(12)
+                                                        }
+                                                    }
+                                                    .background {
+                                                        Color("bg2")
+                                                    }
+                                                    .cornerRadius(12)
+                                                    
+                                                }.simultaneousGesture(TapGesture().onEnded {
+                                                    print("Hello world!")
+                                                    navigating = true
+                                                })
+                                                .disabled(globalData.infoData!.mediaType.lowercased() == "episodes")
+                                            }
+                                        }
+                                        .padding(.bottom, 60)
+                                    }
+                                }
+                                .padding(.top, 12)
+                                .frame(maxHeight: 700)
+                                
+                            }
+                            .animation(.spring(response: 0.3), value: showFullDescription)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 70)
+                        }
+                        .frame(maxWidth: proxy.size.width)
+                        .background(GeometryReader {
+                            Color.clear.preference(key: ViewOffsetKey.self,
+                                                   value: -$0.frame(in: .named("infoscroll")).origin.y)
+                        })
+                        .onPreferenceChange(ViewOffsetKey.self) {
+                            //print("offset >> \($0)")
+                            if($0 >= 110 && $0 < 230) {
+                                showHeader = true
+                                showRealHeader = false
+                            } else if($0 >= 230) {
+                                showHeader = true
+                                showRealHeader = true
+                            } else {
+                                showHeader = false
+                                showRealHeader = false
+                            }
                         }
                     }
                 }
@@ -669,8 +956,6 @@ struct Info: View {
             }
         }
         .onReceive(globalData.$nextUrl) { next in
-            print("next: \(next)")
-            print("global: \(globalData.nextUrl)")
             //if navigating { return }
             if next != nil && next!.count > 0 {
                 viewModel.htmlString = ""

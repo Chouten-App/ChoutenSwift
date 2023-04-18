@@ -1,5 +1,5 @@
 //
-//  TESTING.swift
+//  Reader.swift
 //  ModularSaikouS
 //
 //  Created by Inumaki on 09.04.23.
@@ -452,10 +452,16 @@ enum ReadMode {
     case vertical
 }
 
-struct TESTING: View {
+struct Reader: View {
+    let url: String
+    @ObservedObject var globalData: GlobalData
     
-    @State var images: [mangaImages]? = nil
-    @State var items: [MyCustomData]? = nil
+    @State var htmlString: String = ""
+    @State var currentJsIndex = 0
+    @State var nextUrl: String = ""
+    
+    @State var images: [mangaImages]? = []
+    @State var items: [MyCustomData]? = []
     @State var rtl: Bool = true
     @State var vertical: Bool = false
     @State var scrollIndex: Double = 1
@@ -490,7 +496,7 @@ struct TESTING: View {
     @State var showSettings = false
     @State var readMode: ReadMode = .rtl
     
-    @Namespace var animation
+    //@Namespace var animation
     
     var body: some View {
         GeometryReader {proxy in
@@ -609,6 +615,7 @@ struct TESTING: View {
                     
                     Text("Reading Mode")
                     // read modes
+                    /*
                     HStack {
                         Text("Right To Left")
                             .frame(maxWidth: (proxy.size.width - 40) / 3, maxHeight: .infinity)
@@ -661,6 +668,7 @@ struct TESTING: View {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color("bg"))
                     }
+                     */
                 }
                 .padding(.horizontal, 20)
                 .frame(maxWidth: proxy.size.width, maxHeight: 360, alignment: .topLeading)
@@ -672,8 +680,17 @@ struct TESTING: View {
             .ignoresSafeArea()
         }
         .ignoresSafeArea()
+        .background {
+            if htmlString.count > 0 {
+                WebView(htmlString: htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.code, requestType: "mediaConsume", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.allowExternalScripts, globalData: globalData, nextUrl: $nextUrl, mediaConsumeData: .constant(VideoData(sources: [], subtitles: [])))
+                    .hidden()
+                    .frame(maxWidth: 0, maxHeight: 0)
+            }
+        }
         .onAppear {
+            print(url)
             Task {
+                /*
                 images = await getImages(id: "0615033f-404c-4a57-a595-613a6277f553", provider: "mangadex")
                 print(images)
                 if(images != nil) {
@@ -682,13 +699,14 @@ struct TESTING: View {
                     }
                     items?.append(MyCustomData(id: "\(1000000)", img: "", page: images!.count, nextChapter: true))
                 }
+                */
             }
         }
     }
 }
 
-struct TESTING_Previews: PreviewProvider {
+struct Reader_Previews: PreviewProvider {
     static var previews: some View {
-        TESTING()
+        Reader(url: "", globalData: GlobalData())
     }
 }

@@ -7,6 +7,12 @@
 
 import Foundation
 
+enum subTypes: Codable {
+    case VIDEO
+    case BOOK
+    case TEXT
+}
+
 struct Module: Hashable, Equatable, Codable {
     let id: String
     let type: String
