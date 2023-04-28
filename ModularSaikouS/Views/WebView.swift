@@ -46,10 +46,10 @@ struct WebView: UIViewRepresentable {
     let javaScript: String
     let requestType: String
     let enableExternalScripts: Bool
-    @ObservedObject var globalData: GlobalData
     @Binding var nextUrl: String
     @Binding var mediaConsumeData: VideoData
     @Binding var mediaConsumeBookData: [String]
+    @StateObject var globalData = GlobalData.shared
     
     func makeUIView(context: Context) -> WKWebView {
         let divCreationString = """
@@ -115,21 +115,20 @@ struct WebView: UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(javaScript: javaScript, requestType: requestType,globalData: globalData, nextUrl: $nextUrl, mediaConsumeData: $mediaConsumeData, mediaConsumeBookData: $mediaConsumeBookData)
+        Coordinator(javaScript: javaScript, requestType: requestType, nextUrl: $nextUrl, mediaConsumeData: $mediaConsumeData, mediaConsumeBookData: $mediaConsumeBookData)
     }
     
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         let javaScript: String
         let requestType: String
-        var globalData: GlobalData
         @Binding var nextUrl: String
         @Binding var mediaConsumeData: VideoData
         @Binding var mediaConsumeBookData: [String]
+        @StateObject var globalData = GlobalData.shared
         
-        init(javaScript: String, requestType: String, globalData: GlobalData, nextUrl: Binding<String>, mediaConsumeData: Binding<VideoData>, mediaConsumeBookData: Binding<[String]>) {
+        init(javaScript: String, requestType: String, nextUrl: Binding<String>, mediaConsumeData: Binding<VideoData>, mediaConsumeBookData: Binding<[String]>) {
             self.javaScript = javaScript
             self.requestType = requestType
-            self.globalData = globalData
             self._nextUrl = nextUrl
             self._mediaConsumeData = mediaConsumeData
             self._mediaConsumeBookData = mediaConsumeBookData
@@ -229,7 +228,7 @@ struct WebView: NSViewRepresentable {
     let htmlString: String
     let javaScript: String
     let requestType: String
-    @StateObject var globalData: GlobalData
+    @StateObject var globalData = GlobalData.shared
     
     func makeNSView(context: Context) -> WKWebView {
         let divCreationString = """
@@ -271,18 +270,17 @@ struct WebView: NSViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(javaScript: javaScript, requestType: requestType, globalData: globalData)
+        Coordinator(javaScript: javaScript, requestType: requestType)
     }
     
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         let javaScript: String
         let requestType: String
-        var globalData: GlobalData
+        @StateObject var globalData = GlobalData.shared
         
-        init(javaScript: String, requestType: String, globalData: GlobalData) {
+        init(javaScript: String, requestType: String) {
             self.javaScript = javaScript
             self.requestType = requestType
-            self.globalData = globalData
         }
         
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -318,6 +316,6 @@ struct WebView: NSViewRepresentable {
 
 struct WebView_Previews: PreviewProvider {
     static var previews: some View {
-        WebView(htmlString: "", javaScript: "", requestType: "", enableExternalScripts: false, globalData: GlobalData(), nextUrl: .constant(""), mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
+        WebView(htmlString: "", javaScript: "", requestType: "", enableExternalScripts: false, nextUrl: .constant(""), mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
     }
 }

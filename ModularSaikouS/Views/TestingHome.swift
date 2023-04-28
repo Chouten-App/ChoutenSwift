@@ -16,6 +16,7 @@ struct TestingHome: View {
     @StateObject var Colors: DynamicColors
     
     @Environment(\.colorScheme) var colorScheme
+    @StateObject var globalData = GlobalData.shared
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -32,19 +33,53 @@ struct TestingHome: View {
                     VStack(alignment: .leading) {
                         HStack {
                             Text("Trending")
-                                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimary.dark : Colors.onPrimary.light))
+                                .foregroundColor(Color(hex:
+                                                        globalData.appearance == .system
+                                                      ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.onPrimary.dark
+                                                        : Colors.onPrimary.light
+                                                      ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.onPrimary.dark
+                                                        : Colors.onPrimary.light
+                                                      )
+                                                ))
                                 .fontWeight(.semibold)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 3)
                                 .background {
                                     Capsule()
-                                        .fill(Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light))
+                                        .fill(Color(hex:
+                                                        globalData.appearance == .system
+                                                      ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.Primary.dark
+                                                        : Colors.Primary.light
+                                                      ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.Primary.dark
+                                                        : Colors.Primary.light
+                                                      )
+                                                )
+                                        )
                                 }
                             Spacer()
                             Text("8.8")
                                 .fontWeight(.semibold)
                             Image(systemName: "star.fill")
-                                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.Tertiary.dark : Colors.Tertiary.light))
+                                .foregroundColor(Color(hex:
+                                                        globalData.appearance == .system
+                                                      ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.Tertiary.dark
+                                                        : Colors.Tertiary.light
+                                                      ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.Tertiary.dark
+                                                        : Colors.Tertiary.light
+                                                      )
+                                                ))
                         }
                         
                         Text("Demon Slayer: Kimetsu no Yaiba Swordsmith Village Arc")
@@ -71,7 +106,18 @@ struct TestingHome: View {
                         
                         HStack {
                             Text("Watch Now")
-                                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.Tertiary.dark : Colors.Tertiary.light))
+                                .foregroundColor(Color(hex:
+                                                        globalData.appearance == .system
+                                                      ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.Tertiary.dark
+                                                        : Colors.Tertiary.light
+                                                      ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.Tertiary.dark
+                                                        : Colors.Tertiary.light
+                                                      )
+                                                ))
                                 .fontWeight(.semibold)
                                 .onTapGesture {
                                     let data = ["data": FloatyData(message: "This is a test", action: nil)]
@@ -83,20 +129,64 @@ struct TestingHome: View {
                             Spacer()
                             
                             Image(systemName: "plus")
-                                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimary.dark : Colors.onPrimary.light))
+                                .foregroundColor(Color(hex:
+                                                        globalData.appearance == .system
+                                                      ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.onPrimary.dark
+                                                        : Colors.onPrimary.light
+                                                      ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.onPrimary.dark
+                                                        : Colors.onPrimary.light
+                                                      )
+                                                ))
                                 .padding(6)
                                 .background {
                                     Circle()
-                                        .fill(Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light))
+                                        .fill(Color(hex:
+                                                        globalData.appearance == .system
+                                                      ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.Primary.dark
+                                                        : Colors.Primary.light
+                                                      ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.Primary.dark
+                                                        : Colors.Primary.light
+                                                      )
+                                                ))
                                 }
                         }
                     }
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                    .foregroundColor(Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.onSurface.dark
+                                            : Colors.onSurface.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.onSurface.dark
+                                            : Colors.onSurface.light
+                                          )
+                                    ))
                     .padding(20)
                     .frame(maxWidth: .infinity, maxHeight: 220, alignment: .topLeading)
                     .background {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light))
+                            .fill(Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.SurfaceContainer.dark
+                                            : Colors.SurfaceContainer.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.SurfaceContainer.dark
+                                            : Colors.SurfaceContainer.light
+                                          )
+                                    ))
                     }
                     .shadow(radius: 12)
                     .padding(.horizontal, 12)
@@ -107,7 +197,18 @@ struct TestingHome: View {
                     Text("Recently Released")
                         .font(.title3)
                         .fontWeight(.bold)
-                        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                        .foregroundColor(Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              )
+                                        ))
                     
                     ScrollView(.horizontal) {
                         HStack(spacing: 12) {
@@ -123,7 +224,18 @@ struct TestingHome: View {
                     Text("Recently Released")
                         .font(.title3)
                         .fontWeight(.bold)
-                        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                        .foregroundColor(Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              )
+                                        ))
                     
                     
                     ScrollView(.horizontal) {
@@ -142,7 +254,18 @@ struct TestingHome: View {
                                     Text("Oshi No Ko")
                                         .font(.caption)
                                 }
-                                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                                .foregroundColor(Color(hex:
+                                                        globalData.appearance == .system
+                                                      ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.onSurface.dark
+                                                        : Colors.onSurface.light
+                                                      ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.onSurface.dark
+                                                        : Colors.onSurface.light
+                                                      )
+                                                ))
                             }
                         }
                         .frame(maxHeight: 600)

@@ -70,17 +70,16 @@ struct CustomVideoPlayer: UIViewRepresentable {
 struct CustomPlayerWithControls: View {
     @Binding var streamData: VideoData
     @State var number: Int
-    @ObservedObject var globalData: GlobalData
     @State var doneLoading = false
     @State var showUI: Bool = true
     @State var resIndex: Int = 0
     
     @StateObject private var playerVM = PlayerViewModel()
+    @StateObject var globalData = GlobalData.shared
     
-    init(streamData: Binding<VideoData>, number: Int, globalData: GlobalData) {
+    init(streamData: Binding<VideoData>, number: Int) {
         self._streamData = streamData
         self.number = number
-        self.globalData = globalData
         // we need this to use Picture in Picture
         let audioSession = AVAudioSession.sharedInstance()
         do {
@@ -142,7 +141,7 @@ struct CustomPlayerWithControls: View {
                                 
                             }
                         )
-                        .overlay(CustomControlsView(streamData: $streamData, showUI: $showUI, playerVM: playerVM, number: $number, globalData: globalData)
+                        .overlay(CustomControlsView(streamData: $streamData, showUI: $showUI, playerVM: playerVM, number: $number)
                             .padding(.horizontal, 20), alignment: .bottom)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)

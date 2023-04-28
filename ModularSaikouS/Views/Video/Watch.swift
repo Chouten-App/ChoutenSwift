@@ -50,11 +50,11 @@ struct GaugeProgressStyle: ProgressViewStyle {
 struct WatchPage: View {
     let url: String
     let number: Int
-    @ObservedObject var globalData: GlobalData
     @State var htmlString = ""
     @State var nextUrl: String = ""
     @State var mediaConsumeData: VideoData = VideoData(sources: [], subtitles: [], skips: [])
     @State var mediaSubtitleLink: String = ""
+    @StateObject var globalData = GlobalData.shared
     
     @State var currentJsIndex = 0
     
@@ -67,7 +67,7 @@ struct WatchPage: View {
     
     var body: some View {
         ZStack {
-            CustomPlayerWithControls(streamData: $mediaConsumeData, number: number, globalData: globalData)
+            CustomPlayerWithControls(streamData: $mediaConsumeData, number: number)
                 .navigationBarBackButtonHidden(true)
                 .contentShape(Rectangle())
                 .ignoresSafeArea(.all)
@@ -84,7 +84,7 @@ struct WatchPage: View {
         }
         .background {
             if htmlString.count > 0 {
-                WebView(htmlString: htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.code, requestType: "mediaServers", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.allowExternalScripts, globalData: globalData, nextUrl: $nextUrl, mediaConsumeData: $mediaConsumeData, mediaConsumeBookData: .constant([]))
+                WebView(htmlString: htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.code, requestType: "mediaServers", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.allowExternalScripts, nextUrl: $nextUrl, mediaConsumeData: $mediaConsumeData, mediaConsumeBookData: .constant([]))
                     .hidden()
                     .frame(maxWidth: 0, maxHeight: 0)
             }
@@ -157,7 +157,7 @@ struct WatchPage: View {
 
 struct WatchPage_Previews: PreviewProvider {
     static var previews: some View {
-        WatchPage(url: "", number: 1, globalData: GlobalData())
+        WatchPage(url: "", number: 1)
     }
 }
 

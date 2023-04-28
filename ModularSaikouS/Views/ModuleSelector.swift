@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct ModuleSelector: View{
-    @StateObject var globalData: GlobalData
     @Binding var showPopup: Bool
     @StateObject var Colors: DynamicColors
     
     let buttonHeight: CGFloat = 55
+    @StateObject var globalData = GlobalData.shared
     
     @State var availableModules: [Module] = []
     @State var availableJsons: [URL] = []
@@ -44,7 +44,18 @@ struct ModuleSelector: View{
             HStack {
                 Text("Module Selector")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimaryContainer.dark : Colors.onPrimaryContainer.light))
+                    .foregroundColor(Color(hex:
+                                            globalData.appearance == .system
+                                           ? (
+                                            colorScheme == .dark
+                                            ? Colors.onPrimaryContainer.dark
+                                            : Colors.onPrimaryContainer.light
+                                           ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.onPrimaryContainer.dark
+                                            : Colors.onPrimaryContainer.light
+                                           )
+                                          ))
                 
             }
             .padding(.top, 40)
@@ -52,7 +63,18 @@ struct ModuleSelector: View{
             
             Text("Select one of the modules below to provide this app with data:")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimaryContainer.dark : Colors.onPrimaryContainer.light).opacity(0.7))
+                .foregroundColor(Color(hex:
+                                        globalData.appearance == .system
+                                       ? (
+                                        colorScheme == .dark
+                                        ? Colors.onPrimaryContainer.dark
+                                        : Colors.onPrimaryContainer.light
+                                       ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.onPrimaryContainer.dark
+                                        : Colors.onPrimaryContainer.light
+                                       )
+                                      ).opacity(0.7))
                 .padding(.bottom, 24)
                 .padding(.horizontal, 20)
                 .multilineTextAlignment(.center)
@@ -66,20 +88,53 @@ struct ModuleSelector: View{
                             .font(.system(size: 16, weight: .heavy))
                             .padding(.vertical, 12)
                             .padding(.horizontal, 14)
-                            .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimaryContainer.dark : Colors.onPrimaryContainer.light))
+                            .foregroundColor(Color(hex:
+                                                    globalData.appearance == .system
+                                                   ? (
+                                                    colorScheme == .dark
+                                                    ? Colors.onPrimaryContainer.dark
+                                                    : Colors.onPrimaryContainer.light
+                                                   ) : (
+                                                    globalData.appearance == .dark
+                                                    ? Colors.onPrimaryContainer.dark
+                                                    : Colors.onPrimaryContainer.light
+                                                   )
+                                                  ))
                     }
                     .fixedSize()
                     .cornerRadius(40)
                     
                     VStack(alignment: .leading) {
                         Text("Import Module")
-                            .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimaryContainer.dark : Colors.onPrimaryContainer.light))
+                            .foregroundColor(Color(hex:
+                                                    globalData.appearance == .system
+                                                   ? (
+                                                    colorScheme == .dark
+                                                    ? Colors.onPrimaryContainer.dark
+                                                    : Colors.onPrimaryContainer.light
+                                                   ) : (
+                                                    globalData.appearance == .dark
+                                                    ? Colors.onPrimaryContainer.dark
+                                                    : Colors.onPrimaryContainer.light
+                                                   )
+                                                  ))
                             .font(.system(size: 16, weight: .bold))
                             .lineLimit(1)
                         
                         HStack {
                             Text("Import Module from URL")
-                                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimaryContainer.dark : Colors.onPrimaryContainer.light).opacity(0.7))
+                                .foregroundColor(Color(hex:
+                                                        globalData.appearance == .system
+                                                       ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.onPrimaryContainer.dark
+                                                        : Colors.onPrimaryContainer.light
+                                                       ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.onPrimaryContainer.dark
+                                                        : Colors.onPrimaryContainer.light
+                                                       )
+                                                      ).opacity(0.7))
                                 .font(.system(size: 12, weight: .semibold))
                                 .lineLimit(1)
                             
@@ -116,15 +171,37 @@ struct ModuleSelector: View{
         .frame(maxWidth: 400, maxHeight: .infinity, alignment: .top)
         .padding(.leading, 20)
 #endif
-        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimaryContainer.dark : Colors.onPrimaryContainer.light))
+        .foregroundColor(Color(hex:
+                                globalData.appearance == .system
+                               ? (
+                                colorScheme == .dark
+                                ? Colors.onPrimaryContainer.dark
+                                : Colors.onPrimaryContainer.light
+                               ) : (
+                                globalData.appearance == .dark
+                                ? Colors.onPrimaryContainer.dark
+                                : Colors.onPrimaryContainer.light
+                               )
+                              ))
         .background {
-            Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light)
+            Color(hex:
+                    globalData.appearance == .system
+                  ? (
+                    colorScheme == .dark
+                    ? Colors.SurfaceContainer.dark
+                    : Colors.SurfaceContainer.light
+                  ) : (
+                    globalData.appearance == .dark
+                    ? Colors.SurfaceContainer.dark
+                    : Colors.SurfaceContainer.light
+                  )
+            )
         }
     }
 }
 
 struct ModuleSelector_Previews: PreviewProvider {
     static var previews: some View {
-        ModuleSelector(globalData: GlobalData(), showPopup: .constant(true), Colors: DynamicColors())
+        ModuleSelector(showPopup: .constant(true), Colors: DynamicColors())
     }
 }

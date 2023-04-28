@@ -8,6 +8,11 @@
 import SwiftUI
 
 class GlobalData: ObservableObject {
+    static let shared = GlobalData()
+    init() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleSharedJson(_:)), name: .sharedJson, object: nil)
+    }
+    
     @Published var selectedModule: String?
     @Published var jsSource: String?
     @Published var arg: String?
@@ -15,6 +20,7 @@ class GlobalData: ObservableObject {
     @Published var module: Module?
     @Published var availableModules: [Module] = []
     @Published var availableJsons: [URL] = []
+    @Published var appearance = AppearanceStyle.system
     
     @Published var reloadPlease: Bool = false
     
@@ -27,9 +33,6 @@ class GlobalData: ObservableObject {
     
     @Published var doneInfo: Bool = false
     
-    init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleSharedJson(_:)), name: .sharedJson, object: nil)
-    }
     
     @objc private func handleSharedJson(_ notification: Notification) {
         if let url = notification.userInfo?["url"] as? URL {

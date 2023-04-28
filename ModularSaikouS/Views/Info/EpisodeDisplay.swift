@@ -10,9 +10,9 @@ import Kingfisher
 
 struct EpisodeDisplay: View {
     let proxy: GeometryProxy
-    @StateObject var globalData: GlobalData
     @StateObject var Colors: DynamicColors
     @Binding var navigating: Bool
+    @StateObject var globalData = GlobalData.shared
     
     func forTrailingZero(temp: Double) -> String {
         return String(format: "%g", temp)
@@ -24,9 +24,20 @@ struct EpisodeDisplay: View {
         ScrollView {
             VStack(spacing: 20) {
                 ForEach(0..<globalData.infoData!.mediaList[0].count, id: \.self) {index in
-                    NavigationLink(destination: globalData.infoData!.mediaType.lowercased() == "episodes" ? AnyView(WatchPage(url: globalData.infoData!.mediaList[0][index].url, number: index, globalData: globalData)) : AnyView(Reader(url: globalData.infoData!.mediaList[0][index].url, selectedMediaIndex: index, globalData: globalData))) {
+                    NavigationLink(destination: globalData.infoData!.mediaType.lowercased() == "episodes" ? AnyView(WatchPage(url: globalData.infoData!.mediaList[0][index].url, number: index)) : AnyView(Reader(url: globalData.infoData!.mediaList[0][index].url, selectedMediaIndex: index))) {
                         ZStack {
-                            Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light)
+                            Color(hex:
+                                                    globalData.appearance == .system
+                                                  ? (
+                                                    colorScheme == .dark
+                                                    ? Colors.SurfaceContainer.dark
+                                                    : Colors.SurfaceContainer.light
+                                                  ) : (
+                                                    globalData.appearance == .dark
+                                                    ? Colors.SurfaceContainer.dark
+                                                    : Colors.SurfaceContainer.light
+                                                  )
+                                                  )
                             
                             VStack(spacing: 0) {
                                 HStack(spacing: 8) {
@@ -76,7 +87,18 @@ struct EpisodeDisplay: View {
                             }
                         }
                         .cornerRadius(12)
-                        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                        .foregroundColor(Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              )
+                                              ))
                         
                     }.simultaneousGesture(TapGesture().onEnded {
                         print("Hello world!")
@@ -88,13 +110,5 @@ struct EpisodeDisplay: View {
         }
         .padding(.top, 12)
         .frame(maxHeight: 700)
-    }
-}
-
-struct EpisodeDisplay_Previews: PreviewProvider {
-    static var previews: some View {
-        GeometryReader {proxy in
-            EpisodeDisplay(proxy: proxy, globalData: GlobalData(), Colors: DynamicColors(), navigating: .constant(false))
-        }
     }
 }

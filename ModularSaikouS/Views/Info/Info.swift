@@ -22,13 +22,13 @@ struct Info: View {
     @Binding var url: String
     @Binding var poster: String
     @Binding var title: String
-    @StateObject var globalData: GlobalData
     @Binding var showInfo: Bool
     @StateObject var Colors: DynamicColors
     var animation: Namespace.ID?
     @StateObject var viewModel: InfoViewModel = InfoViewModel()
     @State var isOn: Bool = false
     @State var showFullDescription: Bool = false
+    @StateObject var globalData = GlobalData.shared
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -43,13 +43,35 @@ struct Info: View {
     
     var body: some View {
         ZStack {
-            Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light)
+            Color(hex:
+                        globalData.appearance == .system
+                      ? (
+                        colorScheme == .dark
+                        ? Colors.Surface.dark
+                        : Colors.Surface.light
+                      ) : (
+                        globalData.appearance == .dark
+                        ? Colors.Surface.dark
+                        : Colors.Surface.light
+                      )
+                     )
             
             GeometryReader {proxy in
                 ScrollView(.vertical, showsIndicators: false) {
                     if globalData.infoData != nil {
-                        InfoDisplay(globalData: globalData, Colors: Colors, proxy: proxy, showHeader: $showHeader, title: title, showFullDescription: $showFullDescription, isOn: $isOn, navigating: $navigating)
-                            .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                        InfoDisplay(Colors: Colors, proxy: proxy, showHeader: $showHeader, title: title, showFullDescription: $showFullDescription, isOn: $isOn, navigating: $navigating)
+                            .foregroundColor(Color(hex:
+                                                    globalData.appearance == .system
+                                                  ? (
+                                                    colorScheme == .dark
+                                                    ? Colors.onSurface.dark
+                                                    : Colors.onSurface.light
+                                                  ) : (
+                                                    globalData.appearance == .dark
+                                                    ? Colors.onSurface.dark
+                                                    : Colors.onSurface.light
+                                                  )
+                                                  ))
                             .frame(maxWidth: proxy.size.width)
                             .background(GeometryReader {
                                 Color.clear.preference(key: ViewOffsetKey.self,
@@ -82,7 +104,18 @@ struct Info: View {
                                 .padding(12)
                                 .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, maxHeight: 110, alignment: .bottomLeading)
                                 .background {
-                                    Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light)
+                                    Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.SurfaceContainer.dark
+                                                : Colors.SurfaceContainer.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.SurfaceContainer.dark
+                                                : Colors.SurfaceContainer.light
+                                              )
+                                             )
                                 }
                                 .padding(.bottom, -60)
                                 
@@ -92,8 +125,30 @@ struct Info: View {
                                         Rectangle()
                                             .overlay {
                                                 LinearGradient(stops: [
-                                                    Gradient.Stop(color: Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light).opacity(0.9), location: 0.0),
-                                                    Gradient.Stop(color: Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light).opacity(0.4), location: 1.0),
+                                                    Gradient.Stop(color: Color(hex:
+                                                                                globalData.appearance == .system
+                                                                              ? (
+                                                                                colorScheme == .dark
+                                                                                ? Colors.Surface.dark
+                                                                                : Colors.Surface.light
+                                                                              ) : (
+                                                                                globalData.appearance == .dark
+                                                                                ? Colors.Surface.dark
+                                                                                : Colors.Surface.light
+                                                                              )
+                                                                             ).opacity(0.9), location: 0.0),
+                                                    Gradient.Stop(color: Color(hex:
+                                                                                globalData.appearance == .system
+                                                                              ? (
+                                                                                colorScheme == .dark
+                                                                                ? Colors.Surface.dark
+                                                                                : Colors.Surface.light
+                                                                              ) : (
+                                                                                globalData.appearance == .dark
+                                                                                ? Colors.Surface.dark
+                                                                                : Colors.Surface.light
+                                                                              )
+                                                                             ).opacity(0.4), location: 1.0),
                                                 ], startPoint: .bottom, endPoint: .top)
                                             }
                                             .frame(
@@ -210,7 +265,18 @@ struct Info: View {
                                      VStack(alignment: .trailing) {
                                      Text("Source")
                                      .font(.subheadline)
-                                     .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                                     .foregroundColor(Color(hex:
+                                     globalData.appearance == .system
+                                   ? (
+                                     colorScheme == .dark
+                                     ? Colors.onSurface.dark
+                                     : Colors.onSurface.light
+                                   ) : (
+                                     globalData.appearance == .dark
+                                     ? Colors.onSurface.dark
+                                     : Colors.onSurface.light
+                                   )
+                                  ))
                                      .padding(.trailing, 4)
                                      .padding(.bottom, -4)
                                      
@@ -218,17 +284,49 @@ struct Info: View {
                                      Text("Zoro.to")
                                      .font(.subheadline)
                                      .fontWeight(.semibold)
-                                     .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                                     .foregroundColor(Color(hex:
+                                     globalData.appearance == .system
+                                   ? (
+                                     colorScheme == .dark
+                                     ? Colors.onSurface.dark
+                                     : Colors.onSurface.light
+                                   ) : (
+                                     globalData.appearance == .dark
+                                     ? Colors.onSurface.dark
+                                     : Colors.onSurface.light
+                                   )
+                                  ))
                                      
                                      Image(systemName: "chevron.down")
                                      .font(.caption)
-                                     .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimary.dark : Colors.onPrimary.light))
+                                     .foregroundColor(Color(hex:
+                                     globalData.appearance == .system
+                                   ? (
+                                     colorScheme == .dark
+                                     ? Colors.onPrimary.dark
+                                     : Colors.onPrimary.light
+                                   ) : (
+                                     globalData.appearance == .dark
+                                     ? Colors.onPrimary.dark
+                                     : Colors.onPrimary.light
+                                   )
+                                  ))
                                      }
                                      .padding(.vertical, 8)
                                      .padding(.horizontal, 20)
                                      .background {
                                      Capsule()
-                                     .fill(Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light))
+                                     .fill(Color(hex:
+                                     globalData.appearance == .system
+                                   ? (
+                                     colorScheme == .dark
+                                     ? Colors.Primary.dark
+                                     : Colors.Primary.light
+                                   ) : (
+                                     globalData.appearance == .dark
+                                     ? Colors.Primary.dark
+                                     : Colors.Primary.light
+                                   ))
                                      }
                                      }
                                      */
@@ -301,7 +399,17 @@ struct Info: View {
                                                 .padding(12)
                                             }
                                             .background {
-                                                Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light)
+                                                Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.SurfaceContainer.dark
+                                                : Colors.SurfaceContainer.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.SurfaceContainer.dark
+                                                : Colors.SurfaceContainer.light
+                                              ))
                                             }
                                             .cornerRadius(12)
                                         }
@@ -347,7 +455,20 @@ struct Info: View {
                     Text(globalData.infoData!.titles.primary)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                        .foregroundColor(
+                            Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              )
+                                              )
+                        )
                         .lineLimit(1)
                         .opacity(showRealHeader ? 1.0 : 0.0)
                         .animation(nil, value: showRealHeader)
@@ -364,25 +485,59 @@ struct Info: View {
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimary.dark : Colors.onPrimary.light))
+                        .foregroundColor(Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.onPrimary.dark
+                                                : Colors.onPrimary.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.onPrimary.dark
+                                                : Colors.onPrimary.light
+                                              )
+                                              )
+                        )
                         .padding(8)
                         .background {
                             Circle()
-                                .fill(Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light))
+                                .fill(Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.Primary.dark
+                                                : Colors.Primary.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.Primary.dark
+                                                : Colors.Primary.light
+                                              )
+                                              ))
                         }
                 }
             }
             .padding(12)
             .frame(maxWidth: .infinity, maxHeight: 110, alignment: .bottom)
             .background {
-                Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light)
+                Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.SurfaceContainer.dark
+                                        : Colors.SurfaceContainer.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.SurfaceContainer.dark
+                                        : Colors.SurfaceContainer.light
+                                      )
+                                      )
                     .opacity(showRealHeader ? 1.0 : 0.0)
                     .animation(nil)
             }
         }
         .background {
             if !navigating && viewModel.htmlString.count > 0 {
-                WebView(htmlString: viewModel.htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.code, requestType: "info", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.allowExternalScripts, globalData: globalData, nextUrl: $nextUrl, mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
+                WebView(htmlString: viewModel.htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.code, requestType: "info", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.allowExternalScripts, nextUrl: $nextUrl, mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
                     .hidden()
                     .frame(maxWidth: 0, maxHeight: 0)
             }
@@ -459,6 +614,6 @@ struct Info: View {
 
 struct Info_Previews: PreviewProvider {
     static var previews: some View {
-        Info(url: .constant(""), poster: .constant(""), title: .constant(""),globalData: GlobalData(), showInfo: .constant(true), Colors: DynamicColors())
+        Info(url: .constant(""), poster: .constant(""), title: .constant(""), showInfo: .constant(true), Colors: DynamicColors())
     }
 }

@@ -25,7 +25,7 @@ struct FloatyData {
 struct EdgeBorder: Shape {
     var width: CGFloat
     var edges: [Edge]
-
+    
     func path(in rect: CGRect) -> Path {
         var path = Path()
         for edge in edges {
@@ -35,21 +35,21 @@ struct EdgeBorder: Shape {
                 case .trailing: return rect.maxX - width
                 }
             }
-
+            
             var y: CGFloat {
                 switch edge {
                 case .top, .leading, .trailing: return rect.minY
                 case .bottom: return rect.maxY - width
                 }
             }
-
+            
             var w: CGFloat {
                 switch edge {
                 case .top, .bottom: return rect.width
                 case .leading, .trailing: return width
                 }
             }
-
+            
             var h: CGFloat {
                 switch edge {
                 case .top, .bottom: return width
@@ -68,8 +68,12 @@ extension View {
     }
 }
 
+enum AppearanceStyle: String, CaseIterable {
+    case light, dark, system
+}
 
 struct Home: View {
+    @StateObject var globalData = GlobalData.shared
     
     // temp data
     var carouselList: [CarouselData] = [
@@ -86,7 +90,6 @@ struct Home: View {
     @Namespace var animation
     
     @State var showModuleSelector = false
-    @StateObject var globalData: GlobalData = GlobalData()
     @StateObject var Colors: DynamicColors = DynamicColors()
     
     @State var showPopup = false
@@ -107,18 +110,42 @@ struct Home: View {
                 TabView(selection: $selectedTab) {
                     VStack {
                         Text("Nothing to see yet .-.")
+                            .foregroundColor(
+                                Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.onSurface.dark
+                                        : Colors.onSurface.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.onSurface.dark
+                                        : Colors.onSurface.light
+                                      )
+                                     )
+                            )
                             .font(.title2)
                             .fontWeight(.semibold)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
                     .background {
-                        Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light)
+                        Color(hex:
+                                globalData.appearance == .system
+                              ? (
+                                colorScheme == .dark
+                                ? Colors.Surface.dark
+                                : Colors.Surface.light
+                              ) : (
+                                globalData.appearance == .dark
+                                ? Colors.Surface.dark
+                                : Colors.Surface.light
+                              )
+                        )
                     }
                     .ignoresSafeArea()
                     .tag(0)
                     
-                    Search(globalData: globalData, Colors: Colors)
+                    Search(Colors: Colors)
                         .tag(1)
                     
                     SettingsView(Colors: Colors)
@@ -138,24 +165,62 @@ struct Home: View {
                             .padding(.horizontal, 20)
                             .background {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light))
+                                    .fill(
+                                        Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.Primary.dark
+                                                : Colors.Primary.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.Primary.dark
+                                                : Colors.Primary.light
+                                              )
+                                             )
+                                    )
                             }
                     }
                     .buttonStyle(PlainButtonStyle())
                     .padding(.trailing, 20)
                     .padding(.bottom, 130)
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimary.dark : Colors.onPrimary.light))
+                    .foregroundColor(Color(hex:
+                                            globalData.appearance == .system
+                                           ? (
+                                            colorScheme == .dark
+                                            ? Colors.onPrimary.dark
+                                            : Colors.onPrimary.light
+                                           ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.onPrimary.dark
+                                            : Colors.onPrimary.light
+                                           )
+                                          )
+                    )
                 }
             }
             .overlay {
-                BottomSheet(isShowing: $showModuleSelector, content: AnyView(ModuleSelector(globalData: globalData, showPopup: $showModuleSelector, Colors: Colors)))
+                BottomSheet(isShowing: $showModuleSelector, content: AnyView(ModuleSelector(showPopup: $showModuleSelector, Colors: Colors)))
                     .padding(.bottom, 100)
             }
             .overlay(alignment: .bottom) {
                 Navbar(selectedTab: $selectedTab, Colors: Colors)
                     .overlay(alignment: .top) {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(Color(hex: colorScheme == .dark ? Colors.onPrimaryContainer.dark : Colors.onPrimaryContainer.light))
+                            .fill(
+                                Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.onPrimaryContainer.dark
+                                        : Colors.onPrimaryContainer.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.onPrimaryContainer.dark
+                                        : Colors.onPrimaryContainer.light
+                                      )
+                                     )
+                            )
                             .frame(maxWidth: .infinity, maxHeight: 2)
                             .padding(40)
                             .offset(y: -52)
@@ -215,7 +280,20 @@ struct Home: View {
             if userInfo.count > 0 {
                 Colors.getFromJson(fileName: userInfo[0].selectedTheme ?? "theme")
                 
+                print(userInfo[0])
+                
+                if userInfo[0].selectedAppearance == 0 {
+                    globalData.appearance = .light
+                } else if userInfo[0].selectedAppearance == 1 {
+                    globalData.appearance = .dark
+                } else {
+                    globalData.appearance = .system
+                }
+                
+                print(globalData.appearance)
+                
                 selectedModuleId = userInfo[0].selectedModuleId
+                
                 let temp = globalData.availableModules.filter { $0.id == selectedModuleId }
                 if temp.count > 0 {
                     globalData.module = temp[0]

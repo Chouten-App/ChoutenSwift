@@ -31,6 +31,8 @@ struct SearchCard: View {
     
     var animation: Namespace.ID?
     
+    @StateObject var globalData: GlobalData = GlobalData.shared
+    
     var body: some View {
         if type == .GRID {
             VStack(alignment: .leading) {
@@ -54,7 +56,20 @@ struct SearchCard: View {
                     
                     if hasIndicator {
                         Text(indicatorText!)
-                            .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimary.dark : Colors.onPrimary.light))
+                            .foregroundColor(
+                                Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.onPrimary.dark
+                                        : Colors.onPrimary.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.onPrimary.dark
+                                        : Colors.onPrimary.light
+                                      )
+                                     )
+                            )
                             .font(.caption)
                             .fontWeight(.bold)
                             .padding(.vertical, 4)
@@ -62,7 +77,18 @@ struct SearchCard: View {
                             .padding(.trailing, 12)
                             .padding(.top, 4)
                             .background {
-                                Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light)
+                                Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.Primary.dark
+                                        : Colors.Primary.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.Primary.dark
+                                        : Colors.Primary.light
+                                      )
+                                     )
                             }
                             .cornerRadius(6)
                             .offset(x: 6, y: -4)
@@ -78,14 +104,40 @@ struct SearchCard: View {
                     .fontWeight(.semibold)
                     .frame(maxWidth: 110)
                     .lineLimit(2)
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                    .foregroundColor(
+                        Color(hex:
+                                globalData.appearance == .system
+                              ? (
+                                colorScheme == .dark
+                                ? Colors.onSurface.dark
+                                : Colors.onSurface.light
+                              ) : (
+                                globalData.appearance == .dark
+                                ? Colors.onSurface.dark
+                                : Colors.onSurface.light
+                              )
+                             )
+                    )
                     .frame(minWidth: 110, maxWidth: 110)
                     .multilineTextAlignment(.leading)
                 
                 Text((currentCount != nil ? String(currentCount!) : "~") + " | " + (totalCount != nil ? String(totalCount!) : "~"))
                     .font(.caption)
                     .frame(maxWidth: 104, alignment: .trailing)
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light).opacity(0.7))
+                    .foregroundColor(
+                        Color(hex:
+                                globalData.appearance == .system
+                              ? (
+                                colorScheme == .dark
+                                ? Colors.onSurface.dark
+                                : Colors.onSurface.light
+                              ) : (
+                                globalData.appearance == .dark
+                                ? Colors.onSurface.dark
+                                : Colors.onSurface.light
+                              )
+                             ).opacity(0.7)
+                    )
             }
         } else {
             GeometryReader {proxy in
@@ -96,11 +148,34 @@ struct SearchCard: View {
                             .aspectRatio(contentMode: .fill)
                             .frame(maxWidth: proxy.size.width, minHeight: 110, maxHeight: 110)
                             .overlay {
-                                Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light)
+                                Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.Surface.dark
+                                        : Colors.Surface.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.Surface.dark
+                                        : Colors.Surface.light
+                                      )
+                                     )
                                     .opacity(0.4)
                             }
                         
-                        Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light)
+                        
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.Surface.dark
+                                    : Colors.Surface.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.Surface.dark
+                                    : Colors.Surface.light
+                                  )
+                                 )
                             .frame(maxWidth: proxy.size.width, minHeight: 80, maxHeight: 80)
                     }
                     
@@ -115,14 +190,40 @@ struct SearchCard: View {
                             Text("Classroom of the Elite")
                                 .font(.title3)
                                 .fontWeight(.bold)
-                                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                                .foregroundColor(
+                                    Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.onSurface.dark
+                                            : Colors.onSurface.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.onSurface.dark
+                                            : Colors.onSurface.light
+                                          )
+                                         )
+                                )
                                 .lineLimit(2)
                             
                             HStack(alignment: .top) {
                                 Text("\(currentCount ?? 0) / \(totalCount ?? 0)")
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light).opacity(0.7))
+                                    .foregroundColor(
+                                        Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              )
+                                             )
+                                        .opacity(0.7))
                                 
                                 Spacer()
                                 
@@ -130,7 +231,21 @@ struct SearchCard: View {
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .multilineTextAlignment(.trailing)
-                                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light).opacity(0.7))
+                                    .foregroundColor(
+                                        Color(hex:
+                                                globalData.appearance == .system
+                                              ? (
+                                                colorScheme == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              ) : (
+                                                globalData.appearance == .dark
+                                                ? Colors.onSurface.dark
+                                                : Colors.onSurface.light
+                                              )
+                                             )
+                                        .opacity(0.7)
+                                    )
                             }
                         }
                         .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 120, alignment: .bottom)

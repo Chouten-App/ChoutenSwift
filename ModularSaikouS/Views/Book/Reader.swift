@@ -537,7 +537,6 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 struct Reader: View {
     let url: String
     var selectedMediaIndex: Int
-    @ObservedObject var globalData: GlobalData
     @State var images: [String] = []
     
     @State var htmlString: String = ""
@@ -553,6 +552,8 @@ struct Reader: View {
     @State var showUI = false
     @State var showSettings = false
     @State var readMode: ReadMode = .rtl
+    
+    @StateObject var globalData = GlobalData.shared
     
     //@Namespace var animation
     @Environment(\.presentationMode) var presentationMode
@@ -761,7 +762,7 @@ struct Reader: View {
         .ignoresSafeArea()
         .background {
             if globalData.module != nil && htmlString.count > 0 && currentJsIndex < globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]!.count {
-                WebView(htmlString: htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.code, requestType: "mediaServers", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.allowExternalScripts, globalData: globalData, nextUrl: $nextUrl, mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: $images)
+                WebView(htmlString: htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.code, requestType: "mediaServers", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.allowExternalScripts, nextUrl: $nextUrl, mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: $images)
                     .hidden()
                     .frame(maxWidth: 0, maxHeight: 0)
             }
@@ -814,6 +815,6 @@ struct Reader: View {
 
 struct Reader_Previews: PreviewProvider {
     static var previews: some View {
-        Reader(url: "https://api.mangadex.org/at-home/server/aeb5f0bc-219c-491b-8170-f57cb6031a07", selectedMediaIndex: 0, globalData: GlobalData())
+        Reader(url: "https://api.mangadex.org/at-home/server/aeb5f0bc-219c-491b-8170-f57cb6031a07", selectedMediaIndex: 0)
     }
 }

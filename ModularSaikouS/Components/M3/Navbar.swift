@@ -10,6 +10,7 @@ import SwiftUI
 struct Navbar: View {
     @Binding var selectedTab: Int
     @ObservedObject var Colors: DynamicColors
+    @StateObject var globalData: GlobalData = GlobalData.shared
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -30,7 +31,7 @@ struct Navbar: View {
         }
         .padding(.horizontal, 8)
         .padding(.bottom, 24)
-        .background(Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light))
+        .background(Color(hex: globalData.appearance == .system ? (colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light) : (globalData.appearance == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light)))
         .shadow(color: .black.opacity(0.15),x: 0, y: 1, blur: 2)
         .shadow(color: .black.opacity(0.15),x: 0, y: 2, blur: 6)
     }
@@ -43,13 +44,15 @@ struct NavbarItem: View {
     let hasNotification: Bool
     @ObservedObject var Colors: DynamicColors
     
+    @StateObject var globalData: GlobalData = GlobalData.shared
+    
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         VStack(spacing: 4) {
             ZStack {
                 Capsule()
-                    .fill(Color(hex: colorScheme == .dark ? Colors.SecondaryContainer.dark : Colors.SecondaryContainer.light))
+                    .fill(Color(hex: globalData.appearance == .system ? (colorScheme == .dark ? Colors.SecondaryContainer.dark : Colors.SecondaryContainer.light) : (globalData.appearance == .dark ? Colors.SecondaryContainer.dark : Colors.SecondaryContainer.light)))
                     .frame(maxWidth: 64, maxHeight: 32)
                     .opacity(selected ? 1.0 : 0.0)
                 
@@ -59,16 +62,55 @@ struct NavbarItem: View {
                     .frame(maxWidth: 12, maxHeight: 12)
                  */
                 Image(systemName: icon)
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSecondaryContainer.dark : Colors.onSecondaryContainer.light))
+                    .foregroundColor(
+                        Color(hex:
+                                globalData.appearance == .system
+                              ? (
+                                colorScheme == .dark
+                                ? Colors.onSecondaryContainer.dark
+                                : Colors.onSecondaryContainer.light
+                              ) : (
+                                globalData.appearance == .dark
+                                ? Colors.onSecondaryContainer.dark
+                                : Colors.onSecondaryContainer.light
+                              )
+                             )
+                    )
                     .frame(maxWidth: 12, maxHeight: 12)
                 
                 Text("3")
                     .font(.caption2)
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onError.dark : Colors.onError.light))
+                    .foregroundColor(
+                        Color(hex:
+                                globalData.appearance == .system
+                              ? (
+                                colorScheme == .dark
+                                ? Colors.onError.dark
+                                : Colors.onError.light
+                              ) : (
+                                globalData.appearance == .dark
+                                ? Colors.onError.dark
+                                : Colors.onError.light
+                              )
+                             )
+                    )
                     .padding(4)
                     .background {
                         Circle()
-                            .fill(Color(hex: colorScheme == .dark ? Colors.Error.dark : Colors.Error.light))
+                            .fill(
+                                Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.Error.dark
+                                        : Colors.Error.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.Error.dark
+                                        : Colors.Error.light
+                                      )
+                                     )
+                            )
                     }
                     .offset(x: 6, y: -6)
                     .opacity(hasNotification ? 1.0 : 0.0)
@@ -77,7 +119,20 @@ struct NavbarItem: View {
             Text(label)
                 .font(.caption)
                 .fontWeight(.medium)
-                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSecondaryContainer.dark : Colors.onSecondaryContainer.light))
+                .foregroundColor(
+                    Color(hex:
+                            globalData.appearance == .system
+                          ? (
+                            colorScheme == .dark
+                            ? Colors.onSecondaryContainer.dark
+                            : Colors.onSecondaryContainer.light
+                          ) : (
+                            globalData.appearance == .dark
+                            ? Colors.onSecondaryContainer.dark
+                            : Colors.onSecondaryContainer.light
+                          )
+                         )
+                )
         }
         .frame(maxWidth: .infinity, maxHeight: 80)
     }

@@ -51,10 +51,10 @@ private class DebounceState<Value>: ObservableObject {
 }
 
 struct Search: View {
-    @StateObject var globalData: GlobalData
     @StateObject var Colors: DynamicColors
     @StateObject var viewModel: SearchViewModel = SearchViewModel()
     @StateObject private var debounceState: DebounceState = DebounceState(initialValue: "")
+    @StateObject var globalData = GlobalData.shared
     
     @Namespace var animation
     
@@ -89,18 +89,57 @@ struct Search: View {
                             }
                     }
                 }
-                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                .foregroundColor(
+                    Color(hex:
+                            globalData.appearance == .system
+                          ? (
+                            colorScheme == .dark
+                            ? Colors.onSurface.dark
+                            : Colors.onSurface.light
+                          ) : (
+                            globalData.appearance == .dark
+                            ? Colors.onSurface.dark
+                            : Colors.onSurface.light
+                          )
+                         )
+                )
                 .frame(maxHeight: 32)
                 .padding(.leading, 12)
                 .textFieldStyle(PlainTextFieldStyle())
                 .background {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light))
+                        .fill(
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.SurfaceContainer.dark
+                                    : Colors.SurfaceContainer.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.SurfaceContainer.dark
+                                    : Colors.SurfaceContainer.light
+                                  )
+                                 )
+                        )
                 }
                 .overlay(alignment: .trailing) {
                     if debounceState.currentValue.count > 0 {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurfaceVariant.dark : Colors.onSurfaceVariant.light))
+                            .foregroundColor(
+                                Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.onSurfaceVariant.dark
+                                        : Colors.onSurfaceVariant.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.onSurfaceVariant.dark
+                                        : Colors.onSurfaceVariant.light
+                                      )
+                                     )
+                            )
                             .padding(.trailing, 12)
                             .onTapGesture {
                                 debounceState.currentValue = ""
@@ -261,7 +300,20 @@ struct Search: View {
                 if isFocused {
                     Text("Cancel")
                         .padding(.leading, 12)
-                        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                        .foregroundColor(
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.onSurface.dark
+                                    : Colors.onSurface.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.onSurface.dark
+                                    : Colors.onSurface.light
+                                  )
+                                 )
+                        )
                         .onTapGesture {
                             isFocused = false
                         }
@@ -279,7 +331,7 @@ struct Search: View {
                     ], spacing: 20) {
                         ForEach(globalData.searchResults, id: \.self) {result in
                             if !(viewModel.showInfo && viewModel.selectedId == result.url) {
-                                NavigationLink(destination: Info(url: .constant(result.url), poster: .constant(result.img), title: .constant(result.title), globalData: globalData, showInfo: $viewModel.showInfo, Colors: Colors, animation: animation)) {
+                                NavigationLink(destination: Info(url: .constant(result.url), poster: .constant(result.img), title: .constant(result.title), showInfo: $viewModel.showInfo, Colors: Colors, animation: animation)) {
                                     SearchCard(image: result.img, title: result.title, hasIndicator: result.indicatorText != nil, indicatorText: result.indicatorText, currentCount: result.currentCount, totalCount: result.totalCount, type: .GRID, cover: nil, Colors: Colors, animation: animation)
                                 }
                             }
@@ -295,25 +347,49 @@ struct Search: View {
                 }
                 .padding(.bottom, 100)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+                .foregroundColor(
+                    Color(hex:
+                            globalData.appearance == .system
+                          ? (
+                            colorScheme == .dark
+                            ? Colors.onSurface.dark
+                            : Colors.onSurface.light
+                          ) : (
+                            globalData.appearance == .dark
+                            ? Colors.onSurface.dark
+                            : Colors.onSurface.light
+                          )
+                         )
+                )
             }
             
             
         }
         .background {
             if viewModel.htmlString.count > 0 {
-                WebView(htmlString: viewModel.htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].javascript.code, requestType: "search", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].javascript.allowExternalScripts, globalData: globalData, nextUrl: .constant(""), mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
+                WebView(htmlString: viewModel.htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].javascript.code, requestType: "search", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].javascript.allowExternalScripts, nextUrl: .constant(""), mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
                     .hidden()
                     .frame(maxWidth: 0, maxHeight: 0)
             }
         }
         .background {
-            Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light)
+                Color(hex:
+                        globalData.appearance == .system
+                      ? (
+                        colorScheme == .dark
+                        ? Colors.Surface.dark
+                        : Colors.Surface.light
+                      ) : (
+                        globalData.appearance == .dark
+                        ? Colors.Surface.dark
+                        : Colors.Surface.light
+                      )
+                     )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .overlay {
             /*if let _ = viewModel.selectedId, viewModel.showInfo {
-                Info(url: $viewModel.selectedId, poster: $viewModel.selectedPoster, title: $viewModel.selectedTitle, globalData: globalData, showInfo: $viewModel.showInfo, animation: animation)
+                Info(url: $viewModel.selectedId, poster: $viewModel.selectedPoster, title: $viewModel.selectedTitle, showInfo: $viewModel.showInfo, animation: animation)
                     .transition(.move(edge: .bottom))
             }*/
         }
@@ -323,6 +399,6 @@ struct Search: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        Search(globalData: GlobalData(), Colors: DynamicColors())
+        Search(Colors: DynamicColors())
     }
 }

@@ -12,17 +12,57 @@ struct MaterialToggleStyle: ToggleStyle {
     
     @Environment(\.colorScheme) var colorScheme
     
+    @StateObject var globalData: GlobalData = GlobalData.shared
+    
     func makeBody(configuration: Self.Configuration) -> some View {
  
         return HStack {
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(configuration.isOn ? Color(hex: colorScheme == .dark ? Colors.PrimaryContainer.dark :  Colors.PrimaryContainer.light) : Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark :  Colors.SurfaceContainer.light))
+                    .fill(configuration.isOn ?
+                          Color(hex:
+                                  globalData.appearance == .system
+                                ? (
+                                  colorScheme == .dark
+                                  ? Colors.PrimaryContainer.dark
+                                  : Colors.PrimaryContainer.light
+                                ) : (
+                                  globalData.appearance == .dark
+                                  ? Colors.PrimaryContainer.dark
+                                  : Colors.PrimaryContainer.light
+                                )
+                               ) :
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.SurfaceContainer.dark
+                                    : Colors.SurfaceContainer.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.SurfaceContainer.dark
+                                    : Colors.SurfaceContainer.light
+                                  )
+                                 )
+                    )
                     .frame(maxWidth: 38, maxHeight: 16)
                     .animation(.spring(response: 0.3), value: configuration.isOn)
                 
                 Circle()
-                    .fill(Color(hex: colorScheme == .dark ? Colors.Primary.dark :  Colors.Primary.light))
+                    .fill(
+                        Color(hex:
+                                globalData.appearance == .system
+                              ? (
+                                colorScheme == .dark
+                                ? Colors.Primary.dark
+                                : Colors.Primary.light
+                              ) : (
+                                globalData.appearance == .dark
+                                ? Colors.Primary.dark
+                                : Colors.Primary.light
+                              )
+                             )
+                    )
                     .frame(maxWidth: 24, maxHeight: 24)
                     
                     .offset(x: configuration.isOn ? 8 :  -8)
@@ -35,7 +75,20 @@ struct MaterialToggleStyle: ToggleStyle {
             configuration.label
                 .font(.system(size: 16, weight: .bold))
                 .padding(.leading, 12)
-                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark :  Colors.onSurface.light))
+                .foregroundColor(
+                    Color(hex:
+                            globalData.appearance == .system
+                          ? (
+                            colorScheme == .dark
+                            ? Colors.onSurface.dark
+                            : Colors.onSurface.light
+                          ) : (
+                            globalData.appearance == .dark
+                            ? Colors.onSurface.dark
+                            : Colors.onSurface.light
+                          )
+                        )
+                )
         }
  
     }
@@ -53,7 +106,7 @@ struct MaterialToggle_Preview: PreviewProvider {
         .padding(40)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background {
-            Color("Surface")
+            Color(hex: "#121316")
         }
         .ignoresSafeArea()
     }

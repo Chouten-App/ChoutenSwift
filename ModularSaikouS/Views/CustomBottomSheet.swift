@@ -120,6 +120,6 @@ struct BottomSheet: View {
 
 struct CustomBottomSheet_Previews: PreviewProvider {
     static var previews: some View {
-        BottomSheet(isShowing: .constant(true), content: AnyView(ModuleSelector(globalData: GlobalData(), showPopup: .constant(true), Colors: DynamicColors())))
+        BottomSheet(isShowing: .constant(true), content: AnyView(ModuleSelector(showPopup: .constant(true), Colors: DynamicColors())))
     }
 }

@@ -13,6 +13,8 @@ struct Developer: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.presentationMode) var presentationMode
     
+    @StateObject var globalData = GlobalData.shared
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -40,10 +42,34 @@ struct Developer: View {
         }
         .padding(.horizontal, 20)
         .padding(.top, 80)
-        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onSurface.dark : Colors.onSurface.light))
+        .foregroundColor(
+            Color(hex:
+                                globalData.appearance == .system
+                              ? (
+                                colorScheme == .dark
+                                ? Colors.onSurface.dark
+                                : Colors.onSurface.light
+                              ) : (
+                                globalData.appearance == .dark
+                                ? Colors.onSurface.dark
+                                : Colors.onSurface.light
+                              )
+                             )
+        )
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background {
-            Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light)
+            Color(hex:
+                    globalData.appearance == .system
+                  ? (
+                    colorScheme == .dark
+                    ? Colors.Surface.dark
+                    : Colors.Surface.light
+                  ) : (
+                    globalData.appearance == .dark
+                    ? Colors.Surface.dark
+                    : Colors.Surface.light
+                  )
+                 )
         }
         .ignoresSafeArea()
         .navigationBarHidden(true)

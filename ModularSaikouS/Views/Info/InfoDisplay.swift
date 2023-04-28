@@ -9,7 +9,6 @@ import SwiftUI
 import Kingfisher
 
 struct InfoDisplay: View {
-    @StateObject var globalData: GlobalData
     @StateObject var Colors: DynamicColors
     
     let proxy: GeometryProxy
@@ -19,6 +18,7 @@ struct InfoDisplay: View {
     @Binding var isOn: Bool
     @Binding var navigating: Bool
     var animation: Namespace.ID?
+    @StateObject var globalData = GlobalData.shared
     
     func forTrailingZero(temp: Double) -> String {
         return String(format: "%g", temp)
@@ -30,7 +30,18 @@ struct InfoDisplay: View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 0) {
                 ZStack {
-                    Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light)
+                    Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.SurfaceContainer.dark
+                                            : Colors.SurfaceContainer.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.SurfaceContainer.dark
+                                            : Colors.SurfaceContainer.light
+                                          )
+                                          )
                     
                     Text(globalData.infoData!.titles.primary)
                         .font(.title2)
@@ -39,7 +50,18 @@ struct InfoDisplay: View {
                         .multilineTextAlignment(.leading)
                 }
                 .padding(12)
-                .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimaryContainer.dark : Colors.onPrimaryContainer.light))
+                .foregroundColor(Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.onPrimaryContainer.dark
+                                        : Colors.onPrimaryContainer.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.onPrimaryContainer.dark
+                                        : Colors.onPrimaryContainer.light
+                                      )
+                                      ))
                 .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, maxHeight: 110, alignment: .bottomLeading)
                 .padding(.bottom, -60)
                 
@@ -53,8 +75,30 @@ struct InfoDisplay: View {
                         .blur(radius: globalData.infoData!.banner != nil ? 0.0 : 6.0)
                         .overlay {
                             LinearGradient(stops: [
-                                Gradient.Stop(color: Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light).opacity(0.9), location: 0.0),
-                                Gradient.Stop(color: Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light).opacity(0.4), location: 1.0),
+                                Gradient.Stop(color: Color(hex:
+                                                            globalData.appearance == .system
+                                                          ? (
+                                                            colorScheme == .dark
+                                                            ? Colors.Surface.dark
+                                                            : Colors.Surface.light
+                                                          ) : (
+                                                            globalData.appearance == .dark
+                                                            ? Colors.Surface.dark
+                                                            : Colors.Surface.light
+                                                          )
+                                                          ).opacity(0.9), location: 0.0),
+                                Gradient.Stop(color: Color(hex:
+                                                            globalData.appearance == .system
+                                                          ? (
+                                                            colorScheme == .dark
+                                                            ? Colors.Surface.dark
+                                                            : Colors.Surface.light
+                                                          ) : (
+                                                            globalData.appearance == .dark
+                                                            ? Colors.Surface.dark
+                                                            : Colors.Surface.light
+                                                          )
+                                                          ).opacity(0.4), location: 1.0),
                             ], startPoint: .bottom, endPoint: .top)
                         }
                         .frame(
@@ -93,7 +137,18 @@ struct InfoDisplay: View {
                             
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(globalData.infoData!.status ?? "")
-                                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light))
+                                    .foregroundColor( Color(hex:
+                                                                globalData.appearance == .system
+                                                              ? (
+                                                                colorScheme == .dark
+                                                                ? Colors.Primary.dark
+                                                                : Colors.Primary.light
+                                                              ) : (
+                                                                globalData.appearance == .dark
+                                                                ? Colors.Primary.dark
+                                                                : Colors.Primary.light
+                                                              )
+                                                              ))
                                     .fontWeight(.bold)
                                 
                                 Text("\(globalData.infoData!.totalMediaCount ?? 0) \(globalData.infoData!.mediaType)")
@@ -130,7 +185,18 @@ struct InfoDisplay: View {
                     .font(.subheadline)
                     .fontWeight(.bold)
                     .padding(.top, 4)
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light))
+                    .foregroundColor(Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.Primary.dark
+                                            : Colors.Primary.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.Primary.dark
+                                            : Colors.Primary.light
+                                          )
+                                          ))
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .animation(.spring(response: 0.3), value: showFullDescription)
                     .onTapGesture {
@@ -163,29 +229,43 @@ struct InfoDisplay: View {
                         
                         Image(systemName: "chevron.down")
                     }
-                    .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimary.dark : Colors.onPrimary.light))
+                    .foregroundColor(Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.onPrimary.dark
+                                            : Colors.onPrimary.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.onPrimary.dark
+                                            : Colors.onPrimary.light
+                                          )
+                                          ))
                     .padding(.horizontal, 12)
                     .frame(maxWidth: .infinity, maxHeight: 42, alignment: .leading)
                     .background {
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light))
+                            .fill(Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.Primary.dark
+                                            : Colors.Primary.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.Primary.dark
+                                            : Colors.Primary.light
+                                          )
+                                          ))
                     }
                     .padding(.vertical, 8)
                 }
             }
             .padding(.horizontal, 20)
             
-            EpisodeDisplay(proxy: proxy, globalData: globalData, Colors: Colors, navigating: $navigating)
+            EpisodeDisplay(proxy: proxy, Colors: Colors, navigating: $navigating)
                 .animation(.spring(response: 0.3), value: showFullDescription)
                 .padding(.horizontal, 20)
-        }
-    }
-}
-
-struct InfoDisplay_Previews: PreviewProvider {
-    static var previews: some View {
-        GeometryReader {proxy in
-            InfoDisplay(globalData: GlobalData(), Colors: DynamicColors(), proxy: proxy, showHeader: .constant(false), title: "", showFullDescription: .constant(false), isOn: .constant(false), navigating: .constant(false))
         }
     }
 }

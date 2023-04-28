@@ -15,6 +15,8 @@ struct OverlappingCard: View {
     
     @Environment(\.colorScheme) var colorScheme
     
+    @StateObject var globalData: GlobalData = GlobalData.shared
+    
     var body: some View {
         KFImage(URL(string: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx145139-rRimpHGWLhym.png"))
             .resizable()
@@ -23,7 +25,19 @@ struct OverlappingCard: View {
             .clipped()
             .cornerRadius([.bottomLeading, .bottomTrailing], 12)
             .overlay {
-                LinearGradient(stops: [Gradient.Stop(color: .clear, location: 0.0), Gradient.Stop(color: Color(hex: colorScheme == .dark ? Colors.Surface.dark : Colors.Surface.light), location: 1.0)], startPoint: .top, endPoint: .bottom)
+                LinearGradient(stops: [Gradient.Stop(color: .clear, location: 0.0), Gradient.Stop(color:
+                                                                                                    Color(hex:
+                                                                                                            globalData.appearance == .system
+                                                                                                          ? (
+                                                                                                            colorScheme == .dark
+                                                                                                            ? Colors.Surface.dark
+                                                                                                            : Colors.Surface.light
+                                                                                                          ) : (
+                                                                                                            globalData.appearance == .dark
+                                                                                                            ? Colors.Surface.dark
+                                                                                                            : Colors.Surface.light
+                                                                                                          )
+                                                                                                        ), location: 1.0)], startPoint: .top, endPoint: .bottom)
                     .cornerRadius(10)
             }
     }

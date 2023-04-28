@@ -53,7 +53,6 @@ struct CustomControlsView: View {
     @Binding var showUI: Bool
     @ObservedObject var playerVM: PlayerViewModel
     @Binding var number: Int
-    @ObservedObject var globalData: GlobalData
     @State var progress = 0.25
     @State var isLoading: Bool = false
     @State var showEpisodeSelector: Bool = false
@@ -63,6 +62,8 @@ struct CustomControlsView: View {
     @State var showingPopup = false
     @State var showingEpisodeSelector = false
     @State var rotation: Double = 0.0
+    
+    @StateObject var globalData = GlobalData.shared
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     

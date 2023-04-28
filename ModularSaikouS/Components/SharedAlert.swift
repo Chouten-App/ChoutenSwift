@@ -12,25 +12,64 @@ struct CheckBoxToggleStyle: ToggleStyle {
     
     @Environment(\.colorScheme) var colorScheme
     
+    @StateObject var globalData: GlobalData = GlobalData.shared
+    
     func makeBody(configuration: Self.Configuration) -> some View {
  
         return HStack {
             ZStack {
                 if configuration.isOn {
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(Color(hex: colorScheme == .dark ? Colors.Primary.dark :  Colors.Primary.light))
+                        .fill(
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.Primary.dark
+                                    : Colors.Primary.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.Primary.dark
+                                    : Colors.Primary.light
+                                  )
+                                 )
+                        )
                         .frame(maxWidth: 18, maxHeight: 18)
                         .animation(.spring(response: 0.3), value: configuration.isOn)
                 } else {
                     RoundedRectangle(cornerRadius: 2)
-                        .stroke(Color(hex: colorScheme == .dark ? Colors.onSurfaceVariant.dark :  Colors.onSurfaceVariant.light), lineWidth: 2)
+                        .stroke(
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.onSurfaceVariant.dark
+                                    : Colors.onSurfaceVariant.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.onSurfaceVariant.dark
+                                    : Colors.onSurfaceVariant.light
+                                  )
+                                 ), lineWidth: 2)
                         .frame(maxWidth: 18, maxHeight: 18)
                         .animation(.spring(response: 0.3), value: configuration.isOn)
                 }
                 
                 Image(systemName: "checkmark")
                     .font(.system(size: 8), weight: .bold)
-                    .foregroundColor(configuration.isOn ? Color(hex: colorScheme == .dark ? Colors.onPrimary.dark :  Colors.onPrimary.light) : .clear)
+                    .foregroundColor(configuration.isOn ?
+                                     Color(hex:
+                                             globalData.appearance == .system
+                                           ? (
+                                             colorScheme == .dark
+                                             ? Colors.onPrimary.dark
+                                             : Colors.onPrimary.light
+                                           ) : (
+                                             globalData.appearance == .dark
+                                             ? Colors.onPrimary.dark
+                                             : Colors.onPrimary.light
+                                           )
+                                          ) : .clear)
             }
             .onTapGesture {
                 configuration.isOn.toggle()
@@ -50,6 +89,9 @@ struct SharedAlert: View {
     @State var dontShowAgain: Bool = false
     
     @Environment(\.colorScheme) var colorScheme
+    
+    @StateObject var globalData: GlobalData = GlobalData.shared
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text("Privacy")
@@ -74,18 +116,70 @@ struct SharedAlert: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .padding(8)
-                        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimary.dark : Colors.onPrimary.light))
+                        .foregroundColor(
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.onPrimary.dark
+                                    : Colors.onPrimary.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.onPrimary.dark
+                                    : Colors.onPrimary.light
+                                  )
+                                 )
+                        )
                         .background{
                             Capsule()
-                                .fill(Color(hex: colorScheme == .dark ? Colors.Primary.dark : Colors.Primary.light))
+                                .fill(
+                                    Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.Primary.dark
+                                            : Colors.Primary.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.Primary.dark
+                                            : Colors.Primary.light
+                                          )
+                                         )
+                                )
                         }
                 }
             }
             .frame(maxWidth: .infinity)
         }
         .padding(20)
-        .foregroundColor(Color(hex: colorScheme == .dark ? Colors.onPrimaryContainer.dark : Colors.onPrimaryContainer.light))
-        .background(Color(hex: colorScheme == .dark ? Colors.SurfaceContainer.dark : Colors.SurfaceContainer.light))
+        .foregroundColor(
+            Color(hex:
+                    globalData.appearance == .system
+                  ? (
+                    colorScheme == .dark
+                    ? Colors.onPrimaryContainer.dark
+                    : Colors.onPrimaryContainer.light
+                  ) : (
+                    globalData.appearance == .dark
+                    ? Colors.onPrimaryContainer.dark
+                    : Colors.onPrimaryContainer.light
+                  )
+                 )
+        )
+        .background(
+            Color(hex:
+                    globalData.appearance == .system
+                  ? (
+                    colorScheme == .dark
+                    ? Colors.SurfaceContainer.dark
+                    : Colors.SurfaceContainer.light
+                  ) : (
+                    globalData.appearance == .dark
+                    ? Colors.SurfaceContainer.dark
+                    : Colors.SurfaceContainer.light
+                  )
+                 )
+        )
         .cornerRadius(12)
         .padding(20)
     }
