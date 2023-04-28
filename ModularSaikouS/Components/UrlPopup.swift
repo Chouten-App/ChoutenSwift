@@ -52,13 +52,13 @@ struct UrlPopup: View {
             .overlay {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(lineWidth: 1)
-                    .fill(isFocused ? Color("accentColor1") : Color("textColor2"))
+                    .fill(isFocused ? Color("a1-300") : Color("a2-100"))
             }
             .overlay(alignment: .leading) {
                 Text("Import Module from URL")
                     .font(isFocused ? .caption : .subheadline)
                     .background {
-                        Color("bg2")
+                        Color("n2-700")
                     }
                     .offset(y: isFocused ? -22 : 0)
                     .padding(.horizontal, 16)
@@ -76,19 +76,19 @@ struct UrlPopup: View {
                 } label: {
                     Text("Import Module")
                         .font(.subheadline)
-                        .foregroundColor(Color("textColor"))
+                        .foregroundColor(Color("n1-700"))
                         .padding(.vertical, 10)
                         .padding(.horizontal, 18)
                         .background {
                             Capsule()
-                                .fill(Color("accentColor1"))
+                                .fill(Color("a1-300"))
                         }
                 }
             }
         }
         .padding(20)
-        .foregroundColor(Color("textColor2"))
-        .background(Color("bg2"))
+        .foregroundColor(Color("a2-100"))
+        .background(Color("n2-700"))
         .frame(maxWidth: 260, alignment: .leading)
         .cornerRadius(12)
     }
@@ -100,6 +100,6 @@ struct UrlPopup_Previews: PreviewProvider {
             UrlPopup(showPopup: .constant(true))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("bg"))
+        .background(Color("n1-900"))
     }
 }

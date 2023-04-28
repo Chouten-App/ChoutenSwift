@@ -1,0 +1,95 @@
+{
+  "pins" : [
+    {
+      "identity" : "activityindicatorview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/ActivityIndicatorView.git",
+      "state" : {
+        "revision" : "9970fd0bb7a05dad0b6566ae1f56937716686b24",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "jxkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jectivex/JXKit.git",
+      "state" : {
+        "revision" : "1d2c56ada375aa14c9ec2eb299d27690949fb5a4",
+        "version" : "3.5.1"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher",
+      "state" : {
+        "branch" : "master",
+        "revision" : "7f6331da4d0fcebec4996e9a64d072f467be932d"
+      }
+    },
+    {
+      "identity" : "popupview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/PopupView",
+      "state" : {
+        "revision" : "d786b3c93f4af79c501250c8c4ead875a600ee89",
+        "version" : "2.1.4"
+      }
+    },
+    {
+      "identity" : "pure-swift-ui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CodeSlicing/pure-swift-ui.git",
+      "state" : {
+        "revision" : "f3cf6c8e49b19ce5076d06ad0ace841ef8f78092",
+        "version" : "3.1.0"
+      }
+    },
+    {
+      "identity" : "pure-swift-ui-design",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CodeSlicing/pure-swift-ui-design.git",
+      "state" : {
+        "revision" : "40489273ee4703032c7d4d185ac25743f604e158",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swiftui-shimmer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/markiv/SwiftUI-Shimmer.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "17b66b0e7d94d2d3f220bbcb021b5026436f06c7"
+      }
+    },
+    {
+      "identity" : "swiftuifonticon",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/huybuidac/SwiftUIFontIcon",
+      "state" : {
+        "branch" : "master",
+        "revision" : "4f170fbf443d985ae518a14a12ec8194ec6b08eb"
+      }
+    },
+    {
+      "identity" : "swiftuix",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftUIX/SwiftUIX",
+      "state" : {
+        "revision" : "1b8b443b61b8b37fafb06c1abad9b6be244c9de9",
+        "version" : "0.1.4"
+      }
+    },
+    {
+      "identity" : "swiftwebvtt",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/thisIsTheFoxe/SwiftWebVTT",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a02faf7e8ba5d1369e390661768482618581c192"
+      }
+    }
+  ],
+  "version" : 2
+}

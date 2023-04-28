@@ -21,6 +21,13 @@ struct Servers: Codable {
 struct VideoData: Codable {
     let sources: [Source]
     let subtitles: [Subtitle]
+    let skips: [SkipTime]
+}
+
+struct SkipTime: Codable {
+    let start: Double
+    let end: Double
+    let type: String
 }
 
 struct Subtitle: Codable {
@@ -42,6 +49,7 @@ struct WebView: UIViewRepresentable {
     @ObservedObject var globalData: GlobalData
     @Binding var nextUrl: String
     @Binding var mediaConsumeData: VideoData
+    @Binding var mediaConsumeBookData: [String]
     
     func makeUIView(context: Context) -> WKWebView {
         let divCreationString = """
@@ -107,7 +115,7 @@ struct WebView: UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(javaScript: javaScript, requestType: requestType,globalData: globalData, nextUrl: $nextUrl, mediaConsumeData: $mediaConsumeData)
+        Coordinator(javaScript: javaScript, requestType: requestType,globalData: globalData, nextUrl: $nextUrl, mediaConsumeData: $mediaConsumeData, mediaConsumeBookData: $mediaConsumeBookData)
     }
     
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
@@ -116,13 +124,15 @@ struct WebView: UIViewRepresentable {
         var globalData: GlobalData
         @Binding var nextUrl: String
         @Binding var mediaConsumeData: VideoData
+        @Binding var mediaConsumeBookData: [String]
         
-        init(javaScript: String, requestType: String, globalData: GlobalData, nextUrl: Binding<String>, mediaConsumeData: Binding<VideoData>) {
+        init(javaScript: String, requestType: String, globalData: GlobalData, nextUrl: Binding<String>, mediaConsumeData: Binding<VideoData>, mediaConsumeBookData: Binding<[String]>) {
             self.javaScript = javaScript
             self.requestType = requestType
             self.globalData = globalData
             self._nextUrl = nextUrl
             self._mediaConsumeData = mediaConsumeData
+            self._mediaConsumeBookData = mediaConsumeBookData
         }
         
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -177,16 +187,28 @@ struct WebView: UIViewRepresentable {
                                 let info = try decoder.decode(DecodableResult<[Servers]>.self, from: data!)
                                 print(info)
                                 nextUrl = info.nextUrl ?? ""
+                                return
                             } catch {
                                 print(error.localizedDescription)
-                                do {
-                                    let info = try decoder.decode(DecodableResult<VideoData>.self, from: data!)
-                                    print(info)
-                                    mediaConsumeData = info.result
-                                    nextUrl = info.nextUrl ?? ""
-                                } catch {
-                                    print(error.localizedDescription)
-                                }
+                            }
+                            print("trying next")
+                            do {
+                                let info = try decoder.decode(DecodableResult<VideoData>.self, from: data!)
+                                print(info)
+                                mediaConsumeData = info.result
+                                nextUrl = info.nextUrl ?? ""
+                                return
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                            print("trying next")
+                            do {
+                                let info = try decoder.decode(DecodableResult<[String]>.self, from: data!)
+                                print(info)
+                                mediaConsumeBookData = info.result
+                                nextUrl = info.nextUrl ?? ""
+                            } catch {
+                                print(error.localizedDescription)
                             }
                         }
                     }
@@ -296,6 +318,6 @@ struct WebView: NSViewRepresentable {
 
 struct WebView_Previews: PreviewProvider {
     static var previews: some View {
-        WebView(htmlString: "", javaScript: "", requestType: "", enableExternalScripts: false, globalData: GlobalData(), nextUrl: .constant(""), mediaConsumeData: .constant(VideoData(sources: [], subtitles: [])))
+        WebView(htmlString: "", javaScript: "", requestType: "", enableExternalScripts: false, globalData: GlobalData(), nextUrl: .constant(""), mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
     }
 }

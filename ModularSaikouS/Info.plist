@@ -2,12 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Fonts/trebuchet-ms.ttf</string>
-		<string>Fonts/trebuchet-ms-italic.ttf</string>
-		<string>Fonts/trebuchet-ms-bold.ttf</string>
-	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -19,15 +15,27 @@
 			<string>JSON Document</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
 			<key>LSHandlerRank</key>
 			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.json</string>
 			</array>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/trebuchet-ms.ttf</string>
+		<string>Fonts/trebuchet-ms-italic.ttf</string>
+		<string>Fonts/trebuchet-ms-bold.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array/>
 </dict>
 </plist>

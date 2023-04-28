@@ -30,6 +30,19 @@ struct BottomSheet: View {
                     .onTapGesture {
                         isShowing.toggle()
                     }
+                    .gesture(DragGesture()
+                        .onChanged({ val in
+                            if(val.translation.height >= 0) {
+                                offsetY = val.translation.height
+                            }
+                        })
+                        .onEnded({ val in
+                            if val.translation.height > 200 {
+                                isShowing = false
+                            }
+                            offsetY = 0
+                        })
+                    )
                 content
                     #if os(iOS)
                     .offset(y: offsetY)
@@ -47,8 +60,8 @@ struct BottomSheet: View {
                     .overlay(alignment: .top) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(Color("accentColor1"))
-                                .frame(maxWidth: 40, maxHeight: 4)
+                                .fill(Color("Outline"))
+                                .frame(maxWidth: 32, maxHeight: 4)
                                 .offset(y: offsetY)
                                 .animation(.spring(response: 0.3), value: offsetY)
                                 .padding(.top, 16)
@@ -73,7 +86,7 @@ struct BottomSheet: View {
                     .overlay(alignment: .leading) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(Color("accentColor1"))
+                                .fill(Color("Outline"))
                                 .frame(maxWidth: 4, maxHeight: 40)
                                 .offset(x: offsetY)
                                 .animation(.spring(response: 0.3), value: offsetY)
@@ -107,6 +120,6 @@ struct BottomSheet: View {
 
 struct CustomBottomSheet_Previews: PreviewProvider {
     static var previews: some View {
-        BottomSheet(isShowing: .constant(true), content: AnyView(ModuleSelector(globalData: GlobalData(), showPopup: .constant(true))))
+        BottomSheet(isShowing: .constant(true), content: AnyView(ModuleSelector(globalData: GlobalData(), showPopup: .constant(true), Colors: DynamicColors())))
     }
 }

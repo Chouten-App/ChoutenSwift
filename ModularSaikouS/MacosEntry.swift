@@ -56,7 +56,7 @@ struct Chouten: App {
             }
             .frame(width: 450, height: 400)
             .background {
-                Color("bg")
+                Color("n1-900")
             }
             .onAppear {
                 // Hide the titlebar of the Settings window

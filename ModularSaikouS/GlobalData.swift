@@ -13,6 +13,8 @@ class GlobalData: ObservableObject {
     @Published var arg: String?
     @Published var url: String?
     @Published var module: Module?
+    @Published var availableModules: [Module] = []
+    @Published var availableJsons: [URL] = []
     
     @Published var reloadPlease: Bool = false
     

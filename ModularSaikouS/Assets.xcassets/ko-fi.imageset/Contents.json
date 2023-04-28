@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "ko-fi.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -14,8 +14,8 @@ struct ButtonLarge: View {
     var image: String?
     var developer: String?
     var version: String?
-    var background: Color = Color("accentColor1")
-    var textColor: Color = Color("textColor")
+    var background: Color = Color("a1-300")
+    var textColor: Color = Color("n1-700")
     var action: (() -> ())
     
     let cornorRadius: CGFloat = 12
@@ -39,7 +39,7 @@ struct ButtonLarge: View {
                         Image(systemName: "questionmark")
                             .padding(.vertical, 12)
                             .padding(.horizontal, 14)
-                            .foregroundColor(Color("textColor"))
+                            .foregroundColor(Color("n1-700"))
                     }
                     .fixedSize()
                     .cornerRadius(40)
