@@ -3,7 +3,7 @@ import UIKit
 import SwiftUI
 
 extension Notification.Name {
-    static let sharedJson = Notification.Name("com.applemusic.shared.json")
+    static let sharedJson = Notification.Name("com.inumaki.chouten.module")
 }
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -15,8 +15,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         
         if let urlContext = connectionOptions.urlContexts.first {
-                handleOpenURL(urlContext.url)
-            }
+            print(urlContext.url)
+            handleOpenURL(urlContext.url)
+        }
         
             
         if let windowScene = scene as? UIWindowScene {
@@ -32,10 +33,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        print("working")
-        if let urlContext = URLContexts.first {
-            handleOpenURL(urlContext.url)
-        }
+        guard let url = URLContexts.first?.url, url.isFileURL else {
+                return
+            }
+
+            if url.pathExtension == "module" {
+                // Handle the file here
+                // For example, you could use FileManager to copy the file to your app's documents directory:
+                let fileManager = FileManager.default
+                do {
+                    let documentsURL = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                    let destinationURL = documentsURL.appendingPathComponent("Modules").appendingPathComponent(url.lastPathComponent)
+                    try fileManager.copyItem(at: url, to: destinationURL)
+                    // handle unzip of module
+                    
+                    ModuleManager.shared.importFromFile(fileUrl: destinationURL)
+                    
+                } catch {
+                    print("Error: \(error)")
+                }
+            } else if url.pathExtension == "theme" {
+                // Handle the file here
+                // For example, you could use FileManager to copy the file to your app's documents directory:
+                let fileManager = FileManager.default
+                do {
+                    let documentsURL = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                    let destinationURL = documentsURL.appendingPathComponent("Themes").appendingPathComponent(url.lastPathComponent)
+                    try fileManager.copyItem(at: url, to: destinationURL)
+                } catch {
+                    print("Error: \(error)")
+                }
+            }
     }
 
     func handleOpenURL(_ url: URL) {
@@ -45,6 +73,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     @objc func handleSharedJson(_ notification: Notification) {
         guard notification.userInfo?["url"] is URL else { return }
+        
+        print(notification.userInfo?["url"])
         
         if let shouldOpenApp = notification.userInfo?["openApp"] as? Bool, shouldOpenApp {
             // Open the app
@@ -58,9 +88,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 window.makeKeyAndVisible()
             }
         }
-        
-        // Handle the JSON data
-        // ...
     }
 }
 #endif

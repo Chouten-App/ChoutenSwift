@@ -120,7 +120,7 @@ struct TestingHome: View {
                                                 ))
                                 .fontWeight(.semibold)
                                 .onTapGesture {
-                                    let data = ["data": FloatyData(message: "This is a test", action: nil)]
+                                    let data = ["data": FloatyData(message: "This is a test", error: false, action: nil)]
                                     NotificationCenter.default
                                                 .post(name:           NSNotification.Name("floaty"),
                                                       object: nil, userInfo: data)

@@ -14,6 +14,8 @@ final class SearchViewModel: ObservableObject {
     @Published var showModuleSelector: Bool = false
     @Published var moduleText: String = ""
     @Published var htmlString: String = ""
+    @Published var jsString: String = ""
+    @Published var allowExternalStrings: Bool = false
     @Published var query: String = ""
     
     @Published var showInfo: Bool = false

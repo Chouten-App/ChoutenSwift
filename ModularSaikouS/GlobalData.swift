@@ -13,11 +13,15 @@ class GlobalData: ObservableObject {
         NotificationCenter.default.addObserver(self, selector: #selector(handleSharedJson(_:)), name: .sharedJson, object: nil)
     }
     
+    @Published var showModuleSelector: Bool = false
+    
     @Published var selectedModule: String?
     @Published var jsSource: String?
     @Published var arg: String?
     @Published var url: String?
-    @Published var module: Module?
+    @Published var module: OLDModule?
+    @Published var newModule: Module?
+    @Published var availableModulesOLD: [OLDModule] = []
     @Published var availableModules: [Module] = []
     @Published var availableJsons: [URL] = []
     @Published var appearance = AppearanceStyle.system
@@ -28,11 +32,18 @@ class GlobalData: ObservableObject {
     @Published var moduleData: SearchData?
     @Published var searchResults: [SearchData] = []
     @Published var infoData: InfoData? = nil
+    @Published var lastVisitedEntry: String = ""
     @Published var nextUrl: String? = nil
     @Published var mediaConsumeLink: String? = nil
     
     @Published var doneInfo: Bool = false
     
+    @Published var downloadedOnly: Bool = false
+    @Published var incognito: Bool = false
+    
+    
+    @Published var isLoading = false
+    @Published var mediaFailedToLoad = false
     
     @objc private func handleSharedJson(_ notification: Notification) {
         if let url = notification.userInfo?["url"] as? URL {

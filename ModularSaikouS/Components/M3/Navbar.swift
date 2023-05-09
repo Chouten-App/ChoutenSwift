@@ -19,14 +19,22 @@ struct Navbar: View {
             NavbarItem(label: "Home", icon: "house.fill", selected: selectedTab == 0, hasNotification: false, Colors: Colors)
                 .onTapGesture {
                     selectedTab = 0
+                    globalData.showModuleSelector = false
                 }
             NavbarItem(label: "Search", icon: "magnifyingglass",selected: selectedTab == 1, hasNotification: false, Colors: Colors)
                 .onTapGesture {
                     selectedTab = 1
+                    globalData.showModuleSelector = false
                 }
-            NavbarItem(label: "Settings", icon: "gear",selected: selectedTab == 2, hasNotification: true, Colors: Colors)
+            NavbarItem(label: "History", icon: "clock.arrow.circlepath",selected: selectedTab == 2, hasNotification: true, Colors: Colors)
                 .onTapGesture {
                     selectedTab = 2
+                    globalData.showModuleSelector = false
+                }
+            NavbarItem(label: "More", icon: "ellipsis",selected: selectedTab == 3, hasNotification: false, Colors: Colors)
+                .onTapGesture {
+                    selectedTab = 3
+                    globalData.showModuleSelector = false
                 }
         }
         .padding(.horizontal, 8)
@@ -77,6 +85,7 @@ struct NavbarItem: View {
                              )
                     )
                     .frame(maxWidth: 12, maxHeight: 12)
+                    .contentShape(Rectangle())
                 
                 Text("3")
                     .font(.caption2)

@@ -9,6 +9,7 @@ import SwiftUI
 import Kingfisher
 import Shimmer
 import SwiftUIX
+import PureSwiftUI
 
 struct ViewOffsetKey: PreferenceKey {
     typealias Value = CGFloat
@@ -29,6 +30,9 @@ struct Info: View {
     @State var isOn: Bool = false
     @State var showFullDescription: Bool = false
     @StateObject var globalData = GlobalData.shared
+    @StateObject var moduleManager = ModuleManager.shared
+    
+    @State var returnData: ReturnedData? = nil
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -44,17 +48,17 @@ struct Info: View {
     var body: some View {
         ZStack {
             Color(hex:
-                        globalData.appearance == .system
-                      ? (
-                        colorScheme == .dark
-                        ? Colors.Surface.dark
-                        : Colors.Surface.light
-                      ) : (
-                        globalData.appearance == .dark
-                        ? Colors.Surface.dark
-                        : Colors.Surface.light
-                      )
-                     )
+                    globalData.appearance == .system
+                  ? (
+                    colorScheme == .dark
+                    ? Colors.Surface.dark
+                    : Colors.Surface.light
+                  ) : (
+                    globalData.appearance == .dark
+                    ? Colors.Surface.dark
+                    : Colors.Surface.light
+                  )
+            )
             
             GeometryReader {proxy in
                 ScrollView(.vertical, showsIndicators: false) {
@@ -62,15 +66,15 @@ struct Info: View {
                         InfoDisplay(Colors: Colors, proxy: proxy, showHeader: $showHeader, title: title, showFullDescription: $showFullDescription, isOn: $isOn, navigating: $navigating)
                             .foregroundColor(Color(hex:
                                                     globalData.appearance == .system
-                                                  ? (
+                                                   ? (
                                                     colorScheme == .dark
                                                     ? Colors.onSurface.dark
                                                     : Colors.onSurface.light
-                                                  ) : (
+                                                   ) : (
                                                     globalData.appearance == .dark
                                                     ? Colors.onSurface.dark
                                                     : Colors.onSurface.light
-                                                  )
+                                                   )
                                                   ))
                             .frame(maxWidth: proxy.size.width)
                             .background(GeometryReader {
@@ -105,17 +109,17 @@ struct Info: View {
                                 .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, maxHeight: 110, alignment: .bottomLeading)
                                 .background {
                                     Color(hex:
-                                                globalData.appearance == .system
-                                              ? (
-                                                colorScheme == .dark
-                                                ? Colors.SurfaceContainer.dark
-                                                : Colors.SurfaceContainer.light
-                                              ) : (
-                                                globalData.appearance == .dark
-                                                ? Colors.SurfaceContainer.dark
-                                                : Colors.SurfaceContainer.light
-                                              )
-                                             )
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.SurfaceContainer.dark
+                                            : Colors.SurfaceContainer.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.SurfaceContainer.dark
+                                            : Colors.SurfaceContainer.light
+                                          )
+                                    )
                                 }
                                 .padding(.bottom, -60)
                                 
@@ -127,28 +131,28 @@ struct Info: View {
                                                 LinearGradient(stops: [
                                                     Gradient.Stop(color: Color(hex:
                                                                                 globalData.appearance == .system
-                                                                              ? (
+                                                                               ? (
                                                                                 colorScheme == .dark
                                                                                 ? Colors.Surface.dark
                                                                                 : Colors.Surface.light
-                                                                              ) : (
+                                                                               ) : (
                                                                                 globalData.appearance == .dark
                                                                                 ? Colors.Surface.dark
                                                                                 : Colors.Surface.light
-                                                                              )
-                                                                             ).opacity(0.9), location: 0.0),
+                                                                               )
+                                                                              ).opacity(0.9), location: 0.0),
                                                     Gradient.Stop(color: Color(hex:
                                                                                 globalData.appearance == .system
-                                                                              ? (
+                                                                               ? (
                                                                                 colorScheme == .dark
                                                                                 ? Colors.Surface.dark
                                                                                 : Colors.Surface.light
-                                                                              ) : (
+                                                                               ) : (
                                                                                 globalData.appearance == .dark
                                                                                 ? Colors.Surface.dark
                                                                                 : Colors.Surface.light
-                                                                              )
-                                                                             ).opacity(0.4), location: 1.0),
+                                                                               )
+                                                                              ).opacity(0.4), location: 1.0),
                                                 ], startPoint: .bottom, endPoint: .top)
                                             }
                                             .frame(
@@ -267,16 +271,16 @@ struct Info: View {
                                      .font(.subheadline)
                                      .foregroundColor(Color(hex:
                                      globalData.appearance == .system
-                                   ? (
+                                     ? (
                                      colorScheme == .dark
                                      ? Colors.onSurface.dark
                                      : Colors.onSurface.light
-                                   ) : (
+                                     ) : (
                                      globalData.appearance == .dark
                                      ? Colors.onSurface.dark
                                      : Colors.onSurface.light
-                                   )
-                                  ))
+                                     )
+                                     ))
                                      .padding(.trailing, 4)
                                      .padding(.bottom, -4)
                                      
@@ -286,31 +290,31 @@ struct Info: View {
                                      .fontWeight(.semibold)
                                      .foregroundColor(Color(hex:
                                      globalData.appearance == .system
-                                   ? (
+                                     ? (
                                      colorScheme == .dark
                                      ? Colors.onSurface.dark
                                      : Colors.onSurface.light
-                                   ) : (
+                                     ) : (
                                      globalData.appearance == .dark
                                      ? Colors.onSurface.dark
                                      : Colors.onSurface.light
-                                   )
-                                  ))
+                                     )
+                                     ))
                                      
                                      Image(systemName: "chevron.down")
                                      .font(.caption)
                                      .foregroundColor(Color(hex:
                                      globalData.appearance == .system
-                                   ? (
+                                     ? (
                                      colorScheme == .dark
                                      ? Colors.onPrimary.dark
                                      : Colors.onPrimary.light
-                                   ) : (
+                                     ) : (
                                      globalData.appearance == .dark
                                      ? Colors.onPrimary.dark
                                      : Colors.onPrimary.light
-                                   )
-                                  ))
+                                     )
+                                     ))
                                      }
                                      .padding(.vertical, 8)
                                      .padding(.horizontal, 20)
@@ -318,15 +322,15 @@ struct Info: View {
                                      Capsule()
                                      .fill(Color(hex:
                                      globalData.appearance == .system
-                                   ? (
+                                     ? (
                                      colorScheme == .dark
                                      ? Colors.Primary.dark
                                      : Colors.Primary.light
-                                   ) : (
+                                     ) : (
                                      globalData.appearance == .dark
                                      ? Colors.Primary.dark
                                      : Colors.Primary.light
-                                   ))
+                                     ))
                                      }
                                      }
                                      */
@@ -400,16 +404,16 @@ struct Info: View {
                                             }
                                             .background {
                                                 Color(hex:
-                                                globalData.appearance == .system
-                                              ? (
-                                                colorScheme == .dark
-                                                ? Colors.SurfaceContainer.dark
-                                                : Colors.SurfaceContainer.light
-                                              ) : (
-                                                globalData.appearance == .dark
-                                                ? Colors.SurfaceContainer.dark
-                                                : Colors.SurfaceContainer.light
-                                              ))
+                                                        globalData.appearance == .system
+                                                      ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.SurfaceContainer.dark
+                                                        : Colors.SurfaceContainer.light
+                                                      ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.SurfaceContainer.dark
+                                                        : Colors.SurfaceContainer.light
+                                                      ))
                                             }
                                             .cornerRadius(12)
                                         }
@@ -448,27 +452,25 @@ struct Info: View {
         .navigationBarHidden(true)
         .navigationBarTitle("", displayMode: .inline)
         .navigationBarHidden(true)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(.greedy)
         .overlay(alignment: .topTrailing) {
             HStack {
                 if globalData.infoData != nil {
                     Text(globalData.infoData!.titles.primary)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(
-                            Color(hex:
+                        .foregroundColor(Color(hex:
                                                 globalData.appearance == .system
-                                              ? (
+                                               ? (
                                                 colorScheme == .dark
-                                                ? Colors.onSurface.dark
-                                                : Colors.onSurface.light
-                                              ) : (
+                                                ? Colors.onPrimaryContainer.dark
+                                                : Colors.onPrimaryContainer.light
+                                               ) : (
                                                 globalData.appearance == .dark
-                                                ? Colors.onSurface.dark
-                                                : Colors.onSurface.light
-                                              )
-                                              )
-                        )
+                                                ? Colors.onPrimaryContainer.dark
+                                                : Colors.onPrimaryContainer.light
+                                               )
+                                              ))
                         .lineLimit(1)
                         .opacity(showRealHeader ? 1.0 : 0.0)
                         .animation(nil, value: showRealHeader)
@@ -487,15 +489,15 @@ struct Info: View {
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(Color(hex:
                                                 globalData.appearance == .system
-                                              ? (
+                                               ? (
                                                 colorScheme == .dark
                                                 ? Colors.onPrimary.dark
                                                 : Colors.onPrimary.light
-                                              ) : (
+                                               ) : (
                                                 globalData.appearance == .dark
                                                 ? Colors.onPrimary.dark
                                                 : Colors.onPrimary.light
-                                              )
+                                               )
                                               )
                         )
                         .padding(8)
@@ -503,16 +505,16 @@ struct Info: View {
                             Circle()
                                 .fill(Color(hex:
                                                 globalData.appearance == .system
-                                              ? (
+                                            ? (
                                                 colorScheme == .dark
                                                 ? Colors.Primary.dark
                                                 : Colors.Primary.light
-                                              ) : (
+                                            ) : (
                                                 globalData.appearance == .dark
                                                 ? Colors.Primary.dark
                                                 : Colors.Primary.light
-                                              )
-                                              ))
+                                            )
+                                           ))
                         }
                 }
             }
@@ -520,52 +522,120 @@ struct Info: View {
             .frame(maxWidth: .infinity, maxHeight: 110, alignment: .bottom)
             .background {
                 Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        colorScheme == .dark
-                                        ? Colors.SurfaceContainer.dark
-                                        : Colors.SurfaceContainer.light
-                                      ) : (
-                                        globalData.appearance == .dark
-                                        ? Colors.SurfaceContainer.dark
-                                        : Colors.SurfaceContainer.light
-                                      )
-                                      )
-                    .opacity(showRealHeader ? 1.0 : 0.0)
-                    .animation(nil)
+                        globalData.appearance == .system
+                      ? (
+                        colorScheme == .dark
+                        ? Colors.SurfaceContainer.dark
+                        : Colors.SurfaceContainer.light
+                      ) : (
+                        globalData.appearance == .dark
+                        ? Colors.SurfaceContainer.dark
+                        : Colors.SurfaceContainer.light
+                      )
+                )
+                .opacity(showRealHeader ? 1.0 : 0.0)
+                .animation(nil)
             }
         }
         .background {
-            if !navigating && viewModel.htmlString.count > 0 {
-                WebView(htmlString: viewModel.htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.code, requestType: "info", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.allowExternalScripts, nextUrl: $nextUrl, mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
+            if viewModel.htmlString.count > 0 && returnData != nil {
+                WebView(htmlString: viewModel.htmlString, javaScript: viewModel.jsString, requestType: "info", enableExternalScripts: returnData!.allowExternalScripts, nextUrl: $nextUrl, mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
                     .hidden()
                     .frame(maxWidth: 0, maxHeight: 0)
             }
         }
         .onAppear {
-            viewModel.htmlString = ""
-            Task {
-                if self.url.count > 0 {
-                    do {
-                        print(self.url)
-                        let url = URL(string: self.url)!
-                        let (data, response) = try await URLSession.shared.data(from: url)
-                        
-                        guard let httpResponse = response as? HTTPURLResponse,
-                              httpResponse.statusCode == 200,
-                              let html = String(data: data, encoding: .utf8) else {
-                            print("Invalid response")
-                            return
+            if globalData.infoData == nil || (globalData.infoData!.mediaList.count > 0 && globalData.infoData!.mediaList[0].count == 0) {
+                viewModel.htmlString = ""
+                if globalData.newModule != nil {
+                    //globalData.isLoading = true
+                    viewModel.htmlString = ""
+                    
+                    // moduleManager.selectedModuleName
+                    
+                    // get search js file data
+                    if returnData == nil {
+                        returnData = moduleManager.getJsForType("info", num: currentJsIndex)
+                        viewModel.jsString = returnData!.js
+                    }
+                    
+                    print(returnData)
+                    
+                    
+                    if returnData != nil {
+                        Task {
+                            
+                            if returnData!.request != nil {
+                                let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url)!)
+                                do {
+                                    guard let httpResponse = response as? HTTPURLResponse,
+                                          httpResponse.statusCode == 200,
+                                          let html = String(data: data, encoding: .utf8) else {
+                                        print("Invalid response")
+                                        let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url)", error: true, action: nil)]
+                                        NotificationCenter.default
+                                            .post(name:           NSNotification.Name("floaty"),
+                                                  object: nil, userInfo: data)
+                                        return
+                                    }
+                                    if returnData!.usesApi {
+                                        print("API!!!")
+                                        
+                                        
+                                        let regexPattern = "&#\\d+;"
+                                        let regex = try! NSRegularExpression(pattern: regexPattern)
+                                        
+                                        let range = NSRange(html.startIndex..., in: html)
+                                        
+                                        let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
+                                        
+                                        let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
+                                        //print(cleaned)
+                                        viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                    } else {
+                                        viewModel.htmlString = html
+                                    }
+                                } catch let error {
+                                    print(error.localizedDescription)
+                                }
+                            } else {
+                                let (data, response) = try await URLSession.shared.data(from: URL(string: self.url)!)
+                                
+                                print(self.url)
+                                do {
+                                    guard let httpResponse = response as? HTTPURLResponse,
+                                          httpResponse.statusCode == 200,
+                                          let html = String(data: data, encoding: .utf8) else {
+                                        print("Invalid response")
+                                        let data = ["data": FloatyData(message: "Failed to load data from \(self.url)", error: true, action: nil)]
+                                        NotificationCenter.default
+                                            .post(name:           NSNotification.Name("floaty"),
+                                                  object: nil, userInfo: data)
+                                        return
+                                    }
+                                    if returnData!.usesApi {
+                                        print("API!!!")
+                                        
+                                        
+                                        let regexPattern = "&#\\d+;"
+                                        let regex = try! NSRegularExpression(pattern: regexPattern)
+                                        
+                                        let range = NSRange(html.startIndex..., in: html)
+                                        
+                                        let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
+                                        
+                                        let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
+                                        //print(cleaned)
+                                        viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                    } else {
+                                        viewModel.htmlString = html
+                                    }
+                                } catch let error {
+                                    print(error.localizedDescription)
+                                }
+                            }
+                            
                         }
-                        if globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.usesApi == true {
-                            viewModel.htmlString = """
-                            <div id=\"json-result\" data-json=\"\(html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'"))\">UNRELATED</div>
-                        """
-                        } else {
-                            viewModel.htmlString = html
-                        }
-                    } catch {
-                        print("Error: \(error.localizedDescription)")
                     }
                 }
             }
@@ -576,29 +646,99 @@ struct Info: View {
                 viewModel.htmlString = ""
                 Task {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                        Task {
-                            do {
-                                if currentJsIndex < globalData.module!.code[globalData.module!.subtypes[0]]!["info"]!.count - 1 {
+                        if globalData.newModule != nil {
+                            //globalData.isLoading = true
+                            
+                            // moduleManager.selectedModuleName
+                            
+                            if currentJsIndex < moduleManager.getJsCount("info") {
+                                if currentJsIndex == 0 {
+                                    currentJsIndex = 2
+                                } else {
                                     currentJsIndex += 1
                                 }
-                                let (data, response) = try await URLSession.shared.data(from: URL(string: next!)!)
+                            }
+                            
+                            print("index is \(currentJsIndex)")
+                            
+                            // get search js file data
+                            returnData = moduleManager.getJsForType("info", num: currentJsIndex)
+                            
+                            if returnData != nil {
+                                viewModel.jsString = returnData!.js
                                 
-                                guard let httpResponse = response as? HTTPURLResponse,
-                                      httpResponse.statusCode == 200,
-                                      let html = String(data: data, encoding: .utf8) else {
-                                    print("Invalid response")
-                                    return
+                                print(returnData)
+                                Task {
+                                    if returnData!.request != nil {
+                                        let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url)!)
+                                        do {
+                                            guard let httpResponse = response as? HTTPURLResponse,
+                                                  httpResponse.statusCode == 200,
+                                                  let html = String(data: data, encoding: .utf8) else {
+                                                print("Invalid response")
+                                                let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url)", error: true, action: nil)]
+                                                NotificationCenter.default
+                                                    .post(name:           NSNotification.Name("floaty"),
+                                                          object: nil, userInfo: data)
+                                                return
+                                            }
+                                            if returnData!.usesApi {
+                                                print("API!!!")
+                                                
+                                                
+                                                let regexPattern = "&#\\d+;"
+                                                let regex = try! NSRegularExpression(pattern: regexPattern)
+                                                
+                                                let range = NSRange(html.startIndex..., in: html)
+                                                
+                                                let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
+                                                
+                                                let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
+                                                //print(cleaned)
+                                                viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                            } else {
+                                                viewModel.htmlString = html
+                                            }
+                                        } catch let error {
+                                            print(error.localizedDescription)
+                                        }
+                                    } else {
+                                        let (data, response) = try await URLSession.shared.data(from: URL(string: next!)!)
+                                        do {
+                                            guard let httpResponse = response as? HTTPURLResponse,
+                                                  httpResponse.statusCode == 200,
+                                                  let html = String(data: data, encoding: .utf8) else {
+                                                print("Invalid response")
+                                                let data = ["data": FloatyData(message: "Failed to load data from \(next!)", error: true, action: nil)]
+                                                NotificationCenter.default
+                                                    .post(name:           NSNotification.Name("floaty"),
+                                                          object: nil, userInfo: data)
+                                                return
+                                            }
+                                            if returnData!.usesApi {
+                                                print("API!!!")
+                                                
+                                                
+                                                let regexPattern = "&#\\d+;"
+                                                let regex = try! NSRegularExpression(pattern: regexPattern)
+                                                
+                                                let range = NSRange(html.startIndex..., in: html)
+                                                
+                                                let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
+                                                
+                                                let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
+                                                //print(cleaned)
+                                                viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                            } else {
+                                                viewModel.htmlString = html
+                                            }
+                                            currentJsIndex += 1
+                                        } catch let error {
+                                            print(error.localizedDescription)
+                                        }
+                                    }
+                                    
                                 }
-                                if globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.usesApi != nil && globalData.module!.code[globalData.module!.subtypes[0]]!["info"]![currentJsIndex].javascript.usesApi! == true {
-                                    print("API!!!")
-                                    let cleaned = html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "&#39;", with: "").replacingOccurrences(of: "\"", with: "'")
-                                    //print(cleaned)
-                                    viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
-                                } else {
-                                    viewModel.htmlString = html
-                                }
-                            } catch let error {
-                                print(error)
                             }
                         }
                     }
@@ -607,6 +747,10 @@ struct Info: View {
         }
         .onDisappear {
             globalData.nextUrl = ""
+            if globalData.infoData != nil {
+                globalData.lastVisitedEntry = self.url
+                globalData.mediaFailedToLoad = false
+            }
         }
         .ignoresSafeArea()
     }

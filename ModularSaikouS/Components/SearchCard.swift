@@ -54,8 +54,8 @@ struct SearchCard: View {
                             view.matchedGeometryEffect(id: title, in: animation!)
                         }*/
                     
-                    if hasIndicator {
-                        Text(indicatorText!)
+                    if hasIndicator && indicatorText != nil && !indicatorText!.isEmpty {
+                        Text(indicatorText ?? "")
                             .foregroundColor(
                                 Color(hex:
                                         globalData.appearance == .system

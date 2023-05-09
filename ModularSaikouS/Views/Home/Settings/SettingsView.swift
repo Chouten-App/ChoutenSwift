@@ -340,17 +340,14 @@ struct SettingsView: View {
     @StateObject var Colors: DynamicColors
     
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.presentationMode) var presentationMode
     
     @State var showAppearanceSelector: Bool = false
     @StateObject var globalData = GlobalData.shared
     
     var body: some View {
-        NavigationView {
+        ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Settings")
-                    .font(.title)
-                    .fontWeight(.semibold)
-                
                 HStack {
                     VStack(alignment: .leading) {
                         Text("Export Theme to JSON")
@@ -367,17 +364,17 @@ struct SettingsView: View {
                         RoundedRectangle(cornerRadius: 4)
                             .fill(
                                 Color(hex:
-                                            globalData.appearance == .system
-                                          ? (
-                                            colorScheme == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          ) : (
-                                            globalData.appearance == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          )
-                                         )
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.Primary.dark
+                                        : Colors.Primary.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.Primary.dark
+                                        : Colors.Primary.light
+                                      )
+                                     )
                             )
                             .opacity(0.7)
                             .frame(maxWidth: 14, maxHeight: 18)
@@ -385,17 +382,17 @@ struct SettingsView: View {
                         RoundedRectangle(cornerRadius: 4)
                             .stroke(
                                 Color(hex:
-                                            globalData.appearance == .system
-                                          ? (
-                                            colorScheme == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          ) : (
-                                            globalData.appearance == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          )
-                                         ),lineWidth: 2)
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.Primary.dark
+                                        : Colors.Primary.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.Primary.dark
+                                        : Colors.Primary.light
+                                      )
+                                     ),lineWidth: 2)
                             .frame(maxWidth: 14, maxHeight: 18)
                             .offset(x: 4, y: -4)
                     }
@@ -447,36 +444,37 @@ struct SettingsView: View {
                         .fontWeight(.bold)
                         .foregroundColor(
                             Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        colorScheme == .dark
-                                        ? Colors.onPrimary.dark
-                                        : Colors.onPrimary.light
-                                      ) : (
-                                        globalData.appearance == .dark
-                                        ? Colors.onPrimary.dark
-                                        : Colors.onPrimary.light
-                                      )
-                                     )
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.onPrimary.dark
+                                    : Colors.onPrimary.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.onPrimary.dark
+                                    : Colors.onPrimary.light
+                                  )
+                                 )
                         )
                         .frame(maxWidth: .infinity, maxHeight: 40)
                         .background {
                             
-                                Color(hex:
-                                            globalData.appearance == .system
-                                          ? (
-                                            colorScheme == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          ) : (
-                                            globalData.appearance == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          )
-                                         )
-                                .cornerRadius(12)
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.Primary.dark
+                                    : Colors.Primary.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.Primary.dark
+                                    : Colors.Primary.light
+                                  )
+                            )
+                            .cornerRadius(12)
                         }
                 }
+                .frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40)
                 
                 Spacer()
                 
@@ -496,72 +494,96 @@ struct SettingsView: View {
                         Image(systemName: "chevron.right")
                     }
                 }
-                
-                HStack(spacing: 12) {
-                    Image("coffee")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .cornerRadius(8)
-                        .onTapGesture {
-                            if let url = URL(string: "https://www.buymeacoffee.com/inumaki") {
-                                UIApplication.shared.open(url)
-                            }
-                        }
-                    
-                    Image("ko-fi")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .cornerRadius(8)
-                        .onTapGesture {
-                            if let url = URL(string: "https://ko-fi.com/inumakicoding") {
-                                UIApplication.shared.open(url)
-                            }
-                        }
-                }
-                .padding(.bottom, 120)
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 80)
-            .foregroundColor(
-                Color(hex:
-                            globalData.appearance == .system
-                          ? (
-                            colorScheme == .dark
-                            ? Colors.onSurface.dark
-                            : Colors.onSurface.light
-                          ) : (
-                            globalData.appearance == .dark
-                            ? Colors.onSurface.dark
-                            : Colors.onSurface.light
-                          )
-                         ))
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .background {
-                Color(hex:
-                            globalData.appearance == .system
-                          ? (
-                            colorScheme == .dark
-                            ? Colors.Surface.dark
-                            : Colors.Surface.light
-                          ) : (
-                            globalData.appearance == .dark
-                            ? Colors.Surface.dark
-                            : Colors.Surface.light
-                          )
-                         )
-            }
-            .overlay {
-                if showAppearanceSelector {
-                    ZStack {
-                        Color.black.opacity(0.4)
-                        
-                        AppearanceSelector(Colors: Colors, showSelector: $showAppearanceSelector)
-                            .frame(width: 240)
-                    }
+            .padding(.horizontal, 20)
+            .padding(.top, (globalData.downloadedOnly || globalData.incognito ? 64 : 110))
+            .padding(.bottom, 120)
+        }
+        .foregroundColor(
+            Color(hex:
+                        globalData.appearance == .system
+                      ? (
+                        colorScheme == .dark
+                        ? Colors.onSurface.dark
+                        : Colors.onSurface.light
+                      ) : (
+                        globalData.appearance == .dark
+                        ? Colors.onSurface.dark
+                        : Colors.onSurface.light
+                      )
+                     ))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background {
+            Color(hex:
+                        globalData.appearance == .system
+                      ? (
+                        colorScheme == .dark
+                        ? Colors.Surface.dark
+                        : Colors.Surface.light
+                      ) : (
+                        globalData.appearance == .dark
+                        ? Colors.Surface.dark
+                        : Colors.Surface.light
+                      )
+                     )
+        }
+        .overlay(alignment: .topLeading) {
+            Button {
+                self.presentationMode.wrappedValue.dismiss()
+            } label: {
+                HStack {
+                    Image(systemName: "chevron.left")
+                    
+                    Text("Settings")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                }
+                .padding(.bottom, 8)
+                .padding(.horizontal, 20)
+                .foregroundColor(Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.onSurface.dark
+                                        : Colors.onSurface.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.onSurface.dark
+                                        : Colors.onSurface.light
+                                      )
+                                     ))
+                .frame(maxWidth: .infinity, maxHeight: (globalData.downloadedOnly || globalData.incognito ? 16 : 64) + 32, alignment: .bottomLeading)
+                .background {
+                    Color(hex:
+                                globalData.appearance == .system
+                              ? (
+                                colorScheme == .dark
+                                ? Colors.SurfaceContainer.dark
+                                : Colors.SurfaceContainer.light
+                              ) : (
+                                globalData.appearance == .dark
+                                ? Colors.SurfaceContainer.dark
+                                : Colors.SurfaceContainer.light
+                              )
+                             )
                 }
             }
-            .ignoresSafeArea()
         }
+        .overlay {
+            if showAppearanceSelector {
+                ZStack {
+                    Color.black.opacity(0.4)
+                    
+                    AppearanceSelector(Colors: Colors, showSelector: $showAppearanceSelector)
+                        .frame(width: 240)
+                }
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarTitle("", displayMode: .inline)
+        .navigationBarHidden(true)
+        .ignoresSafeArea()
     }
 }
 

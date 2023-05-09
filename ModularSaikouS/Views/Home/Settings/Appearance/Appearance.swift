@@ -42,7 +42,7 @@ struct Appearance: View {
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(0..<themes.count, id: \.self) {index in
-                                ThemePreview(bgColor1: colorScheme == .dark ? themes[index].dark.SurfaceContainer : themes[index].light.SurfaceContainer, bgColor2: colorScheme == .dark ? themes[index].dark.Surface : themes[index].light.Surface, bgColor3: colorScheme == .dark ? themes[index].dark.SurfaceContainerHigh : themes[index].light.SurfaceContainerHigh, accentColor1: colorScheme == .dark ? themes[index].dark.Primary : themes[index].light.Primary, accentColor2: colorScheme == .dark ? themes[index].dark.Secondary : themes[index].light.Secondary, accentColor3: colorScheme == .dark ? themes[index].dark.Primary : themes[index].light.Primary, accentColor4: colorScheme == .dark ? themes[index].dark.Tertiary : themes[index].light.Tertiary, accentColor5: colorScheme == .dark ? themes[index].dark.onPrimaryContainer : themes[index].light.onPrimaryContainer)
+                                ThemePreview(bgColor1: colorScheme == .dark ? themes[index].dark.SurfaceContainer : themes[index].light.SurfaceContainer, bgColor2: colorScheme == .dark ? themes[index].dark.Surface : themes[index].light.Surface, bgColor3: colorScheme == .dark ? themes[index].dark.Error : themes[index].light.Error, accentColor1: colorScheme == .dark ? themes[index].dark.Primary : themes[index].light.Primary, accentColor2: colorScheme == .dark ? themes[index].dark.Secondary : themes[index].light.Secondary, accentColor3: colorScheme == .dark ? themes[index].dark.Primary : themes[index].light.Primary, accentColor4: colorScheme == .dark ? themes[index].dark.Tertiary : themes[index].light.Tertiary, accentColor5: colorScheme == .dark ? themes[index].dark.onPrimaryContainer : themes[index].light.onPrimaryContainer)
                                     .frame(minWidth: 150, minHeight: 220)
                                     .overlay {
                                         Text(themes[index].dark.Primary)
@@ -240,67 +240,6 @@ struct Appearance: View {
                         
                     }
                     .padding(.horizontal, 20)
-                    
-                    HStack(spacing: 0) {
-                        // MARK: Primary
-                        VStack(alignment: .leading) {
-                            Text("Primary")
-                                .font(.title3)
-                                .fontWeight(.bold)
-                            
-                            ColorPicker("Primary", selection: .constant(Color(hex: Colors.Primary.dark)))
-                            ColorPicker("onPrimary", selection: .constant(Color(hex: Colors.onPrimary.dark)))
-                            ColorPicker("PrimaryContainer", selection: .constant(Color(hex: Colors.PrimaryContainer.dark)))
-                            ColorPicker("onPrimaryContainer", selection: .constant(Color(hex: Colors.onPrimaryContainer.dark)))
-                            ColorPicker("PrimaryFixed", selection: .constant(Color(hex: Colors.PrimaryFixed.dark)))
-                            ColorPicker("PrimaryFixedDim", selection: .constant(Color(hex: Colors.PrimaryFixedDim.dark)))
-                            ColorPicker("onPrimaryFixed", selection: .constant(Color(hex: Colors.onPrimaryFixed.dark)))
-                            ColorPicker("onPrimaryFixedVariant", selection: .constant(Color(hex: Colors.onPrimaryFixedVariant.dark)))
-                        }
-                        .frame(minWidth: proxy.size.width - 40)
-                        .padding(.horizontal, 20)
-                        .tag(0)
-                        
-                        // MARK: Secondary
-                        VStack(alignment: .leading) {
-                            Text("Secondary")
-                                .font(.title3)
-                                .fontWeight(.bold)
-                            
-                            ColorPicker("Secondary", selection: .constant(Color(hex: Colors.Secondary.dark)))
-                            ColorPicker("onSecondary", selection: .constant(Color(hex: Colors.onSecondary.dark)))
-                            ColorPicker("SecondaryContainer", selection: .constant(Color(hex: Colors.SecondaryContainer.dark)))
-                            ColorPicker("onSecondaryContainer", selection: .constant(Color(hex: Colors.onSecondaryContainer.dark)))
-                            ColorPicker("SecondaryFixed", selection: .constant(Color(hex: Colors.SecondaryFixed.dark)))
-                            ColorPicker("SecondaryFixedDim", selection: .constant(Color(hex: Colors.SecondaryFixedDim.dark)))
-                            ColorPicker("onSecondaryFixed", selection: .constant(Color(hex: Colors.onSecondaryFixed.dark)))
-                            ColorPicker("onSecondaryFixedVariant", selection: .constant(Color(hex: Colors.onSecondaryFixedVariant.dark)))
-                        }
-                        .frame(minWidth: proxy.size.width - 40)
-                        .padding(.horizontal, 20)
-                        .tag(1)
-                        
-                        // MARK: Tertiary
-                        VStack(alignment: .leading) {
-                            Text("Tertiary")
-                                .font(.title3)
-                                .fontWeight(.bold)
-                            
-                            ColorPicker("Tertiary", selection: .constant(Color(hex: Colors.Tertiary.dark)))
-                            ColorPicker("onTertiary", selection: .constant(Color(hex: Colors.onTertiary.dark)))
-                            ColorPicker("TertiaryContainer", selection: .constant(Color(hex: Colors.TertiaryContainer.dark)))
-                            ColorPicker("onTertiaryContainer", selection: .constant(Color(hex: Colors.onTertiaryContainer.dark)))
-                            ColorPicker("TertiaryFixed", selection: .constant(Color(hex: Colors.TertiaryFixed.dark)))
-                            ColorPicker("TertiaryFixedDim", selection: .constant(Color(hex: Colors.TertiaryFixedDim.dark)))
-                            ColorPicker("onTertiaryFixed", selection: .constant(Color(hex: Colors.onTertiaryFixed.dark)))
-                            ColorPicker("onTertiaryFixedVariant", selection: .constant(Color(hex: Colors.onTertiaryFixedVariant.dark)))
-                        }
-                        .frame(minWidth: proxy.size.width - 40)
-                        .padding(.horizontal, 20)
-                        .tag(2)
-                    }
-                    .offset(x: -proxy.size.width * Double(tab))
-                    .frame(maxWidth: proxy.size.width, maxHeight: .infinity, alignment: .topLeading)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }

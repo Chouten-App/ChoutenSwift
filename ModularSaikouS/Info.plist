@@ -1,41 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeMIMETypes</key>
-			<array>
-				<string>application/json</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>JSON Document</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>public.json</string>
-			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-	</array>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Fonts/trebuchet-ms.ttf</string>
-		<string>Fonts/trebuchet-ms-italic.ttf</string>
-		<string>Fonts/trebuchet-ms-bold.ttf</string>
-	</array>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>audio</string>
-	</array>
-	<key>UTExportedTypeDeclarations</key>
-	<array/>
-</dict>
+    <dict>
+        <key>LSSupportsOpeningDocumentsInPlace</key>
+        <false/>
+        <key>CFBundleDocumentTypes</key>
+        <array>
+            <dict>
+                <key>CFBundleTypeName</key>
+                <string>Chouten Module</string>
+                <key>LSHandlerRank</key>
+                <string>Owner</string>
+                <key>LSItemContentTypes</key>
+                <array>
+                    <string>com.chouten.module</string>
+                </array>
+            </dict>
+            <dict>
+                <key>CFBundleTypeName</key>
+                <string>Chouten Theme</string>
+                <key>LSHandlerRank</key>
+                <string>Owner</string>
+                <key>LSItemContentTypes</key>
+                <array>
+                    <string>com.chouten.theme</string>
+                </array>
+            </dict>
+        </array>
+        
+        <key>UIAppFonts</key>
+        <array>
+            <string>Fonts/trebuchet-ms.ttf</string>
+            <string>Fonts/trebuchet-ms-italic.ttf</string>
+            <string>Fonts/trebuchet-ms-bold.ttf</string>
+        </array>
+        <key>UIBackgroundModes</key>
+        <array>
+            <string>audio</string>
+        </array>
+        <key>UTExportedTypeDeclarations</key>
+            <array>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.zip-archive</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>Chouten Module</string>
+                    <key>UTTypeIconFiles</key>
+                    <array/>
+                    <key>UTTypeIdentifier</key>
+                    <string>com.chouten.module</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>module</string>
+                        </array>
+                    </dict>
+                </dict>
+                <dict>
+                    <key>UTTypeConformsTo</key>
+                    <array>
+                        <string>public.json</string>
+                    </array>
+                    <key>UTTypeDescription</key>
+                    <string>Chouten Theme</string>
+                    <key>UTTypeIconFiles</key>
+                    <array/>
+                    <key>UTTypeIdentifier</key>
+                    <string>com.chouten.theme</string>
+                    <key>UTTypeTagSpecification</key>
+                    <dict>
+                        <key>public.filename-extension</key>
+                        <array>
+                            <string>theme</string>
+                        </array>
+                    </dict>
+                </dict>
+            </array>
+    </dict>
 </plist>

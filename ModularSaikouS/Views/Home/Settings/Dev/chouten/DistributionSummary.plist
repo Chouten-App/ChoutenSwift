@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ModularSaikouS.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>4</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>093C62D636032021696293DB00FC91DE337832D9</string>
+				<key>dateExpires</key>
+				<string>25.04.24</string>
+				<key>type</key>
+				<string>Cloud Managed Apple Distribution</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>A9QQBWPHB7.com.inumaki.Chouten</string>
+				<key>beta-reports-active</key>
+				<true/>
+				<key>com.apple.developer.team-identifier</key>
+				<string>A9QQBWPHB7</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>ModularSaikouS.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>f5e5b166-0e96-4781-9f7a-58c82985c7e0</string>
+				<key>dateExpires</key>
+				<string>25.04.24</string>
+				<key>name</key>
+				<string>iOS Team Store Provisioning Profile: com.inumaki.Chouten</string>
+			</dict>
+			<key>symbols</key>
+			<true/>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>A9QQBWPHB7</string>
+				<key>name</key>
+				<string>Marcel Heinrichs</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>0.1</string>
+		</dict>
+	</array>
+</dict>
+</plist>

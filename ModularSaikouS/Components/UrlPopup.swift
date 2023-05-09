@@ -8,10 +8,14 @@
 import SwiftUI
 
 struct UrlPopup: View {
+    @StateObject var Colors: DynamicColors
     @Binding var showPopup: Bool
     @State var fileUrl: String = ""
     
     @FocusState private var isFocused: Bool
+    
+    @StateObject var globalData = GlobalData.shared
+    @Environment(\.colorScheme) var colorScheme
     
     func importModule() {
         guard let url = URL(string: fileUrl) else {
@@ -47,26 +51,26 @@ struct UrlPopup: View {
             
             TextField("", text: $fileUrl)
                 .focused($isFocused)
-            .padding(.vertical, 10)
-            .padding(.horizontal, 16)
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(lineWidth: 1)
-                    .fill(isFocused ? Color("a1-300") : Color("a2-100"))
-            }
-            .overlay(alignment: .leading) {
-                Text("Import Module from URL")
-                    .font(isFocused ? .caption : .subheadline)
-                    .background {
-                        Color("n2-700")
-                    }
-                    .offset(y: isFocused ? -22 : 0)
-                    .padding(.horizontal, 16)
-                    .onTapGesture {
-                        isFocused = true
-                    }
-                    .animation(.easeInOut, value: isFocused)
-            }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 16)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(lineWidth: 1)
+                        .fill(isFocused ? Color("a1-300") : Color("a2-100"))
+                }
+                .overlay(alignment: .leading) {
+                    Text("Import Module from URL")
+                        .font(isFocused ? .caption : .subheadline)
+                        .background {
+                            Color("n2-700")
+                        }
+                        .offset(y: isFocused ? -22 : 0)
+                        .padding(.horizontal, 16)
+                        .onTapGesture {
+                            isFocused = true
+                        }
+                        .animation(.easeInOut, value: isFocused)
+                }
             
             HStack {
                 Spacer()
@@ -87,8 +91,32 @@ struct UrlPopup: View {
             }
         }
         .padding(20)
-        .foregroundColor(Color("a2-100"))
-        .background(Color("n2-700"))
+        .foregroundColor(Color(hex:
+                                globalData.appearance == .system
+                              ? (
+                                colorScheme == .dark
+                                ? Colors.onSurface.dark
+                                : Colors.onSurface.light
+                              ) : (
+                                globalData.appearance == .dark
+                                ? Colors.onSurface.dark
+                                : Colors.onSurface.light
+                              )
+                             ))
+        .background(
+            Color(hex:
+                    globalData.appearance == .system
+                  ? (
+                    colorScheme == .dark
+                    ? Colors.SurfaceContainer.dark
+                    : Colors.SurfaceContainer.light
+                  ) : (
+                    globalData.appearance == .dark
+                    ? Colors.SurfaceContainer.dark
+                    : Colors.SurfaceContainer.light
+                  )
+                 )
+        )
         .frame(maxWidth: 260, alignment: .leading)
         .cornerRadius(12)
     }
@@ -97,9 +125,9 @@ struct UrlPopup: View {
 struct UrlPopup_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            UrlPopup(showPopup: .constant(true))
+            UrlPopup(Colors: DynamicColors(), showPopup: .constant(true))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("n1-900"))
+        .background(Color(hex: DynamicColors().Surface.dark))
     }
 }

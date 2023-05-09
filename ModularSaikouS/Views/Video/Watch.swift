@@ -51,10 +51,14 @@ struct WatchPage: View {
     let url: String
     let number: Int
     @State var htmlString = ""
+    @State var jsString = ""
     @State var nextUrl: String = ""
     @State var mediaConsumeData: VideoData = VideoData(sources: [], subtitles: [], skips: [])
     @State var mediaSubtitleLink: String = ""
     @StateObject var globalData = GlobalData.shared
+    @StateObject var moduleManager = ModuleManager.shared
+    
+    @State var returnData: ReturnedData? = nil
     
     @State var currentJsIndex = 0
     
@@ -83,64 +87,252 @@ struct WatchPage: View {
             view.prefersHomeIndicatorAutoHidden(true)
         }
         .background {
-            if htmlString.count > 0 {
-                WebView(htmlString: htmlString, javaScript: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.code, requestType: "mediaServers", enableExternalScripts: globalData.module!.code[globalData.module!.subtypes[0]]!["mediaConsume"]![currentJsIndex].javascript.allowExternalScripts, nextUrl: $nextUrl, mediaConsumeData: $mediaConsumeData, mediaConsumeBookData: .constant([]))
+            if htmlString.count > 0 && returnData != nil {
+                WebView(htmlString: htmlString, javaScript: jsString, requestType: "mediaServers", enableExternalScripts: returnData!.allowExternalScripts, nextUrl: $nextUrl, mediaConsumeData: $mediaConsumeData, mediaConsumeBookData: .constant([]))
                     .hidden()
                     .frame(maxWidth: 0, maxHeight: 0)
             }
         }
         .onAppear {
-            print("WATCH")
-            Task {
-                do {
-                    let (data, response) = try await URLSession.shared.data(from: URL(string: url)!)
-                    
-                    guard let httpResponse = response as? HTTPURLResponse,
-                          httpResponse.statusCode == 200,
-                          let html = String(data: data, encoding: .utf8) else {
-                        print("Invalid response")
-                        return
-                    }
-                    
-                    htmlString = "<div id=\"json-result\" data-json=\"\(html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'"))\">UNRELATED</div>"
-                    print(htmlString)
-                } catch let error {
-                    print(error)
-                }
+            if mediaConsumeData.sources.count > 0 {
+                return
             }
-            print("why")
-        }
-        .onChange(of: nextUrl) { _ in
-            if nextUrl.count > 0 {
+            htmlString = ""
+            if globalData.newModule != nil {
+                //globalData.isLoading = true
                 htmlString = ""
-                Task {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                        Task {
+                
+                // moduleManager.selectedModuleName
+                
+                // get search js file data
+                if returnData == nil {
+                    returnData = moduleManager.getJsForType("media", num: currentJsIndex)
+                    jsString = returnData!.js
+                }
+                
+                print(returnData)
+                
+                
+                if returnData != nil {
+                    Task {
+                        
+                        if returnData!.request != nil {
+                            let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url)!)
                             do {
-                                let (data, response) = try await URLSession.shared.data(from: URL(string: nextUrl)!)
-                                
                                 guard let httpResponse = response as? HTTPURLResponse,
                                       httpResponse.statusCode == 200,
                                       let html = String(data: data, encoding: .utf8) else {
                                     print("Invalid response")
+                                    let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url)", error: true, action: nil)]
+                                    NotificationCenter.default
+                                        .post(name:           NSNotification.Name("floaty"),
+                                              object: nil, userInfo: data)
                                     return
                                 }
-                                htmlString = """
-                                <!DOCTYPE html>
-                                  <html>
-                                    <head>
-                                      <title>My Web Page</title>
-                                      <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-                                    </head>
-                                    <body>
-                                                                      <div id=\"json-result\" data-json=\"\(html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'"))\">UNRELATED</div>
-                                    </body>
-                                  </html>
-                                """
-                                currentJsIndex += 1
-                                print(htmlString)
+                                if returnData!.usesApi {
+                                    print("API!!!")
+                                    
+                                    
+                                    let regexPattern = "&#\\d+;"
+                                    let regex = try! NSRegularExpression(pattern: regexPattern)
+                                    
+                                    let range = NSRange(html.startIndex..., in: html)
+                                    
+                                    let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
+                                    
+                                    let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
+                                    //print(cleaned)
+                                    htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                } else {
+                                    htmlString = html
+                                }
                             } catch let error {
-                                print(error)
+                                print(error.localizedDescription)
+                            }
+                        } else {
+                            let (data, response) = try await URLSession.shared.data(from: URL(string: self.url)!)
+                            
+                            print(self.url)
+                            do {
+                                guard let httpResponse = response as? HTTPURLResponse,
+                                      httpResponse.statusCode == 200,
+                                      let html = String(data: data, encoding: .utf8) else {
+                                    print("Invalid response")
+                                    let data = ["data": FloatyData(message: "Failed to load data from \(self.url)", error: true, action: nil)]
+                                    NotificationCenter.default
+                                        .post(name:           NSNotification.Name("floaty"),
+                                              object: nil, userInfo: data)
+                                    return
+                                }
+                                if returnData!.usesApi {
+                                    print("API!!!")
+                                    
+                                    
+                                    let regexPattern = "&#\\d+;"
+                                    let regex = try! NSRegularExpression(pattern: regexPattern)
+                                    
+                                    let range = NSRange(html.startIndex..., in: html)
+                                    
+                                    let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
+                                    
+                                    let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
+                                    //print(cleaned)
+                                    htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                } else {
+                                    htmlString = html
+                                }
+                            } catch let error {
+                                print(error.localizedDescription)
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+        .onChange(of: nextUrl) { _ in
+            if mediaConsumeData.sources.count > 0 {
+                return
+            }
+            if nextUrl.count > 0 {
+                htmlString = ""
+                Task {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        if globalData.newModule != nil {
+                            //globalData.isLoading = true
+                            
+                            // moduleManager.selectedModuleName
+                            
+                            if currentJsIndex < moduleManager.getJsCount("media") {
+                                if currentJsIndex == 0 {
+                                    currentJsIndex = 2
+                                } else {
+                                    currentJsIndex += 1
+                                }
+                            }
+                            
+                            print("index is \(currentJsIndex)")
+                            
+                            // get search js file data
+                            returnData = moduleManager.getJsForType("media", num: currentJsIndex)
+                            
+                            if returnData != nil {
+                                jsString = returnData!.js
+                                
+                                print(returnData)
+                                Task {
+                                    if returnData!.request != nil {
+                                        let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url)!)
+                                        do {
+                                            guard let httpResponse = response as? HTTPURLResponse,
+                                                  httpResponse.statusCode == 200,
+                                                  let html = String(data: data, encoding: .utf8) else {
+                                                print("Invalid response")
+                                                let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url)", error: true, action: nil)]
+                                                NotificationCenter.default
+                                                    .post(name:           NSNotification.Name("floaty"),
+                                                          object: nil, userInfo: data)
+                                                return
+                                            }
+                                            if returnData!.usesApi {
+                                                print("API!!!")
+                                                
+                                                
+                                                let regexPattern = "&#\\d+;"
+                                                let regex = try! NSRegularExpression(pattern: regexPattern)
+                                                
+                                                let range = NSRange(html.startIndex..., in: html)
+                                                
+                                                let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
+                                                
+                                                let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
+                                                //print(cleaned)
+                                                
+                                                if returnData!.imports.isNotEmpty {
+                                                    var scripts = ""
+                                                    
+                                                    for imp in returnData!.imports {
+                                                        scripts.append("<script src=\"\(imp)\"></script>")
+                                                    }
+                                                    
+                                                    htmlString = """
+                                                    <!DOCTYPE html>
+                                                      <html>
+                                                        <head>
+                                                          <title>My Web Page</title>
+                                                          \(scripts)
+                                                        </head>
+                                                        <body>
+                                                            <div id=\"json-result\" data-json=\"\(html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'"))\">UNRELATED</div>
+                                                        </body>
+                                                      </html>
+                                                    """
+                                                } else {
+                                                    htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                                }
+                                            } else {
+                                                htmlString = html
+                                            }
+                                        } catch let error {
+                                            print(error.localizedDescription)
+                                        }
+                                    } else {
+                                        let (data, response) = try await URLSession.shared.data(from: URL(string: nextUrl)!)
+                                        do {
+                                            guard let httpResponse = response as? HTTPURLResponse,
+                                                  httpResponse.statusCode == 200,
+                                                  let html = String(data: data, encoding: .utf8) else {
+                                                print("Invalid response")
+                                                let data = ["data": FloatyData(message: "Failed to load data from \(nextUrl)", error: true, action: nil)]
+                                                NotificationCenter.default
+                                                    .post(name:           NSNotification.Name("floaty"),
+                                                          object: nil, userInfo: data)
+                                                return
+                                            }
+                                            if returnData!.usesApi {
+                                                print("API!!!")
+                                                
+                                                
+                                                let regexPattern = "&#\\d+;"
+                                                let regex = try! NSRegularExpression(pattern: regexPattern)
+                                                
+                                                let range = NSRange(html.startIndex..., in: html)
+                                                
+                                                let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
+                                                
+                                                let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
+                                                //print(cleaned)
+                                                if returnData!.imports.isNotEmpty {
+                                                    var scripts = ""
+                                                    
+                                                    for imp in returnData!.imports {
+                                                        scripts.append("<script src=\"\(imp)\"></script>")
+                                                    }
+                                                    
+                                                    htmlString = """
+                                                    <!DOCTYPE html>
+                                                      <html>
+                                                        <head>
+                                                          <title>My Web Page</title>
+                                                          \(scripts)
+                                                        </head>
+                                                        <body>
+                                                            <div id=\"json-result\" data-json=\"\(html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'"))\">UNRELATED</div>
+                                                        </body>
+                                                      </html>
+                                                    """
+                                                } else {
+                                                    htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                                }
+                                            } else {
+                                                htmlString = html
+                                            }
+                                        } catch let error {
+                                            print(error.localizedDescription)
+                                        }
+                                    }
+                                    
+                                }
                             }
                         }
                     }
@@ -148,9 +340,6 @@ struct WatchPage: View {
             } else {
                 print("hm")
             }
-        }
-        .onDisappear {
-            print("bye bye")
         }
     }
 }

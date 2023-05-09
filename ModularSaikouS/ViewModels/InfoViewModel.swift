@@ -9,5 +9,7 @@ import Foundation
 
 final class InfoViewModel: ObservableObject {
     @Published var htmlString: String = ""
+    @Published var jsString: String = ""
+    @Published var allowExternalScripts: Bool = false
     @Published var loadingMedia: Bool = false
 }

@@ -624,7 +624,7 @@ struct Reader: View {
                         Spacer()
                             .frame(maxWidth: 12)
                         
-                        if globalData.infoData != nil {
+                        if globalData.infoData != nil && globalData.infoData!.mediaList.count > 0 && selectedMediaIndex < globalData.infoData!.mediaList[0].count {
                             VStack {
                                 Text("\(globalData.infoData!.mediaList[0][selectedMediaIndex].number): \(globalData.infoData!.mediaList[0][selectedMediaIndex].title ?? "")")
                                     .bold()

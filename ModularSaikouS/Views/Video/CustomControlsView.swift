@@ -11,6 +11,7 @@ import SwiftUIFontIcon
 import SwiftWebVTT
 import ActivityIndicatorView
 import Kingfisher
+import PureSwiftUI
 
 extension UIFont {
     static func custom(_ name: String, size: CGFloat) -> UIFont {
@@ -140,8 +141,10 @@ struct CustomControlsView: View {
                 // ui
                 ZStack(alignment: .bottomTrailing) {
                     HStack {
+                        Spacer()
+                        
                         Color.clear
-                            .frame(width: proxy.size.width / 3, height: 300)
+                            .frame(width: proxy.size.width / 6, height: 200)
                             .contentShape(Rectangle())
                             .gesture(
                                 TapGesture(count: 2)
@@ -152,15 +155,21 @@ struct CustomControlsView: View {
                                                 )
                             )
                         
+                        Spacer()
+                        
+                        
                         Color.clear
-                            .frame(width: proxy.size.width / 3, height: 300)
+                            .frame(width: proxy.size.width / 6, height: 200)
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 showUI = false
                             }
                         
+                        Spacer()
+                        
+                        
                         Color.clear
-                            .frame(width: proxy.size.width / 3, height: 300)
+                            .frame(width: proxy.size.width / 6, height: 200)
                             .contentShape(Rectangle())
                             .gesture(
                                 TapGesture(count: 2)
@@ -170,6 +179,8 @@ struct CustomControlsView: View {
                                         .onEnded({showUI = false})
                                                 )
                             )
+                        
+                        Spacer()
                         
                     }
                     
@@ -198,7 +209,7 @@ struct CustomControlsView: View {
                                     }
                                 
                                 
-                                Text("Skip Opening")
+                                Text("Skip \(streamData.skips[0].type)")
                                     .font(.system(size: 16, weight: .heavy))
                                     .foregroundColor(.white)
                                     .blendMode(BlendMode.difference)
@@ -231,41 +242,43 @@ struct CustomControlsView: View {
                     VStack {
                         // top part
                         HStack {
-                            Button(action: {
+                            Button {
                                 self.presentationMode.wrappedValue.dismiss()
-                            }, label: {
+                            } label: {
                                 ZStack {
                                     Image(systemName: "chevron.left")
                                         .font(.system(size: 24, weight: .bold))
                                         .foregroundColor(.white)
                                 }
                                 .fixedSize()
-                            })
+                            }
                             
                             Spacer()
                                 .frame(maxWidth: 12)
                             
                             
-                            VStack {
-                                Text("\(String(globalData.infoData!.mediaList[0][number].number)): \(globalData.infoData!.mediaList[0][number].title ?? "")")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 16))
-                                    .bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                Text("\(globalData.infoData!.titles.primary)")
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .font(.system(size: 14))
-                                    .bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            if globalData.infoData != nil {
+                                VStack {
+                                    Text("\(String(globalData.infoData!.mediaList.count > 0 && number < globalData.infoData!.mediaList[0].count ? globalData.infoData!.mediaList[0][number].number : 0)): \(globalData.infoData!.mediaList.count > 0 && number < globalData.infoData!.mediaList[0].count ? (globalData.infoData!.mediaList[0][number].title ?? "") : "")")
+                                        .foregroundColor(.white)
+                                        .font(.system(size: 16))
+                                        .bold()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                    Text("\(globalData.infoData!.titles.primary)")
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .font(.system(size: 14))
+                                        .bold()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
-                            .frame(maxWidth: .infinity, alignment: .topLeading)
                             
                             Spacer()
                             
                             VStack(alignment: .trailing) {
                                 
-                                Text(globalData.module?.name ?? "")
+                                Text(globalData.newModule?.name ?? "")
                                     .foregroundColor(.white)
                                     .font(.system(size: 16))
                                     .bold()

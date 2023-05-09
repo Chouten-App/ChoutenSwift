@@ -13,7 +13,7 @@ struct DecodableResult<T: Codable>: Codable {
     let nextUrl: String?
 }
 
-struct Servers: Codable {
+struct Server: Codable {
     let name: String
     let url: String
 }
@@ -147,6 +147,7 @@ struct WebView: UIViewRepresentable {
                             do {
                                 let searchResults = try decoder.decode([SearchData].self, from: data!)
                                 globalData.searchResults = searchResults
+                                globalData.isLoading = false
                             } catch {
                                 print(error.localizedDescription)
                             }
@@ -177,13 +178,16 @@ struct WebView: UIViewRepresentable {
                                 print(info)
                                 globalData.infoData?.mediaList[0] = info
                                 globalData.doneInfo = false
+                                globalData.mediaFailedToLoad = false
+                                
                                 return
                             } catch {
                                 print(error.localizedDescription)
+                                globalData.mediaFailedToLoad = true
                             }
                         } else if requestType == "mediaServers" {
                             do {
-                                let info = try decoder.decode(DecodableResult<[Servers]>.self, from: data!)
+                                let info = try decoder.decode(DecodableResult<[Server]>.self, from: data!)
                                 print(info)
                                 nextUrl = info.nextUrl ?? ""
                                 return
@@ -212,8 +216,6 @@ struct WebView: UIViewRepresentable {
                         }
                     }
                 }
-                
-                
             }
         }
         

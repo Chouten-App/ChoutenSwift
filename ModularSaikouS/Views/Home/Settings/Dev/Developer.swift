@@ -14,6 +14,8 @@ struct Developer: View {
     @Environment(\.presentationMode) var presentationMode
     
     @StateObject var globalData = GlobalData.shared
+    @FetchRequest(sortDescriptors: []) var userInfo: FetchedResults<UserInfo>
+    @Environment(\.managedObjectContext) var moc
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -30,13 +32,156 @@ struct Developer: View {
             }
             
             VStack(alignment: .center) {
-                Spacer()
+                Button {
+                    for userData in userInfo {
+                        moc.delete(userData)
+                    }
+                    do {
+                        try moc.save()
+                    } catch {
+                        // handle the Core Data error
+                    }
+                } label: {
+                    Text("Clear CoreData")
+                        .fontWeight(.bold)
+                        .foregroundColor(
+                            Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.onError.dark
+                                        : Colors.onError.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.onError.dark
+                                        : Colors.onError.light
+                                      )
+                                     )
+                        )
+                        .frame(maxWidth: .infinity, maxHeight: 40)
+                        .background {
+                            
+                                Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.Error.dark
+                                            : Colors.Error.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.Error.dark
+                                            : Colors.Error.light
+                                          )
+                                         )
+                                .cornerRadius(12)
+                        }
+                }
                 
-                Text("Nothing to see here yet .-.")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                Button {
+                    if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                        do {
+                            let directoryContents = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [])
+                            let jsonFiles = directoryContents.filter { $0.pathExtension == "json" }
+                            for fileURL in jsonFiles {
+                                try FileManager.default.removeItem(at: fileURL)
+                            }
+                        } catch {
+                            print("Error getting directory contents: \(error.localizedDescription)")
+                        }
+                    }
+                } label: {
+                    Text("Delete Installed Modules")
+                        .fontWeight(.bold)
+                        .foregroundColor(
+                            Color(hex:
+                                        globalData.appearance == .system
+                                      ? (
+                                        colorScheme == .dark
+                                        ? Colors.onError.dark
+                                        : Colors.onError.light
+                                      ) : (
+                                        globalData.appearance == .dark
+                                        ? Colors.onError.dark
+                                        : Colors.onError.light
+                                      )
+                                     )
+                        )
+                        .frame(maxWidth: .infinity, maxHeight: 40)
+                        .background {
+                            
+                                Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.Error.dark
+                                            : Colors.Error.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.Error.dark
+                                            : Colors.Error.light
+                                          )
+                                         )
+                                .cornerRadius(12)
+                        }
+                }
                 
-                Spacer()
+                Button {
+                    if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                        do {
+                            let directoryContents = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [])
+                            let jsonFiles = directoryContents.filter { $0.pathExtension == "json" }
+                            for fileURL in jsonFiles {
+                                let fileData = try Data(contentsOf: fileURL)
+                                print(fileData)
+                                // Do something with the file data
+                                do {
+                                    let decoded = try JSONDecoder().decode(OLDModule.self, from: fileData)
+                                    globalData.availableModulesOLD.append(decoded)
+                                    globalData.availableJsons.append(fileURL)
+                                } catch let error {
+                                    print(error.localizedDescription)
+                                }
+                            }
+                        } catch {
+                            print("Error getting directory contents: \(error.localizedDescription)")
+                        }
+                    }
+                    if userInfo.count > 0 {
+                        Colors.getFromJson(fileName: userInfo[0].selectedTheme ?? "theme")
+                        
+                        print(userInfo[0])
+                        
+                        if userInfo[0].selectedAppearance == 0 {
+                            globalData.appearance = .light
+                        } else if userInfo[0].selectedAppearance == 1 {
+                            globalData.appearance = .dark
+                        } else {
+                            globalData.appearance = .system
+                        }
+                        
+                        print(globalData.appearance)
+                        
+                        let selectedModuleId = userInfo[0].selectedModuleId
+                        
+                        let temp = globalData.availableModulesOLD.filter { $0.id == selectedModuleId }
+                        if temp.count > 0 {
+                            globalData.module = temp[0]
+                        }
+                    }
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Force Reload Modules")
+                                .fontWeight(.semibold)
+                            Text("Reruns the home onAppear Code")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .opacity(0.7)
+                        }
+                        
+                        Spacer()
+                    }
+                }
             }
             .frame(maxWidth: .infinity)
         }
