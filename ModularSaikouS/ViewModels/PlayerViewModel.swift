@@ -76,7 +76,6 @@ final class PlayerViewModel: ObservableObject {
 
                     // Store the seeked time in the seekedTime variable
                     self.seekedTime = CMTime(seconds: self.currentTime, preferredTimescale: 1)
-                    print(self.seekedTime ?? "")
 
                     // Start playing the video
                     self.player.play()
@@ -127,7 +126,6 @@ final class PlayerViewModel: ObservableObject {
                 switch sts {
                 case .failed:
                     self?.hasError = true
-                    print(self?.player.error ?? "")
                 case .readyToPlay:
                     self?.hasError = false
                 case .unknown:

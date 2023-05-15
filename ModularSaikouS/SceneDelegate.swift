@@ -15,7 +15,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         
         if let urlContext = connectionOptions.urlContexts.first {
-            print(urlContext.url)
             handleOpenURL(urlContext.url)
         }
         
@@ -24,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let window = UIWindow(windowScene: windowScene)
             window.rootViewController = HostingController(
                 wrappedView:
-                    Home()
+                    OpeningView()
                         .environment(\.managedObjectContext, dataController.container.viewContext)
             )
             self.window = window
@@ -67,21 +66,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func handleOpenURL(_ url: URL) {
-        print(url)
         NotificationCenter.default.post(name: .sharedJson, object: nil, userInfo: ["url": url])
     }
     
     @objc func handleSharedJson(_ notification: Notification) {
         guard notification.userInfo?["url"] is URL else { return }
-        
-        print(notification.userInfo?["url"])
-        
         if let shouldOpenApp = notification.userInfo?["openApp"] as? Bool, shouldOpenApp {
             // Open the app
             if let window = self.window {
                 let hostingController = HostingController(
                     wrappedView:
-                        Home()
+                        OpeningView()
                             .environment(\.managedObjectContext, dataController.container.viewContext)
                 )
                 window.rootViewController = hostingController

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Appearance: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @State var themes: [JSONColors] = []
     @State var themesFileNames: [String] = []
@@ -33,7 +33,7 @@ struct Appearance: View {
                             Image(systemName: "chevron.left")
                         }
                         
-                        Text("Appearance")
+                        Text("theme-navigation-title")
                             .font(.title)
                             .fontWeight(.semibold)
                     }
@@ -50,7 +50,6 @@ struct Appearance: View {
                                     .onTapGesture {
                                         Colors.setFromModel(jsonColors: themes[index])
                                         if userInfo.count > 0 {
-                                            print("updating")
                                             do {
                                                 userInfo[0].selectedTheme = themesFileNames[index]
                                                 try moc.save()
@@ -58,7 +57,6 @@ struct Appearance: View {
                                                 print(error)
                                             }
                                         } else {
-                                            print("adding")
                                             do {
                                                 let info = UserInfo(context: moc)
                                                 info.selectedTheme = themesFileNames[index]
@@ -72,173 +70,6 @@ struct Appearance: View {
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: 240)
-                    .padding(.horizontal, 20)
-                    
-                    // Theme Editor
-                    
-                    Text("Editor")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .padding(.horizontal, 20)
-                    
-                    HStack(spacing: 4) {
-                        Text("Primary")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        (colorScheme == .dark
-                                        ? (tab == 0 ? Colors.onPrimary.dark : Colors.onPrimaryContainer.dark)
-                                        : (tab == 0 ? Colors.onPrimary.light : Colors.onPrimaryContainer.light))
-                                      ) : (
-                                        (globalData.appearance == .dark
-                                        ? (tab == 0 ? Colors.onPrimary.dark : Colors.onPrimaryContainer.dark)
-                                        : (tab == 0 ? Colors.onPrimary.light : Colors.onPrimaryContainer.light))
-                                      )
-                                     )
-                            )
-                            .padding(4)
-                            .frame(width: proxy.size.width / 3 - 20)
-                            .background{
-                                if tab == 0 {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(
-                                            Color(hex:
-                                                    globalData.appearance == .system
-                                                  ? (
-                                                    colorScheme == .dark
-                                                    ? Colors.onPrimaryContainer.dark
-                                                    : Colors.onPrimaryContainer.light
-                                                  ) : (
-                                                    globalData.appearance == .dark
-                                                    ? Colors.onPrimaryContainer.dark
-                                                    : Colors.onPrimaryContainer.light
-                                                  )
-                                                 )
-                                        )
-                                        .matchedGeometryEffect(id: "TABS", in: animation)
-                                }
-                            }
-                            .onTapGesture {
-                                withAnimation(.spring(response: 0.3)) {
-                                    tab = 0
-                                }
-                            }
-                            .padding(.leading, 4)
-                        
-                        Text("Secondary")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        (colorScheme == .dark
-                                        ? (tab == 1 ? Colors.onPrimary.dark : Colors.onPrimaryContainer.dark)
-                                        : (tab == 1 ? Colors.onPrimary.light : Colors.onPrimaryContainer.light))
-                                      ) : (
-                                        (globalData.appearance == .dark
-                                        ? (tab == 1 ? Colors.onPrimary.dark : Colors.onPrimaryContainer.dark)
-                                        : (tab == 1 ? Colors.onPrimary.light : Colors.onPrimaryContainer.light))
-                                      )
-                                     )
-                            )
-                            .padding(4)
-                            .frame(width: proxy.size.width / 3 - 20)
-                            .background{
-                                if tab == 1 {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(
-                                            Color(hex:
-                                                    globalData.appearance == .system
-                                                  ? (
-                                                    colorScheme == .dark
-                                                    ? Colors.onPrimaryContainer.dark
-                                                    : Colors.onPrimaryContainer.light
-                                                  ) : (
-                                                    globalData.appearance == .dark
-                                                    ? Colors.onPrimaryContainer.dark
-                                                    : Colors.onPrimaryContainer.light
-                                                  )
-                                                 )
-                                        )
-                                        .matchedGeometryEffect(id: "TABS", in: animation)
-                                }
-                            }
-                            .onTapGesture {
-                                withAnimation(.spring(response: 0.3)) {
-                                    tab = 1
-                                }
-                            }
-                        
-                        Text("Tertiary")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        (colorScheme == .dark
-                                        ? (tab == 2 ? Colors.onPrimary.dark : Colors.onPrimaryContainer.dark)
-                                        : (tab == 2 ? Colors.onPrimary.light : Colors.onPrimaryContainer.light))
-                                      ) : (
-                                        (globalData.appearance == .dark
-                                        ? (tab == 2 ? Colors.onPrimary.dark : Colors.onPrimaryContainer.dark)
-                                        : (tab == 2 ? Colors.onPrimary.light : Colors.onPrimaryContainer.light))
-                                      )
-                                     )
-                            )
-                            .padding(4)
-                            .frame(width: proxy.size.width / 3 - 20)
-                            .background{
-                                if tab == 2 {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(
-                                            Color(hex:
-                                                    globalData.appearance == .system
-                                                  ? (
-                                                    colorScheme == .dark
-                                                    ? Colors.onPrimaryContainer.dark
-                                                    : Colors.onPrimaryContainer.light
-                                                  ) : (
-                                                    globalData.appearance == .dark
-                                                    ? Colors.onPrimaryContainer.dark
-                                                    : Colors.onPrimaryContainer.light
-                                                  )
-                                                 )
-                                        )
-                                        .matchedGeometryEffect(id: "TABS", in: animation)
-                                }
-                            }
-                            .onTapGesture {
-                                withAnimation(.spring(response: 0.3)) {
-                                    tab = 2
-                                }
-                            }
-                            .padding(.trailing, 4)
-                    }
-                    .padding(4)
-                    .frame(maxWidth: proxy.size.width - 40)
-                    .background{
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        colorScheme == .dark
-                                        ? Colors.SurfaceContainer.dark
-                                        : Colors.SurfaceContainer.light
-                                      ) : (
-                                        globalData.appearance == .dark
-                                        ? Colors.SurfaceContainer.dark
-                                        : Colors.SurfaceContainer.light
-                                      )
-                                     )
-                            )
-                        
-                    }
                     .padding(.horizontal, 20)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -282,16 +113,15 @@ struct Appearance: View {
         .onAppear {
             if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                 do {
-                    let directoryContents = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [])
-                    let jsonFiles = directoryContents.filter { $0.pathExtension == "json" }
+                    let directoryContents = try FileManager.default.contentsOfDirectory(at: documentsDirectory.appendingPathComponent("Themes"), includingPropertiesForKeys: nil, options: [])
+                    let jsonFiles = directoryContents.filter { $0.pathExtension == "theme" }
                     for fileURL in jsonFiles {
                         let fileData = try Data(contentsOf: fileURL)
-                        print(fileData)
                         // Do something with the file data
                         do {
                             let decoded = try JSONDecoder().decode(JSONColors.self, from: fileData)
                             themes.append(decoded)
-                            themesFileNames.append(fileURL.lastPathComponent.replacingOccurrences(of: ".json", with: ""))
+                            themesFileNames.append(fileURL.lastPathComponent.replacingOccurrences(of: ".theme", with: ""))
                         } catch let error {
                             print(error.localizedDescription)
                         }
@@ -309,6 +139,6 @@ struct Appearance: View {
 
 struct Appearance_Previews: PreviewProvider {
     static var previews: some View {
-        Appearance(Colors: DynamicColors())
+        Appearance()
     }
 }

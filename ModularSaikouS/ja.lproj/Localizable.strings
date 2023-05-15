@@ -1,0 +1,38 @@
+"nothing-text" = "おっと！ここにはまだ何もありません。";
+"downloaded-only" = "マイダウンロードだけ";
+"incognito" = "プライバシーモード中";
+
+// navbar
+"navitem-home" = "ホーム";
+"navitem-search" = "検索";
+"navitem-history" = "履歴";
+"navitem-more" = "もっと見る";
+
+// more view
+"downloaded-only-title" = "オフラインモード";
+"downloaded-only-description" = "ダウンロードしたコンテンツのみ";
+"incognito-title" = "プライバシーモード";
+"incognito-description" = "やらしいことのために使う( ͡° ͜ʖ ͡°)";
+
+// settings view
+"settings-title" = "設定";
+"save-theme-title" = "JSONでテーマを保存";
+"export-theme-title" = "JSONでテーマをコピー";
+"export-theme-description" = "JSONでテーマをクリップボードにコピーする";
+"appearance-title" = "外観";
+"appearance-description" = "明/暗/システム";
+"theme-navigation-title" = "テーマ";
+"theme-navigation-description" = "アプリの色を変わる";
+"developer-navigation-title" = "デベロッパー";
+"developer-navigation-description" = "デベロッパーのためにだけ、触らないでください！";
+
+// search view
+"search-placeholder %@" = "%@で検索";
+"select-module" = "モジュールを選んでください";
+"no-module" = "モジュールがありません";
+
+// home view
+
+// history view
+
+// info view

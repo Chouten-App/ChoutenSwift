@@ -26,7 +26,7 @@ struct SearchBar: View {
     @Binding var htmlString: String
     @Binding var jsString: String
     
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     @StateObject private var debounceState: DebounceState = DebounceState(initialValue: "")
     
     @State var returnData: ReturnedData? = nil
@@ -47,10 +47,10 @@ struct SearchBar: View {
             ZStack(alignment: .leading) {
                 if debounceState.currentValue.isEmpty {
                     if globalData.newModule != nil {
-                        Text("Search on \(globalData.newModule!.name)")
+                        Text("search-placeholder \(globalData.newModule!.name)")
                             .foregroundColor(.gray) // Set the placeholder text color here
                     } else {
-                        Text("Select a module")
+                        Text("select-module")
                             .foregroundColor(.gray)
                     }
                 }
@@ -58,9 +58,6 @@ struct SearchBar: View {
                 TextField("", text: $debounceState.currentValue)
                     .disableAutocorrection(true)
                     .focused($isFocused)
-                    .onChange(of: isFocused) { isFocused in
-                        print(isFocused)
-                    }
                     .onChange(of: debounceState.debouncedValue) { newValue in
                         if debounceState.debouncedValue.isEmpty {
                             globalData.searchResults = []
@@ -68,6 +65,7 @@ struct SearchBar: View {
                         }
                         
                         if globalData.newModule != nil {
+                            print(globalData.newModule!)
                             globalData.searchResults = []
                             globalData.isLoading = true
                             htmlString = ""
@@ -82,13 +80,13 @@ struct SearchBar: View {
                             
                             if returnData != nil {
                                 Task {
-                                    let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url.replacingOccurrences(of: "<query>", with: debounceState.debouncedValue.replacingOccurrences(of: " ", with: "%20")))!)
-                                    print(returnData!.request!.url.replacingOccurrences(of: "<query>", with: debounceState.debouncedValue.replacingOccurrences(of: " ", with: "%20")))
+                                    print(returnData!.request!.url.replacingOccurrences(of: "<query>", with: debounceState.debouncedValue.replacingOccurrences(of: " ", with: "%20").replacingOccurrences(of: "’", with: "").replacingOccurrences(of: ",", with: "")))
+                                    let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url.replacingOccurrences(of: "<query>", with: debounceState.debouncedValue.replacingOccurrences(of: " ", with: "%20").replacingOccurrences(of: "’", with: "").replacingOccurrences(of: ",", with: "")))!)
                                     do {
                                         guard let httpResponse = response as? HTTPURLResponse,
                                               httpResponse.statusCode == 200,
                                               let html = String(data: data, encoding: .utf8) else {
-                                            print("Invalid response")
+                                            
                                             let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url.replacingOccurrences(of: "<query>", with: debounceState.debouncedValue))", error: true, action: nil)]
                                             NotificationCenter.default
                                                 .post(name:           NSNotification.Name("floaty"),
@@ -96,9 +94,6 @@ struct SearchBar: View {
                                             return
                                         }
                                         if returnData!.usesApi {
-                                            print("API!!!")
-                                            
-                                            
                                             let regexPattern = "&#\\d+;"
                                             let regex = try! NSRegularExpression(pattern: regexPattern)
 
@@ -107,89 +102,16 @@ struct SearchBar: View {
                                             let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
                                             
                                             let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
-                                            //print(cleaned)
+                                            
                                             htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
                                         } else {
                                             htmlString = html
                                         }
-                                        //print(htmlString)
-                                        //srprint(jsString)
                                     } catch let error {
-                                        print(error.localizedDescription)
+                                        (error.localizedDescription)
                                     }
                                 }
                             }
-                            /*
-                             if globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].javascript.usesApi != nil && globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].javascript.usesApi! {
-                             print(query)
-                             globalData.moduleData = nil
-                             htmlString = ""
-                             print("reload")
-                             let url = URL(string: globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].request.url.replacingOccurrences(of: "<query>", with: debounceState.debouncedValue.replacingOccurrences(of: " ", with: globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].separator ?? "%20")))!
-                             let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                             if let error = error {
-                             print("Error: \(error.localizedDescription)")
-                             globalData.isLoading = false
-                             return
-                             }
-                             print(url)
-                             
-                             guard let httpResponse = response as? HTTPURLResponse,
-                             httpResponse.statusCode == 200,
-                             let htmlData = data,
-                             let html = String(data: htmlData, encoding: .utf8) else {
-                             print("Invalid response")
-                             globalData.isLoading = false
-                             return
-                             }
-                             
-                             DispatchQueue.main.async {
-                             print("setting html string")
-                             htmlString = """
-                             <div id=\"json-result\" data-json=\"\(html.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'"))\">UNRELATED</div>
-                             """
-                             print(htmlString)
-                             globalData.reloadPlease = false
-                             }
-                             }
-                             
-                             task.resume()
-                             
-                             } else {
-                             print(query)
-                             globalData.moduleData = nil
-                             htmlString = ""
-                             print("reload")
-                             let url = URL(string: globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].request.url.replacingOccurrences(of: "<query>", with: debounceState.debouncedValue.replacingOccurrences(of: " ", with: globalData.module!.code[globalData.module!.subtypes[0]]!["search"]![0].separator ?? "%20")))!
-                             let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                             if let error = error {
-                             print("Error: \(error.localizedDescription)")
-                             globalData.isLoading = false
-                             return
-                             }
-                             print(url)
-                             
-                             guard let httpResponse = response as? HTTPURLResponse,
-                             httpResponse.statusCode == 200,
-                             let htmlData = data,
-                             let html = String(data: htmlData, encoding: .utf8) else {
-                             print("Invalid response")
-                             globalData.isLoading = false
-                             return
-                             }
-                             
-                             DispatchQueue.main.async {
-                             print("setting html string")
-                             print(html)
-                             htmlString = html
-                             globalData.reloadPlease = false
-                             }
-                             }
-                             
-                             task.resume()
-                             
-                             }
-                             */
                         }
                     }
             }
@@ -239,7 +161,7 @@ struct SearchBar: View {
 struct SearchBar_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            SearchBar(query: .constant(""), htmlString: .constant(""), jsString: .constant(""), Colors: DynamicColors())
+            SearchBar(query: .constant(""), htmlString: .constant(""), jsString: .constant(""))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(

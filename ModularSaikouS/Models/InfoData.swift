@@ -17,8 +17,13 @@ struct InfoData: Codable {
     let status: String?
     let totalMediaCount: Int?
     let mediaType: String
-    let seasons: [String]
+    let seasons: [SeasonData]
     var mediaList: [[MediaItem]]
+}
+
+struct SeasonData: Codable, Equatable {
+    let name: String
+    let url: String
 }
 
 struct MediaItem: Codable {

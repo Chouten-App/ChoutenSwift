@@ -13,7 +13,7 @@ struct FloatyAction {
 }
 
 struct FloatyDisplay: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     @Binding var message: String
     @Binding var error: Bool
     var action: FloatyAction? = nil
@@ -169,6 +169,6 @@ struct FloatyDisplay: View {
 
 struct FloatyDisplay_Previews: PreviewProvider {
     static var previews: some View {
-        FloatyDisplay(Colors: DynamicColors(), message: .constant("Floaty"), error: .constant(false), showFloaty: .constant(true))
+        FloatyDisplay(message: .constant("Floaty"), error: .constant(false), showFloaty: .constant(true))
     }
 }

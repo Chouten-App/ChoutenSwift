@@ -2,547 +2,13 @@
 //  Home.swift
 //  ModularSaikouS
 //
-//  Created by Inumaki on 24.03.23.
+//  Created by Inumaki on 14.05.23.
 //
 
 import SwiftUI
-import Kingfisher
 import SwiftUIX
-import PopupView
-
-struct CarouselData: Codable {
-    let titles: Titles
-    let genres: [String]
-    let description: String
-    let image: String
-}
-
-struct FloatyData {
-    var message: String
-    let error: Bool
-    var action: FloatyAction?
-}
-
-struct EdgeBorder: Shape {
-    var width: CGFloat
-    var edges: [Edge]
-    
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        for edge in edges {
-            var x: CGFloat {
-                switch edge {
-                case .top, .bottom, .leading: return rect.minX
-                case .trailing: return rect.maxX - width
-                }
-            }
-            
-            var y: CGFloat {
-                switch edge {
-                case .top, .leading, .trailing: return rect.minY
-                case .bottom: return rect.maxY - width
-                }
-            }
-            
-            var w: CGFloat {
-                switch edge {
-                case .top, .bottom: return rect.width
-                case .leading, .trailing: return width
-                }
-            }
-            
-            var h: CGFloat {
-                switch edge {
-                case .top, .bottom: return width
-                case .leading, .trailing: return rect.height
-                }
-            }
-            path.addRect(CGRect(x: x, y: y, width: w, height: h))
-        }
-        return path
-    }
-}
-
-extension View {
-    func border(width: CGFloat, edges: [Edge], color: Color) -> some View {
-        overlay(EdgeBorder(width: width, edges: edges).foregroundColor(color))
-    }
-}
-
-enum AppearanceStyle: String, CaseIterable {
-    case light, dark, system
-}
-
-struct Home: View {
-    @StateObject var globalData = GlobalData.shared
-    @StateObject var networkMonitor = NetworkMonitor.shared
-    
-    // temp data
-    var carouselList: [CarouselData] = [
-        CarouselData(titles: Titles(primary: "Bungo Stray Dogs 4", secondary: "文豪ストレイドッグス 第4シーズン"), genres: ["Action", "Comedy", "Mystery", "Supernatural"], description: "The fourth season of *Bungou Stray Dogs*", image: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/141249-ssUG44UgGOMK.jpg"),
-        CarouselData(titles: Titles(primary: "Bungo Stray Dogs 4", secondary: "文豪ストレイドッグス 第4シーズン"), genres: ["Action", "Comedy", "Mystery", "Supernatural"], description: "The fourth season of *Bungou Stray Dogs*", image: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/141249-ssUG44UgGOMK.jpg"),
-        CarouselData(titles: Titles(primary: "Bungo Stray Dogs 4", secondary: "文豪ストレイドッグス 第4シーズン"), genres: ["Action", "Comedy", "Mystery", "Supernatural"], description: "The fourth season of *Bungou Stray Dogs*", image: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/141249-ssUG44UgGOMK.jpg"),
-        CarouselData(titles: Titles(primary: "Bungo Stray Dogs 4", secondary: "文豪ストレイドッグス 第4シーズン"), genres: ["Action", "Comedy", "Mystery", "Supernatural"], description: "The fourth season of *Bungou Stray Dogs*", image: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/141249-ssUG44UgGOMK.jpg"),
-        CarouselData(titles: Titles(primary: "Bungo Stray Dogs 4", secondary: "文豪ストレイドッグス 第4シーズン"), genres: ["Action", "Comedy", "Mystery", "Supernatural"], description: "The fourth season of *Bungou Stray Dogs*", image: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/141249-ssUG44UgGOMK.jpg"),
-    ]
-    @State var currentCarouselIndex = 0
-    
-    @State var selectedTab = 0
-    
-    @Namespace var animation
-    
-    @StateObject var Colors: DynamicColors = DynamicColors()
-    
-    @State var showPopup = false
-    
-    @FetchRequest(sortDescriptors: []) var userInfo: FetchedResults<UserInfo>
-    @State var availableModules: [OLDModule] = []
-    @State var selectedModuleId: String? = nil
-    
-    @State var showFloaty = false
-    @State var floatyMessage = ""
-    @State var floatyError = false
-    @State var floatyAction: FloatyAction? = nil
-    
-    @Environment(\.colorScheme) var colorScheme
-    
-    
-    
-    @StateObject var moduleManager = ModuleManager.shared
-    
-    var body: some View {
-        GeometryReader { proxy in
-            VStack(spacing: 0) {
-                // banner
-                if globalData.downloadedOnly {
-                    ZStack(alignment: .bottom) {
-                        Color(hex:
-                                globalData.appearance == .system
-                              ? (
-                                colorScheme == .dark
-                                ? Colors.Tertiary.dark
-                                : Colors.Tertiary.light
-                              ) : (
-                                globalData.appearance == .dark
-                                ? Colors.Tertiary.dark
-                                : Colors.Tertiary.light
-                              )
-                        )
-                        
-                        Text("Downloaded only")
-                            .font(.callout)
-                            .fontWeight(.semibold)
-                            .foregroundColor(
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        colorScheme == .dark
-                                        ? Colors.onTertiary.dark
-                                        : Colors.onTertiary.light
-                                      ) : (
-                                        globalData.appearance == .dark
-                                        ? Colors.onTertiary.dark
-                                        : Colors.onTertiary.light
-                                      )
-                                     )
-                            )
-                            .padding(.bottom, 8)
-                            .padding(.top, proxy.safeAreaInsets.top)
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
-                    .animation(.easeOut, value: globalData.downloadedOnly)
-                }
-                
-                if globalData.incognito {
-                    ZStack(alignment: .bottom) {
-                        Color(hex:
-                                globalData.appearance == .system
-                              ? (
-                                colorScheme == .dark
-                                ? Colors.Primary.dark
-                                : Colors.Primary.light
-                              ) : (
-                                globalData.appearance == .dark
-                                ? Colors.Primary.dark
-                                : Colors.Primary.light
-                              )
-                        )
-                        
-                        Text("Incognito")
-                            .font(.callout)
-                            .fontWeight(.semibold)
-                            .foregroundColor(
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        colorScheme == .dark
-                                        ? Colors.onPrimary.dark
-                                        : Colors.onPrimary.light
-                                      ) : (
-                                        globalData.appearance == .dark
-                                        ? Colors.onPrimary.dark
-                                        : Colors.onPrimary.light
-                                      )
-                                     )
-                            )
-                            .padding(.vertical, 8)
-                            .padding(.top, !globalData.downloadedOnly ? proxy.safeAreaInsets.top : 0)
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
-                    .animation(.easeOut, value: globalData.incognito)
-                }
-                
-                NavigationView {
-                    GeometryReader {proxy in
-                        TabView(selection: $selectedTab) {
-                            VStack {
-                                Text("Nothing to see yet .-.")
-                                    .foregroundColor(
-                                        Color(hex:
-                                                globalData.appearance == .system
-                                              ? (
-                                                colorScheme == .dark
-                                                ? Colors.onSurface.dark
-                                                : Colors.onSurface.light
-                                              ) : (
-                                                globalData.appearance == .dark
-                                                ? Colors.onSurface.dark
-                                                : Colors.onSurface.light
-                                              )
-                                             )
-                                    )
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                
-                                Button {
-                                    globalData.downloadedOnly.toggle()
-                                } label: {
-                                    Text("Toggle Downloaded Only")
-                                        .fontWeight(.bold)
-                                        .foregroundColor(
-                                            Color(hex:
-                                                        globalData.appearance == .system
-                                                      ? (
-                                                        colorScheme == .dark
-                                                        ? Colors.onPrimary.dark
-                                                        : Colors.onPrimary.light
-                                                      ) : (
-                                                        globalData.appearance == .dark
-                                                        ? Colors.onPrimary.dark
-                                                        : Colors.onPrimary.light
-                                                      )
-                                                     )
-                                        )
-                                        .frame(maxWidth: .infinity, maxHeight: 40)
-                                        .background {
-                                            
-                                                Color(hex:
-                                                            globalData.appearance == .system
-                                                          ? (
-                                                            colorScheme == .dark
-                                                            ? Colors.Primary.dark
-                                                            : Colors.Primary.light
-                                                          ) : (
-                                                            globalData.appearance == .dark
-                                                            ? Colors.Primary.dark
-                                                            : Colors.Primary.light
-                                                          )
-                                                         )
-                                                .cornerRadius(12)
-                                        }
-                                }
-                                .padding(.horizontal, 40)
-                                .padding(.bottom, 20)
-                                
-                                Button {
-                                    globalData.incognito.toggle()
-                                } label: {
-                                    Text("Toggle Incognito")
-                                        .fontWeight(.bold)
-                                        .foregroundColor(
-                                            Color(hex:
-                                                        globalData.appearance == .system
-                                                      ? (
-                                                        colorScheme == .dark
-                                                        ? Colors.onPrimary.dark
-                                                        : Colors.onPrimary.light
-                                                      ) : (
-                                                        globalData.appearance == .dark
-                                                        ? Colors.onPrimary.dark
-                                                        : Colors.onPrimary.light
-                                                      )
-                                                     )
-                                        )
-                                        .frame(maxWidth: .infinity, maxHeight: 40)
-                                        .background {
-                                            
-                                                Color(hex:
-                                                            globalData.appearance == .system
-                                                          ? (
-                                                            colorScheme == .dark
-                                                            ? Colors.Primary.dark
-                                                            : Colors.Primary.light
-                                                          ) : (
-                                                            globalData.appearance == .dark
-                                                            ? Colors.Primary.dark
-                                                            : Colors.Primary.light
-                                                          )
-                                                         )
-                                                .cornerRadius(12)
-                                        }
-                                }
-                                .padding(.horizontal, 40)
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background {
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        colorScheme == .dark
-                                        ? Colors.Surface.dark
-                                        : Colors.Surface.light
-                                      ) : (
-                                        globalData.appearance == .dark
-                                        ? Colors.Surface.dark
-                                        : Colors.Surface.light
-                                      )
-                                )
-                            }
-                            .ignoresSafeArea()
-                            .tag(0)
-                            
-                            Search(Colors: Colors)
-                                .tag(1)
-                            
-                            VStack {
-                                Text("YO MAMA")
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .foregroundColor(
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        colorScheme == .dark
-                                        ? Colors.onSurface.dark
-                                        : Colors.onSurface.light
-                                      ) : (
-                                        globalData.appearance == .dark
-                                        ? Colors.onSurface.dark
-                                        : Colors.onSurface.light
-                                      )
-                                )
-                            )
-                            .background {
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        colorScheme == .dark
-                                        ? Colors.Surface.dark
-                                        : Colors.Surface.light
-                                      ) : (
-                                        globalData.appearance == .dark
-                                        ? Colors.Surface.dark
-                                        : Colors.Surface.light
-                                      )
-                                )
-                            }
-                            .ignoresSafeArea()
-                            .tag(2)
-                            
-                            More(Colors: Colors)
-                                .tag(3)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .overlay(alignment: .bottomTrailing) {
-                        if selectedTab != 3 {
-                            Button {
-                                globalData.showModuleSelector.toggle()
-                            } label: {
-                                Text(globalData.newModule == nil ? "No Module" : globalData.newModule!.name)
-                                    .font(.system(size: 18, weight: .bold))
-                                .padding(.horizontal, 24)
-                                .frame(minWidth: 80, maxHeight: 56)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(
-                                            Color(hex:
-                                                    globalData.appearance == .system
-                                                  ? (
-                                                    colorScheme == .dark
-                                                    ? Colors.SecondaryContainer.dark
-                                                    : Colors.SecondaryContainer.light
-                                                  ) : (
-                                                    globalData.appearance == .dark
-                                                    ? Colors.SecondaryContainer.dark
-                                                    : Colors.SecondaryContainer.light
-                                                  )
-                                                 )
-                                        )
-                                }
-                                .shadow(color: Color(hex:
-                                                        globalData.appearance == .system
-                                                     ? (
-                                                        colorScheme == .dark
-                                                        ? Colors.Scrim.dark
-                                                        : Colors.Scrim.light
-                                                     ) : (
-                                                        globalData.appearance == .dark
-                                                        ? Colors.Scrim.dark
-                                                        : Colors.Scrim.light
-                                                     )
-                                                    ).opacity(0.08), radius: 2, x: 0, y: 0)
-                                .shadow(color: Color(hex:
-                                                        globalData.appearance == .system
-                                                     ? (
-                                                        colorScheme == .dark
-                                                        ? Colors.Scrim.dark
-                                                        : Colors.Scrim.light
-                                                     ) : (
-                                                        globalData.appearance == .dark
-                                                        ? Colors.Scrim.dark
-                                                        : Colors.Scrim.light
-                                                     )
-                                                    ).opacity(0.16), radius: 24, x: 0, y: 0)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            .padding(.trailing, 16)
-                            .padding(.bottom, 120)
-                            .foregroundColor(Color(hex:
-                                                    globalData.appearance == .system
-                                                   ? (
-                                                    colorScheme == .dark
-                                                    ? Colors.onPrimaryContainer.dark
-                                                    : Colors.onPrimaryContainer.light
-                                                   ) : (
-                                                    globalData.appearance == .dark
-                                                    ? Colors.onPrimaryContainer.dark
-                                                    : Colors.onPrimaryContainer.light
-                                                   )
-                                                  )
-                            )
-                        }
-                    }
-                    .overlay {
-                        BottomSheet(isShowing: $globalData.showModuleSelector, content: AnyView(ModuleSelector(showPopup: $globalData.showModuleSelector, Colors: Colors)))
-                            .padding(.bottom, 100)
-                    }
-                    .overlay(alignment: .bottom) {
-                        Navbar(selectedTab: $selectedTab, Colors: Colors)
-                    }
-                    .overlay {
-                        if showPopup {
-                            ZStack {
-                                Color.black.opacity(0.5)
-                                    .onTapGesture {
-                                        showPopup = false
-                                    }
-                                
-                                UrlPopup(Colors: Colors, showPopup: $showPopup)
-                            }
-                        }
-                    }
-                    .ignoresSafeArea()
-                }
-                .navigationViewStyle(.stack)
-                .navigationBarBackButtonHidden(true)
-                .navigationBarTitle("", displayMode: .inline)
-                .navigationBarHidden(true)
-                .ignoresSafeArea()
-            }
-            .edgesIgnoringSafeArea(.top)
-        }
-        .animation(.easeOut, value: globalData.incognito)
-        .animation(.easeOut, value: globalData.downloadedOnly)
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("floaty")), perform: { value in
-            if value.userInfo != nil {
-                if value.userInfo!["data"] != nil {
-                    let floatyData = value.userInfo!["data"] as! FloatyData
-                    floatyMessage = floatyData.message
-                    floatyAction = floatyData.action
-                    floatyError = floatyData.error
-                    showFloaty = true
-                }
-            }
-        })
-        .onReceive(networkMonitor.$connected) { hasInternet in
-            print(hasInternet)
-            globalData.downloadedOnly = !hasInternet
-        }
-        .onAppear{
-            if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-                do {
-                    let directoryContents = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [])
-                    let jsonFiles = directoryContents.filter { $0.pathExtension == "json" }
-                    for fileURL in jsonFiles {
-                        let fileData = try Data(contentsOf: fileURL)
-                        print(fileData)
-                        // Do something with the file data
-                        do {
-                            let decoded = try JSONDecoder().decode(OLDModule.self, from: fileData)
-                            globalData.availableModulesOLD.append(decoded)
-                            globalData.availableJsons.append(fileURL)
-                        } catch let error {
-                            print(error.localizedDescription)
-                        }
-                    }
-                    
-                    for moduleFolder in moduleManager.moduleFolderNames {
-                        let data = moduleManager.getMetadata(folderUrl: documentsDirectory.appendingPathComponent("Modules").appendingPathComponent(moduleFolder))
-                        
-                        if data != nil {
-                            globalData.availableModules.append(data!)
-                            moduleManager.moduleIds.append(data!.id)
-                        }
-                    }
-                    
-                } catch {
-                    print("Error getting directory contents: \(error.localizedDescription)")
-                }
-            }
-            if userInfo.count > 0 {
-                Colors.getFromJson(fileName: userInfo[0].selectedTheme ?? "default")
-                
-                print(userInfo[0])
-                
-                if userInfo[0].selectedAppearance == 0 {
-                    globalData.appearance = .light
-                } else if userInfo[0].selectedAppearance == 1 {
-                    globalData.appearance = .dark
-                } else {
-                    globalData.appearance = .system
-                }
-                
-                print(globalData.appearance)
-                
-                selectedModuleId = userInfo[0].selectedModuleId
-                                
-                let temp = globalData.availableModules.filter { $0.id == selectedModuleId }
-                if temp.count > 0 {
-                    globalData.newModule = temp[0]
-                    if selectedModuleId != nil {
-                        let index = moduleManager.moduleIds.firstIndex(of: selectedModuleId!)
-                        if index != nil {
-                            moduleManager.selectedModuleName = moduleManager.moduleFolderNames[index!]
-                        }
-                    }
-                }
-            }
-        }
-        .popup(isPresented: $showFloaty) {
-            FloatyDisplay(Colors: Colors, message: $floatyMessage, error: $floatyError, action: floatyAction, showFloaty: $showFloaty)
-        } customize: {
-            $0
-                .type(.floater())
-                .position(.bottom)
-                .animation(.spring())
-                .closeOnTapOutside(false)
-                .closeOnTap(false)
-                .autohideIn(4.0)
-        }
-    }
-}
+import Kingfisher
+import ActivityIndicatorView
 
 struct CarouselItem: View {
     let proxy: GeometryProxy
@@ -596,6 +62,428 @@ struct CarouselItem: View {
             .frame(minWidth: proxy.size.width, maxWidth: proxy.size.width, alignment: .bottomLeading)
             
         }
+    }
+}
+
+struct Home: View {
+    
+    @State var htmlString = ""
+    @State var jsString = ""
+    @State var returnData: ReturnedData? = nil
+    @State var currentCarouselIndex: Int = 0
+    
+    @StateObject var Colors = DynamicColors.shared
+    @StateObject var globalData = GlobalData.shared
+    @StateObject var moduleManager = ModuleManager.shared
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        GeometryReader { proxy in
+            VStack {
+                if globalData.homeComponents.count > 0 {
+                    ScrollView {
+                        VStack {
+                            PaginationView(axis: .horizontal) {
+                                ForEach(0..<globalData.homeComponents[0].data.count, id: \.self) { index in
+                                    OverlappingCard(image: globalData.homeComponents[0].data[currentCarouselIndex].image,proxy: proxy, Colors: Colors)
+                                }
+                            }
+                            .currentPageIndex($currentCarouselIndex)
+                            .frame(minHeight: 360,maxHeight: 360, alignment: .top)
+                            .ignoresSafeArea()
+                            .overlay(alignment: .bottom) {
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        Text(globalData.homeComponents[0].data[currentCarouselIndex].indicator ?? "")
+                                            .foregroundColor(Color(hex:
+                                                                    globalData.appearance == .system
+                                                                   ? (
+                                                                    colorScheme == .dark
+                                                                    ? Colors.onPrimary.dark
+                                                                    : Colors.onPrimary.light
+                                                                   ) : (
+                                                                    globalData.appearance == .dark
+                                                                    ? Colors.onPrimary.dark
+                                                                    : Colors.onPrimary.light
+                                                                   )
+                                                                  ))
+                                            .fontWeight(.semibold)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 3)
+                                            .background {
+                                                Capsule()
+                                                    .fill(Color(hex:
+                                                                    globalData.appearance == .system
+                                                                ? (
+                                                                    colorScheme == .dark
+                                                                    ? Colors.Primary.dark
+                                                                    : Colors.Primary.light
+                                                                ) : (
+                                                                    globalData.appearance == .dark
+                                                                    ? Colors.Primary.dark
+                                                                    : Colors.Primary.light
+                                                                )
+                                                               )
+                                                    )
+                                            }
+                                        Spacer()
+                                        Text(globalData.homeComponents[0].data[currentCarouselIndex].iconText ?? "")
+                                            .fontWeight(.semibold)
+                                        if globalData.homeComponents[0].data[currentCarouselIndex].showIcon {
+                                            Image(systemName: "star.fill")
+                                                .foregroundColor(Color(hex:
+                                                                        globalData.appearance == .system
+                                                                       ? (
+                                                                        colorScheme == .dark
+                                                                        ? Colors.Tertiary.dark
+                                                                        : Colors.Tertiary.light
+                                                                       ) : (
+                                                                        globalData.appearance == .dark
+                                                                        ? Colors.Tertiary.dark
+                                                                        : Colors.Tertiary.light
+                                                                       )
+                                                                      ))
+                                        }
+                                    }
+                                    
+                                    Text(globalData.homeComponents[0].data[currentCarouselIndex].titles.primary)
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .lineLimit(3)
+                                    if globalData.homeComponents[0].data[currentCarouselIndex].titles.secondary != nil {
+                                        Text(globalData.homeComponents[0].data[currentCarouselIndex].titles.secondary!)
+                                            .font(.headline)
+                                            .fontWeight(.bold)
+                                            .lineLimit(1)
+                                            .opacity(0.7)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    HStack(alignment: .top) {
+                                        Text(globalData.homeComponents[0].data[currentCarouselIndex].subtitle)
+                                        if globalData.homeComponents[0].data[currentCarouselIndex].subtitleValue.count > 0 {
+                                            Text(globalData.homeComponents[0].data[currentCarouselIndex].subtitleValue.joined(separator: " • "))
+                                                .fontWeight(.bold)
+                                                .lineLimit(1)
+                                        }
+                                    }
+                                    .font(.subheadline)
+                                    
+                                    Spacer()
+                                    
+                                    HStack {
+                                        NavigationLink(destination: Info(url: .constant(globalData.homeComponents[0].data[currentCarouselIndex].url), poster: .constant(globalData.homeComponents[0].data[currentCarouselIndex].image), title: .constant(globalData.homeComponents[0].data[currentCarouselIndex].titles.primary), showInfo: .constant(false), Colors: Colors)) {
+                                            Text(globalData.homeComponents[0].data[currentCarouselIndex].buttonText)
+                                                .foregroundColor(Color(hex:
+                                                                        globalData.appearance == .system
+                                                                       ? (
+                                                                        colorScheme == .dark
+                                                                        ? Colors.Tertiary.dark
+                                                                        : Colors.Tertiary.light
+                                                                       ) : (
+                                                                        globalData.appearance == .dark
+                                                                        ? Colors.Tertiary.dark
+                                                                        : Colors.Tertiary.light
+                                                                       )
+                                                                      ))
+                                                .fontWeight(.semibold)
+                                                .contentShape(Rectangle())
+                                        }
+                                        .simultaneousGesture(TapGesture()
+                                            .onEnded({ _ in
+                                                globalData.infoData = nil
+                                            }))
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: "plus")
+                                            .foregroundColor(Color(hex:
+                                                                    globalData.appearance == .system
+                                                                   ? (
+                                                                    colorScheme == .dark
+                                                                    ? Colors.onPrimary.dark
+                                                                    : Colors.onPrimary.light
+                                                                   ) : (
+                                                                    globalData.appearance == .dark
+                                                                    ? Colors.onPrimary.dark
+                                                                    : Colors.onPrimary.light
+                                                                   )
+                                                                  ))
+                                            .padding(6)
+                                            .background {
+                                                Circle()
+                                                    .fill(Color(hex:
+                                                                    globalData.appearance == .system
+                                                                ? (
+                                                                    colorScheme == .dark
+                                                                    ? Colors.Primary.dark
+                                                                    : Colors.Primary.light
+                                                                ) : (
+                                                                    globalData.appearance == .dark
+                                                                    ? Colors.Primary.dark
+                                                                    : Colors.Primary.light
+                                                                )
+                                                               ))
+                                            }
+                                    }
+                                }
+                                .foregroundColor(Color(hex:
+                                                        globalData.appearance == .system
+                                                       ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.onSurface.dark
+                                                        : Colors.onSurface.light
+                                                       ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.onSurface.dark
+                                                        : Colors.onSurface.light
+                                                       )
+                                                      ))
+                                .padding(20)
+                                .frame(maxWidth: .infinity, maxHeight: 220, alignment: .topLeading)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(hex:
+                                                        globalData.appearance == .system
+                                                    ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.SurfaceContainer.dark
+                                                        : Colors.SurfaceContainer.light
+                                                    ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.SurfaceContainer.dark
+                                                        : Colors.SurfaceContainer.light
+                                                    )
+                                                   ))
+                                }
+                                .shadow(radius: 12)
+                                .padding(.horizontal, 12)
+                                .offset(y: 100)
+                            }
+                            
+                            VStack(alignment: .leading) {
+                                ForEach(1..<globalData.homeComponents.count) { index in
+                                    Text(globalData.homeComponents[index].title)
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(Color(hex:
+                                                                globalData.appearance == .system
+                                                               ? (
+                                                                colorScheme == .dark
+                                                                ? Colors.onSurface.dark
+                                                                : Colors.onSurface.light
+                                                               ) : (
+                                                                globalData.appearance == .dark
+                                                                ? Colors.onSurface.dark
+                                                                : Colors.onSurface.light
+                                                               )
+                                                              ))
+                                    
+                                    if globalData.homeComponents[index].type == "list" {
+                                        ScrollView(.horizontal) {
+                                            HStack(spacing: 12) {
+                                                ForEach(0..<globalData.homeComponents[index].data.count) {listIndex in
+                                                    NavigationLink(destination: Info(url: .constant(globalData.homeComponents[index].data[listIndex].url), poster: .constant(globalData.homeComponents[index].data[listIndex].image), title: .constant(globalData.homeComponents[index].data[listIndex].titles.primary), showInfo: .constant(false), Colors: Colors)) {
+                                                        SearchCard(image: globalData.homeComponents[index].data[listIndex].image, title: globalData.homeComponents[index].data[listIndex].titles.primary, hasIndicator: globalData.homeComponents[index].data[listIndex].indicator != nil, indicatorText: globalData.homeComponents[index].data[listIndex].indicator ?? "", currentCount: globalData.homeComponents[index].data[listIndex].current, totalCount: globalData.homeComponents[index].data[listIndex].total, type: SearchCardType.GRID, cover: nil, Colors: Colors)
+                                                    }
+                                                    .simultaneousGesture(TapGesture()
+                                                        .onEnded({ _ in
+                                                            globalData.infoData = nil
+                                                        }))
+                                                }
+                                            }
+                                            .padding(.trailing, 20)
+                                        }
+                                        .frame(maxWidth: proxy.size.width)
+                                        .padding(.trailing, -20)
+                                    } else if globalData.homeComponents[index].type == "grid_2x" {
+                                        ScrollView(.horizontal) {
+                                            LazyHGrid(rows: [
+                                                GridItem(.flexible()),
+                                                GridItem(.flexible())
+                                            ], spacing: 12) {
+                                                ForEach(0..<globalData.homeComponents[index].data.count) {gridIndex in
+                                                    VStack {
+                                                        NavigationLink(destination: Info(url: .constant(globalData.homeComponents[index].data[gridIndex].url), poster: .constant(globalData.homeComponents[index].data[gridIndex].image), title: .constant(globalData.homeComponents[index].data[gridIndex].titles.primary), showInfo: .constant(false), Colors: Colors)) {
+                                                            KFImage(URL(string: globalData.homeComponents[index].data[gridIndex].image))
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fit)
+                                                                .frame(maxHeight: 280)
+                                                                .cornerRadius(6)
+                                                        }
+                                                        .simultaneousGesture(TapGesture()
+                                                            .onEnded({ _ in
+                                                                globalData.infoData = nil
+                                                            }))
+                                                        
+                                                        Text(globalData.homeComponents[index].data[gridIndex].titles.primary)
+                                                            .frame(maxWidth: 80)
+                                                            .font(.caption)
+                                                            .lineLimit(1)
+                                                    }
+                                                }
+                                            }
+                                            .frame(maxHeight: 600)
+                                            .padding(.trailing, 20)
+                                        }
+                                        .frame(maxWidth: proxy.size.width)
+                                        .padding(.trailing, -20)
+                                    } else if globalData.homeComponents[index].type == "grid_3x" {
+                                        ScrollView(.horizontal) {
+                                            LazyHGrid(rows: [
+                                                GridItem(.flexible()),
+                                                GridItem(.flexible()),
+                                                GridItem(.flexible())
+                                            ], spacing: 12) {
+                                                ForEach(0..<globalData.homeComponents[index].data.count) {gridIndex in
+                                                    VStack {
+                                                        NavigationLink(destination: Info(url: .constant(globalData.homeComponents[index].data[gridIndex].url), poster: .constant(globalData.homeComponents[index].data[gridIndex].image), title: .constant(globalData.homeComponents[index].data[gridIndex].titles.primary), showInfo: .constant(false), Colors: Colors)) {
+                                                            KFImage(URL(string: globalData.homeComponents[index].data[gridIndex].image))
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fit)
+                                                                .frame(height: 160)
+                                                                .frame(minHeight: 160, maxHeight: 160)
+                                                                .cornerRadius(6)
+                                                        }
+                                                        .simultaneousGesture(TapGesture()
+                                                            .onEnded({ _ in
+                                                                globalData.infoData = nil
+                                                            }))
+                                                        
+                                                        Text(globalData.homeComponents[index].data[gridIndex].titles.primary)
+                                                            .frame(maxWidth: 80)
+                                                            .font(.callout)
+                                                            .lineLimit(1)
+                                                    }
+                                                }
+                                            }
+                                            .frame(minHeight: 600)
+                                            .padding(.trailing, 20)
+                                        }
+                                        .frame(maxWidth: proxy.size.width)
+                                        .padding(.trailing, -20)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 110)
+                            .padding(.bottom, 110)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    }
+                } else {
+                    VStack{
+                        ActivityIndicatorView(isVisible: $globalData.isLoadingHomepage, type: .growingArc(Color(hex:
+                                                                                                            globalData.appearance == .system
+                                                                                                        ? (
+                                                                                                            colorScheme == .dark
+                                                                                                            ? Colors.onSurface.dark
+                                                                                                            : Colors.onSurface.light
+                                                                                                        ) : (
+                                                                                                            globalData.appearance == .dark
+                                                                                                            ? Colors.onSurface.dark
+                                                                                                            : Colors.onSurface.light
+                                                                                                        )
+                                                                                                       ), lineWidth: 4)) .frame(width: 50.0, height: 50.0)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        }
+        .background {
+            if htmlString.count > 0 && returnData != nil {
+                WebView(htmlString: htmlString, javaScript: jsString, requestType: "home", enableExternalScripts: returnData!.allowExternalScripts, nextUrl: .constant(""), mediaConsumeData: .constant(VideoData(sources: [], subtitles: [], skips: [])), mediaConsumeBookData: .constant([]))
+                    .hidden()
+                    .frame(maxWidth: 0, maxHeight: 0)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .foregroundColor(
+            Color(hex:
+                    globalData.appearance == .system
+                  ? (
+                    colorScheme == .dark
+                    ? Colors.onSurface.dark
+                    : Colors.onSurface.light
+                  ) : (
+                    globalData.appearance == .dark
+                    ? Colors.onSurface.dark
+                    : Colors.onSurface.light
+                  )
+                 )
+        )
+        .background {
+            Color(hex:
+                    globalData.appearance == .system
+                  ? (
+                    colorScheme == .dark
+                    ? Colors.Surface.dark
+                    : Colors.Surface.light
+                  ) : (
+                    globalData.appearance == .dark
+                    ? Colors.Surface.dark
+                    : Colors.Surface.light
+                  )
+            )
+        }
+        .onAppear {
+            if globalData.newModule != nil {
+                globalData.isLoadingHomepage = true
+                htmlString = ""
+                
+                // get search js file data
+                if returnData == nil {
+                    returnData = moduleManager.getJsForType("home", num: 0)
+                    
+                    if returnData == nil {
+                        globalData.isLoadingHomepage = false
+                        return
+                    }
+                    
+                    jsString = returnData!.js
+                }
+                
+                if returnData != nil {
+                    if returnData!.request != nil {
+                        Task {
+                            let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url)!)
+                            do {
+                                guard let httpResponse = response as? HTTPURLResponse,
+                                      httpResponse.statusCode == 200,
+                                      let html = String(data: data, encoding: .utf8) else {
+                                    
+                                    let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url)", error: true, action: nil)]
+                                    NotificationCenter.default
+                                        .post(name:           NSNotification.Name("floaty"),
+                                              object: nil, userInfo: data)
+                                    return
+                                }
+                                if returnData!.usesApi {
+                                    let regexPattern = "&#\\d+;"
+                                    let regex = try! NSRegularExpression(pattern: regexPattern)
+                                    
+                                    let range = NSRange(html.startIndex..., in: html)
+                                    
+                                    let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
+                                    
+                                    let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
+                                    
+                                    htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                } else {
+                                    htmlString = html
+                                }
+                            } catch let error {
+                                (error.localizedDescription)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .ignoresSafeArea()
     }
 }
 

@@ -24,7 +24,7 @@ struct Info: View {
     @Binding var poster: String
     @Binding var title: String
     @Binding var showInfo: Bool
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     var animation: Namespace.ID?
     @StateObject var viewModel: InfoViewModel = InfoViewModel()
     @State var isOn: Bool = false
@@ -63,7 +63,7 @@ struct Info: View {
             GeometryReader {proxy in
                 ScrollView(.vertical, showsIndicators: false) {
                     if globalData.infoData != nil {
-                        InfoDisplay(Colors: Colors, proxy: proxy, showHeader: $showHeader, title: title, showFullDescription: $showFullDescription, isOn: $isOn, navigating: $navigating)
+                        InfoDisplay(Colors: Colors, proxy: proxy, showHeader: $showHeader, title: title, showFullDescription: $showFullDescription, isOn: $isOn, navigating: $navigating, htmlString: $viewModel.htmlString, jsString: $viewModel.jsString, currentJsIndex: $currentJsIndex)
                             .foregroundColor(Color(hex:
                                                     globalData.appearance == .system
                                                    ? (
@@ -82,7 +82,6 @@ struct Info: View {
                                                        value: -$0.frame(in: .named("infoscroll")).origin.y)
                             })
                             .onPreferenceChange(ViewOffsetKey.self) {
-                                //print("offset >> \($0)")
                                 if($0 >= 110 && $0 < 230) {
                                     showHeader = true
                                     showRealHeader = false
@@ -432,7 +431,6 @@ struct Info: View {
                                                    value: -$0.frame(in: .named("infoscroll")).origin.y)
                         })
                         .onPreferenceChange(ViewOffsetKey.self) {
-                            //print("offset >> \($0)")
                             if($0 >= 110 && $0 < 230) {
                                 showHeader = true
                                 showRealHeader = false
@@ -548,7 +546,6 @@ struct Info: View {
             if globalData.infoData == nil || (globalData.infoData!.mediaList.count > 0 && globalData.infoData!.mediaList[0].count == 0) {
                 viewModel.htmlString = ""
                 if globalData.newModule != nil {
-                    //globalData.isLoading = true
                     viewModel.htmlString = ""
                     
                     // moduleManager.selectedModuleName
@@ -559,9 +556,6 @@ struct Info: View {
                         viewModel.jsString = returnData!.js
                     }
                     
-                    print(returnData)
-                    
-                    
                     if returnData != nil {
                         Task {
                             
@@ -571,7 +565,6 @@ struct Info: View {
                                     guard let httpResponse = response as? HTTPURLResponse,
                                           httpResponse.statusCode == 200,
                                           let html = String(data: data, encoding: .utf8) else {
-                                        print("Invalid response")
                                         let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url)", error: true, action: nil)]
                                         NotificationCenter.default
                                             .post(name:           NSNotification.Name("floaty"),
@@ -579,9 +572,6 @@ struct Info: View {
                                         return
                                     }
                                     if returnData!.usesApi {
-                                        print("API!!!")
-                                        
-                                        
                                         let regexPattern = "&#\\d+;"
                                         let regex = try! NSRegularExpression(pattern: regexPattern)
                                         
@@ -590,23 +580,21 @@ struct Info: View {
                                         let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
                                         
                                         let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
-                                        //print(cleaned)
-                                        viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                        viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\" data-url=\"\(self.url)\">UNRELATED</div>"
                                     } else {
                                         viewModel.htmlString = html
                                     }
+                                    
                                 } catch let error {
                                     print(error.localizedDescription)
                                 }
                             } else {
                                 let (data, response) = try await URLSession.shared.data(from: URL(string: self.url)!)
                                 
-                                print(self.url)
                                 do {
                                     guard let httpResponse = response as? HTTPURLResponse,
                                           httpResponse.statusCode == 200,
                                           let html = String(data: data, encoding: .utf8) else {
-                                        print("Invalid response")
                                         let data = ["data": FloatyData(message: "Failed to load data from \(self.url)", error: true, action: nil)]
                                         NotificationCenter.default
                                             .post(name:           NSNotification.Name("floaty"),
@@ -614,9 +602,6 @@ struct Info: View {
                                         return
                                     }
                                     if returnData!.usesApi {
-                                        print("API!!!")
-                                        
-                                        
                                         let regexPattern = "&#\\d+;"
                                         let regex = try! NSRegularExpression(pattern: regexPattern)
                                         
@@ -625,8 +610,7 @@ struct Info: View {
                                         let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
                                         
                                         let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
-                                        //print(cleaned)
-                                        viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
+                                        viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\" data-url=\"\(self.url)\">UNRELATED</div>"
                                     } else {
                                         viewModel.htmlString = html
                                     }
@@ -642,15 +626,11 @@ struct Info: View {
         }
         .onReceive(globalData.$nextUrl) { next in
             //if navigating { return }
-            if next != nil && next!.count > 0 {
+            if next != nil && next!.count > 0 && globalData.infoData != nil && globalData.infoData!.mediaList.count > 0 && globalData.infoData!.mediaList[0].count == 0 {
                 viewModel.htmlString = ""
                 Task {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                         if globalData.newModule != nil {
-                            //globalData.isLoading = true
-                            
-                            // moduleManager.selectedModuleName
-                            
                             if currentJsIndex < moduleManager.getJsCount("info") {
                                 if currentJsIndex == 0 {
                                     currentJsIndex = 2
@@ -659,15 +639,12 @@ struct Info: View {
                                 }
                             }
                             
-                            print("index is \(currentJsIndex)")
-                            
                             // get search js file data
                             returnData = moduleManager.getJsForType("info", num: currentJsIndex)
                             
                             if returnData != nil {
                                 viewModel.jsString = returnData!.js
                                 
-                                print(returnData)
                                 Task {
                                     if returnData!.request != nil {
                                         let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url)!)
@@ -675,7 +652,7 @@ struct Info: View {
                                             guard let httpResponse = response as? HTTPURLResponse,
                                                   httpResponse.statusCode == 200,
                                                   let html = String(data: data, encoding: .utf8) else {
-                                                print("Invalid response")
+                                                
                                                 let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url)", error: true, action: nil)]
                                                 NotificationCenter.default
                                                     .post(name:           NSNotification.Name("floaty"),
@@ -683,9 +660,6 @@ struct Info: View {
                                                 return
                                             }
                                             if returnData!.usesApi {
-                                                print("API!!!")
-                                                
-                                                
                                                 let regexPattern = "&#\\d+;"
                                                 let regex = try! NSRegularExpression(pattern: regexPattern)
                                                 
@@ -694,7 +668,6 @@ struct Info: View {
                                                 let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
                                                 
                                                 let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
-                                                //print(cleaned)
                                                 viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
                                             } else {
                                                 viewModel.htmlString = html
@@ -708,7 +681,7 @@ struct Info: View {
                                             guard let httpResponse = response as? HTTPURLResponse,
                                                   httpResponse.statusCode == 200,
                                                   let html = String(data: data, encoding: .utf8) else {
-                                                print("Invalid response")
+                                                
                                                 let data = ["data": FloatyData(message: "Failed to load data from \(next!)", error: true, action: nil)]
                                                 NotificationCenter.default
                                                     .post(name:           NSNotification.Name("floaty"),
@@ -716,9 +689,6 @@ struct Info: View {
                                                 return
                                             }
                                             if returnData!.usesApi {
-                                                print("API!!!")
-                                                
-                                                
                                                 let regexPattern = "&#\\d+;"
                                                 let regex = try! NSRegularExpression(pattern: regexPattern)
                                                 
@@ -727,7 +697,6 @@ struct Info: View {
                                                 let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
                                                 
                                                 let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
-                                                //print(cleaned)
                                                 viewModel.htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
                                             } else {
                                                 viewModel.htmlString = html
@@ -758,6 +727,6 @@ struct Info: View {
 
 struct Info_Previews: PreviewProvider {
     static var previews: some View {
-        Info(url: .constant(""), poster: .constant(""), title: .constant(""), showInfo: .constant(true), Colors: DynamicColors())
+        Info(url: .constant(""), poster: .constant(""), title: .constant(""), showInfo: .constant(true))
     }
 }

@@ -444,7 +444,6 @@ struct Seekbar: View {
                                 .onChanged({ value in
                                     self.isDragging = true
                                     self.barHeight = isMacos ? 18 : 10
-                                    print(value)
                                     // TODO: - maybe use other logic here
                                     self.percentage = min(max(0, Double(value.location.x / geometry.size.width * total)), total)
                                 })
@@ -771,12 +770,9 @@ struct Reader: View {
             if globalData.module != nil {
                 htmlString = ""
                 globalData.nextUrl = nil
-                print(url)
-                print("Getting images")
                 Task {
                     if self.url.count > 0 {
                         do {
-                            print(self.url)
                             let url = URL(string: self.url)!
                             let (data, response) = try await URLSession.shared.data(from: url)
                             
@@ -794,7 +790,6 @@ struct Reader: View {
                             } else {
                                 htmlString = html
                             }
-                            print(htmlString)
                         } catch {
                             print("Error: \(error.localizedDescription)")
                         }

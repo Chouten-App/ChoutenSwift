@@ -30,6 +30,7 @@ class GlobalData: ObservableObject {
     
     @Published var moduleText: String?
     @Published var moduleData: SearchData?
+    @Published var homeComponents: [HomeComponent] = []
     @Published var searchResults: [SearchData] = []
     @Published var infoData: InfoData? = nil
     @Published var lastVisitedEntry: String = ""
@@ -43,6 +44,7 @@ class GlobalData: ObservableObject {
     
     
     @Published var isLoading = false
+    @Published var isLoadingHomepage = false
     @Published var mediaFailedToLoad = false
     
     @objc private func handleSharedJson(_ notification: Notification) {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MaterialToggleStyle: ToggleStyle {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -99,9 +99,9 @@ struct MaterialToggle_Preview: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .leading) {
             Toggle("Subbed", isOn: .constant(false))
-                .toggleStyle(MaterialToggleStyle(Colors: DynamicColors()))
+                .toggleStyle(MaterialToggleStyle())
             Toggle("Dubbed", isOn: .constant(true))
-                .toggleStyle(MaterialToggleStyle(Colors: DynamicColors()))
+                .toggleStyle(MaterialToggleStyle())
         }
         .padding(40)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)

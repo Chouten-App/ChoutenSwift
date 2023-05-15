@@ -45,9 +45,21 @@ struct AnimatedStroke: Shape {
     }
 }
 
+extension String {
+    var isValidURL: Bool {
+        let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        if let match = detector.firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.utf16.count)) {
+            // it is a link, if the match covers the whole string
+            return match.range.length == self.utf16.count
+        } else {
+            return false
+        }
+    }
+}
+
 struct ModuleSelector: View, KeyboardReadable {
     @Binding var showPopup: Bool
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     let buttonHeight: CGFloat = 55
     @StateObject var globalData = GlobalData.shared
@@ -71,20 +83,16 @@ struct ModuleSelector: View, KeyboardReadable {
     @State private var isKeyboardVisible = false
     
     func loadData(module: Module)  {
-        print("loading data")
         globalData.newModule = module
         globalData.reloadPlease = true
         let index = moduleManager.moduleIds.firstIndex(of: module.id)
         if index != nil {
             moduleManager.selectedModuleName = moduleManager.moduleFolderNames[index!]
         }
-        print(module.id)
         if userInfo.count > 0 {
-            print("updating")
             userInfo[0].selectedModuleId = module.id
             try! moc.save()
         } else {
-            print("adding")
             let info = UserInfo(context: moc)
             info.selectedModuleId = module.id
             try! moc.save()
@@ -527,7 +535,6 @@ struct ModuleSelector: View, KeyboardReadable {
                                         .offset(y: isFocused ? -22 : 0)
                                         .padding(.horizontal, 16)
                                         .onTapGesture {
-                                            print("pressed")
                                             isFocused = true
                                         }
                                         .animation(.easeInOut, value: isFocused)
@@ -535,7 +542,7 @@ struct ModuleSelector: View, KeyboardReadable {
                                 .padding(.bottom, 20)
                             
                             HStack {
-                                TextField("\(fileUrl.isNotEmpty ? (URL(string: fileUrl)?.lastPathComponent ?? "") : "")", text: $fileName)
+                                TextField("\(!fileUrl.isEmpty ? (URL(string: fileUrl)?.lastPathComponent ?? "") : "")", text: $fileName)
                                     .disableAutocorrection(true)
                                     .focused($isNameFocused)
                                     .padding(.vertical, 10)
@@ -614,7 +621,6 @@ struct ModuleSelector: View, KeyboardReadable {
                                             .offset(y: isNameFocused ? -22 : 0)
                                             .padding(.horizontal, 16)
                                             .onTapGesture {
-                                                print("pressed")
                                                 isNameFocused = true
                                             }
                                             .animation(.easeInOut, value: isNameFocused)
@@ -652,41 +658,93 @@ struct ModuleSelector: View, KeyboardReadable {
                                         importPressed = false
                                     }
                                 
-                                Text("Import")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .foregroundColor(
-                                        Color(hex:
-                                                        globalData.appearance == .system
-                                                       ? (
-                                                        colorScheme == .dark
-                                                        ? Colors.onPrimary.dark
-                                                        : Colors.onPrimary.light
-                                                       ) : (
-                                                        globalData.appearance == .dark
-                                                        ? Colors.onPrimary.dark
-                                                        : Colors.onPrimary.light
-                                                       )
-                                                     )
-                                    )
-                                    .background {
-                                        Capsule()
-                                            .fill(
-                                                Color(hex:
-                                                                globalData.appearance == .system
-                                                               ? (
-                                                                colorScheme == .dark
-                                                                ? Colors.Primary.dark
-                                                                : Colors.Primary.light
-                                                               ) : (
-                                                                globalData.appearance == .dark
-                                                                ? Colors.Primary.dark
-                                                                : Colors.Primary.light
-                                                               )
-                                                             )
-                                            )
+                                Button {
+                                    if fileUrl.isValidURL {
+                                        guard let url = URL(string: fileUrl) else { return }
+                                        let downloadTask = URLSession.shared.downloadTask(with: url) { (tempLocation, response, error) in
+                                            guard let tempLocation = tempLocation, error == nil else {
+                                                print("Error downloading file: \(error!.localizedDescription)")
+                                                return
+                                            }
+                                            do {
+                                                let documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                                                
+                                                var name: String = ""
+                                                
+                                                if !fileName.isEmpty {
+                                                    name = fileName + ".module"
+                                                } else {
+                                                    let temp = url.lastPathComponent
+                                                    if temp.contains(".module") {
+                                                        name = temp
+                                                    } else {
+                                                        let filePrefix = "module_"
+                                                        var highestNumber = 0
+                                                        var highestFilename = "\(filePrefix)1.module" // default value if no files exist
+
+                                                        do {
+                                                            let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+                                                            for fileURL in fileURLs {
+                                                                let filename = fileURL.lastPathComponent
+                                                                if filename.hasPrefix(filePrefix), let number = Int(filename.replacingOccurrences(of: filePrefix, with: "").replacingOccurrences(of: ".module", with: "")) {
+                                                                    highestNumber = max(highestNumber, number)
+                                                                }
+                                                            }
+                                                            if highestNumber > 0 {
+                                                                highestFilename = "\(filePrefix)\(highestNumber).module"
+                                                            }
+                                                        } catch {
+                                                            print("Error while enumerating files in documents directory: \(error.localizedDescription)")
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                let fileURL = documentsDirectory.appendingPathComponent("Modules").appendingPathComponent("\(name)")
+                                                try FileManager.default.moveItem(at: tempLocation, to: fileURL)
+                                                ModuleManager.shared.importFromFile(fileUrl: fileURL)
+                                            } catch {
+                                                print("Error moving file to documents directory: \(error.localizedDescription)")
+                                            }
+                                        }
+                                        downloadTask.resume()
                                     }
+                                } label: {
+                                    Text("Import")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .foregroundColor(
+                                            Color(hex:
+                                                    globalData.appearance == .system
+                                                  ? (
+                                                    colorScheme == .dark
+                                                    ? Colors.onPrimary.dark
+                                                    : Colors.onPrimary.light
+                                                  ) : (
+                                                    globalData.appearance == .dark
+                                                    ? Colors.onPrimary.dark
+                                                    : Colors.onPrimary.light
+                                                  )
+                                                 )
+                                        )
+                                        .background {
+                                            Capsule()
+                                                .fill(
+                                                    Color(hex:
+                                                            globalData.appearance == .system
+                                                          ? (
+                                                            colorScheme == .dark
+                                                            ? Colors.Primary.dark
+                                                            : Colors.Primary.light
+                                                          ) : (
+                                                            globalData.appearance == .dark
+                                                            ? Colors.Primary.dark
+                                                            : Colors.Primary.light
+                                                          )
+                                                         )
+                                                )
+                                        }
+                                }
                             }
                         }
                         .padding(.horizontal, 20)
@@ -767,14 +825,13 @@ struct ModuleSelector: View, KeyboardReadable {
             )
         }
         .onReceive(keyboardPublisher) { newIsKeyboardVisible in
-                        print("Is keyboard visible? ", newIsKeyboardVisible)
-                        isKeyboardVisible = newIsKeyboardVisible
-                    }
+            isKeyboardVisible = newIsKeyboardVisible
+        }
     }
 }
 
 struct ModuleSelector_Previews: PreviewProvider {
     static var previews: some View {
-        ModuleSelector(showPopup: .constant(true), Colors: DynamicColors())
+        ModuleSelector(showPopup: .constant(true))
     }
 }

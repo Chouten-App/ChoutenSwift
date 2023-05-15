@@ -13,7 +13,7 @@ struct TestingHome: View {
     let proxy: GeometryProxy
     let carouselList: [CarouselData]
     @Binding var currentCarouselIndex: Int
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @Environment(\.colorScheme) var colorScheme
     @StateObject var globalData = GlobalData.shared
@@ -23,7 +23,7 @@ struct TestingHome: View {
             VStack(alignment: .leading) {
                 PaginationView(axis: .horizontal) {
                     ForEach(0..<carouselList.count, id: \.self) { index in
-                        OverlappingCard(proxy: proxy, Colors: Colors)
+                        OverlappingCard(image: "", proxy: proxy, Colors: Colors)
                     }
                 }
                 .currentPageIndex($currentCarouselIndex)
@@ -287,7 +287,7 @@ struct TestingHome: View {
 struct TestingHome_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader { proxy in
-            TestingHome(proxy: proxy, carouselList: [], currentCarouselIndex: .constant(1), Colors: DynamicColors())
+            TestingHome(proxy: proxy, carouselList: [], currentCarouselIndex: .constant(1))
         }
     }
 }

@@ -38,6 +38,7 @@ struct Subtitle: Codable {
 struct Source: Codable {
     let file: String
     let type: String
+    let quality: String
 }
 
 #if os(iOS)
@@ -74,33 +75,18 @@ struct WebView: UIViewRepresentable {
         let scriptHandler = WKUserScript(source: scriptHandlerString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
         userContentController.addUserScript(scriptHandler)
         
+        
+        
         let handlerName = "callbackHandler"
         userContentController.add(context.coordinator, name: handlerName)
-        
-        
-        class ConsoleMessageHandler: NSObject, WKScriptMessageHandler {
-            func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-                switch message.name {
-                case "error":
-                    // You should actually handle the error :)
-                    let error = (message.body as? [String: Any])?["message"] as? String ?? "unknown"
-                    assertionFailure("JavaScript error: \(error)")
-                default:
-                    assertionFailure("Received invalid message: \(message.name)")
-                }
-            }
-        }
+        userContentController.add(context.coordinator, name: "jsErrorHandler")
 
-        let consoleMessageHandler = ConsoleMessageHandler()
-        userContentController.add(consoleMessageHandler, name: "console")
-        
-        
-        
         let configuration = WKWebViewConfiguration()
         configuration.userContentController = userContentController
         
         let preferences = WKWebpagePreferences()
-        preferences.allowsContentJavaScript = enableExternalScripts // Enable JavaScript
+        
+        preferences.allowsContentJavaScript = true // Enable JavaScript
         configuration.defaultWebpagePreferences = preferences
         
         let webView = WKWebView(frame: .zero, configuration: configuration)
@@ -135,15 +121,22 @@ struct WebView: UIViewRepresentable {
         }
         
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            print("WEBKIT: \(message.body)")
             if message.name == "callbackHandler" {
-                
-                print("Received message from web view: \(message.body)")
                 if let message = message.body as? String {
                     let data = message.data(using: .utf8)
                     let decoder = JSONDecoder()
 
                     if data != nil {
-                        if requestType == "search" {
+                        if requestType == "home" {
+                            do {
+                                let homeComponents = try decoder.decode(DecodableResult<[HomeComponent]>.self, from: data!)
+                                globalData.homeComponents = homeComponents.result
+                                globalData.isLoadingHomepage = false
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                        } else if requestType == "search" {
                             do {
                                 let searchResults = try decoder.decode([SearchData].self, from: data!)
                                 globalData.searchResults = searchResults
@@ -154,32 +147,30 @@ struct WebView: UIViewRepresentable {
                         } else if requestType == "info" {
                             do {
                                 let info = try decoder.decode(DecodableResult<InfoData>.self, from: data!)
-                                globalData.infoData = info.result
+                                if globalData.infoData == nil {
+                                    globalData.infoData = info.result
+                                } else {
+                                    globalData.infoData!.mediaList = info.result.mediaList
+                                }
                                 globalData.nextUrl = info.nextUrl ?? ""
                                 globalData.doneInfo = true
-                                print(info)
                                 return
                             } catch {
                                 print(error.localizedDescription)
                             }
-                            print("trying next")
                             do {
                                 let info = try decoder.decode(DecodableResult<String>.self, from: data!)
-                                print(info)
                                 globalData.nextUrl = info.nextUrl ?? ""
                                 globalData.doneInfo = false
                                 return
                             } catch {
                                 print(error.localizedDescription)
                             }
-                            print("trying next")
                             do {
                                 let info = try decoder.decode([MediaItem].self, from: data!)
-                                print(info)
                                 globalData.infoData?.mediaList[0] = info
                                 globalData.doneInfo = false
                                 globalData.mediaFailedToLoad = false
-                                
                                 return
                             } catch {
                                 print(error.localizedDescription)
@@ -188,26 +179,21 @@ struct WebView: UIViewRepresentable {
                         } else if requestType == "mediaServers" {
                             do {
                                 let info = try decoder.decode(DecodableResult<[Server]>.self, from: data!)
-                                print(info)
                                 nextUrl = info.nextUrl ?? ""
                                 return
                             } catch {
                                 print(error.localizedDescription)
                             }
-                            print("trying next")
                             do {
                                 let info = try decoder.decode(DecodableResult<VideoData>.self, from: data!)
-                                print(info)
                                 mediaConsumeData = info.result
                                 nextUrl = info.nextUrl ?? ""
                                 return
                             } catch {
                                 print(error.localizedDescription)
                             }
-                            print("trying next")
                             do {
                                 let info = try decoder.decode(DecodableResult<[String]>.self, from: data!)
-                                print(info)
                                 mediaConsumeBookData = info.result
                                 nextUrl = info.nextUrl ?? ""
                             } catch {
@@ -216,6 +202,9 @@ struct WebView: UIViewRepresentable {
                         }
                     }
                 }
+            } else if message.name == "jsErrorHandler" {
+                let error = (message.body as? [String: Any])?["message"] as? String ?? "unknown"
+                print("JavaScript error occurred: \(error)")
             }
         }
         
@@ -287,8 +276,6 @@ struct WebView: NSViewRepresentable {
         
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             if message.name == "callbackHandler" {
-                
-                print("Received message from web view: \(message.body)")
                 if let message = message.body as? String {
                     let data = message.data(using: .utf8)
                     let decoder = JSONDecoder()

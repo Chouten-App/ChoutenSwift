@@ -1,0 +1,38 @@
+"nothing-text" = "Hier gibt's noch nichts zu sehen .-.";
+"downloaded-only" = "Heruntergeladenes";
+"incognito" = "Inkognito";
+
+// navbar
+"navitem-home" = "Startseite";
+"navitem-search" = "Suchen";
+"navitem-history" = "Verlauf";
+"navitem-more" = "Mehr";
+
+// more view
+"downloaded-only-title" = "Nur Heruntergeladenes";
+"downloaded-only-description" = "Setzt die App in den Offline-Modus";
+"incognito-title" = "Inkognito Modus";
+"incognito-description" = "Wir wissen, was du tust ;)";
+
+// settings view
+"settings-title" = "Einstellungen";
+"save-theme-title" = "Farbschema als JSON speichern";
+"export-theme-title" = "Farbschema als JSON exportieren";
+"export-theme-description" = "Momentanes Farbschema in JSON-Format kopieren";
+"appearance-title" = "Aussehen";
+"appearance-description" = "Hell/Dunkel/System";
+"theme-navigation-title" = "Farbschema";
+"theme-navigation-description" = "Ändere die Farben der App.";
+"developer-navigation-title" = "Entwickler";
+"developer-navigation-description" = "Entwickler Einstellungen, nicht anfassen!";
+
+// search view
+"search-placeholder %@" = "Suche auf %@";
+"select-module" = "Wähle ein Modul aus";
+"no-module" = "Kein Modul";
+
+// home view
+
+// history view
+
+// info view

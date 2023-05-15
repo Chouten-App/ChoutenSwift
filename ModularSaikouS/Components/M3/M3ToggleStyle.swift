@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct M3ToggleStyle: ToggleStyle {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -140,9 +140,9 @@ struct M3ToggleStyle_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .leading) {
             Toggle("Subbed", isOn: .constant(false))
-                .toggleStyle(M3ToggleStyle(Colors: DynamicColors()))
+                .toggleStyle(M3ToggleStyle())
             Toggle("Dubbed", isOn: .constant(true))
-                .toggleStyle(M3ToggleStyle(Colors: DynamicColors()))
+                .toggleStyle(M3ToggleStyle())
         }
         .padding(40)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)

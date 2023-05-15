@@ -1,0 +1,38 @@
+"nothing-text" = "ჯერ არაფერია სანახავი";
+"downloaded-only" = "Downloaded only";
+"incognito" = "Incognito";
+
+// navbar
+"navitem-home" = "მთავარი";
+"navitem-search" = "ძიება";
+"navitem-history" = "ისტორია";
+"navitem-more" = "მეტი";
+
+// more view
+"downloaded-only-title" = "მხოლოდ ჩამოწერილის ჩვენება";
+"downloaded-only-description" = "აყენებს აპლიკაციის რეჟიმს ოფლაინზე";
+"incognito-title" = "ინკოგნიტო რეჟიმზე გადართვა";
+"incognito-description" = "მხოლოდ ცუღლუტებისთვის";
+
+// settings view
+"settings-title" = "პარამეტრები";
+"save-theme-title" = "შეინახეთ თემა JSON-ში";
+"export-theme-title" = "თემის ექსპორტი JSON-ში";
+"export-theme-description" = "თქვენი თემის დაკოპირება JSON ფორმატში";
+"appearance-title" = "გარეგნობა";
+"appearance-description" = "ნათელი/მუქი/სისტემა";
+"theme-navigation-title" = "თემა";
+"theme-navigation-description" = "აპლიკაციის ფერების შეცვლა.";
+"developer-navigation-title" = "დეველოპერი";
+"developer-navigation-description" = "მხოლოდ დეველოპერებისთვის. არ შეეხოთ!";
+
+// search view
+"search-placeholder %@" = "ძებნა %@-ზე";
+"select-module" = "Select a module";
+"no-module" = "No Module";
+
+// home view
+
+// history view
+
+// info view

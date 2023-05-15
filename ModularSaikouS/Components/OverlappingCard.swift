@@ -10,19 +10,17 @@ import Kingfisher
 import SwiftUIX
 
 struct OverlappingCard: View {
+    let image: String
     let proxy: GeometryProxy
-    @ObservedObject var Colors: DynamicColors
+    @ObservedObject var Colors = DynamicColors.shared
     
     @Environment(\.colorScheme) var colorScheme
     
     @StateObject var globalData: GlobalData = GlobalData.shared
     
     var body: some View {
-        KFImage(URL(string: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx145139-rRimpHGWLhym.png"))
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(maxWidth: proxy.size.width, maxHeight: 360)
-            .clipped()
+        FillAspectImage(url: URL(string: image), doesAnimateHorizontal: false)
+            .frame(height: 360)
             .cornerRadius([.bottomLeading, .bottomTrailing], 12)
             .overlay {
                 LinearGradient(stops: [Gradient.Stop(color: .clear, location: 0.0), Gradient.Stop(color:
@@ -48,9 +46,9 @@ struct OverlappingCard_Previews: PreviewProvider {
         GeometryReader {proxy in
             VStack {
                 PaginationView {
-                    OverlappingCard(proxy: proxy, Colors: DynamicColors())
-                    OverlappingCard(proxy: proxy, Colors: DynamicColors())
-                    OverlappingCard(proxy: proxy, Colors: DynamicColors())
+                    OverlappingCard(image: "", proxy: proxy)
+                    OverlappingCard(image: "", proxy: proxy)
+                    OverlappingCard(image: "", proxy: proxy)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

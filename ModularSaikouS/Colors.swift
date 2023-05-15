@@ -73,6 +73,10 @@ struct SubColors: Codable {
 }
 
 class DynamicColors: ObservableObject {
+    static let shared = DynamicColors()
+    init(fileName: String = "default") {
+        getFromJson(fileName: fileName)
+    }
     // Primary
     @Published var Primary: CustomColor = CustomColor(light: "#005ac1", dark: "#adc6ff")
     @Published var onPrimary: CustomColor = CustomColor(light: "#ffffff", dark: "#002e69")
@@ -133,10 +137,6 @@ class DynamicColors: ObservableObject {
     @Published var InversePrimary: CustomColor = CustomColor(light: "#adc6ff", dark: "#005ac1")
     @Published var Scrim: CustomColor = CustomColor(light: "#000000", dark: "#000000")
     @Published var Shadow: CustomColor? = CustomColor(light: "#000000", dark: "#000000")
-    
-    init(fileName: String = "default") {
-        getFromJson(fileName: fileName)
-    }
     
     func getFromJson(fileName: String) {
         let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!

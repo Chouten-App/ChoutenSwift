@@ -1,0 +1,38 @@
+"nothing-text" = "Niks te zien hier .-.";
+"downloaded-only" = "Downloaded only";
+"incognito" = "Incognito";
+
+// navbar
+"navitem-home" = "Thuis";
+"navitem-search" = "Zoeken";
+"navitem-history" = "Geschiedenis";
+"navitem-more" = "Meer";
+
+// more view
+"downloaded-only-title" = "Activeer downloaded only";
+"downloaded-only-description" = "Zet de mode van de app op offline";
+"incognito-title" = "Activeer Incognito modus";
+"incognito-description" = "Voor de stouters";
+
+// settings view
+"settings-title" = "Instellingen";
+"save-theme-title" = "Sla thema op op JSON";
+"export-theme-title" = "Exporteer thema naar JSON";
+"export-theme-description" = "Kopieer jouw thema naar JSON formaat";
+"appearance-title" = "Uiterlijk";
+"appearance-description" = "Licht/Donker/Systeem";
+"theme-navigation-title" = "Thema";
+"theme-navigation-description" = "Verander de kleur van de app";
+"developer-navigation-title" = "Ontwikkelaar";
+"developer-navigation-description" = "Alleen ontwikkelaar dingen. Niet aanraken";
+
+// search view
+"search-placeholder %@" = "Zoek op %@";
+"select-module" = "Select a module";
+"no-module" = "No Module";
+
+// home view
+
+// history view
+
+// info view

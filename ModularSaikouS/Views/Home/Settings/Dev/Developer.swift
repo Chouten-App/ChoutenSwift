@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Developer: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.presentationMode) var presentationMode
@@ -80,11 +80,10 @@ struct Developer: View {
                 Button {
                     if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                         do {
-                            let directoryContents = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [])
-                            let jsonFiles = directoryContents.filter { $0.pathExtension == "json" }
-                            for fileURL in jsonFiles {
-                                try FileManager.default.removeItem(at: fileURL)
-                            }
+                            try FileManager.default.removeItem(at: documentsDirectory.appendingPathComponent("Modules"))
+                            try FileManager.default.createDirectory(at: documentsDirectory.appendingPathComponent("Modules"), withIntermediateDirectories: false, attributes: nil)
+                            globalData.availableModules = []
+                            globalData.newModule = nil
                         } catch {
                             print("Error getting directory contents: \(error.localizedDescription)")
                         }
@@ -132,7 +131,6 @@ struct Developer: View {
                             let jsonFiles = directoryContents.filter { $0.pathExtension == "json" }
                             for fileURL in jsonFiles {
                                 let fileData = try Data(contentsOf: fileURL)
-                                print(fileData)
                                 // Do something with the file data
                                 do {
                                     let decoded = try JSONDecoder().decode(OLDModule.self, from: fileData)
@@ -149,8 +147,6 @@ struct Developer: View {
                     if userInfo.count > 0 {
                         Colors.getFromJson(fileName: userInfo[0].selectedTheme ?? "theme")
                         
-                        print(userInfo[0])
-                        
                         if userInfo[0].selectedAppearance == 0 {
                             globalData.appearance = .light
                         } else if userInfo[0].selectedAppearance == 1 {
@@ -158,8 +154,6 @@ struct Developer: View {
                         } else {
                             globalData.appearance = .system
                         }
-                        
-                        print(globalData.appearance)
                         
                         let selectedModuleId = userInfo[0].selectedModuleId
                         
@@ -228,6 +222,6 @@ struct Developer: View {
 
 struct Developer_Previews: PreviewProvider {
     static var previews: some View {
-        Developer(Colors: DynamicColors())
+        Developer()
     }
 }

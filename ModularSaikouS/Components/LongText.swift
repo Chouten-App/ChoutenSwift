@@ -16,7 +16,7 @@ struct LongText: View {
     @State private var truncated: Bool = false
 
     let text: String
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
 
     @State var lineLimit = 9
     
@@ -32,7 +32,6 @@ struct LongText: View {
                 .opacity(0.7)
                 .animation(.spring(response: 0.3), value: expanded)
                 .geometryReader { textSize in
-                    print(textSize.size.height)
                     self.truncated = textSize.size.height >= 78
                 }
 
@@ -66,7 +65,7 @@ struct LongText: View {
 
 struct LongText_Previews: PreviewProvider {
     static var previews: some View {
-        LongText(text: "Based on a world-famous action RPG set in an open world, Dragon's Dogma from Capcom will be brought to life as a Netflix original anime series. The story follows a man's journey seeking revenge on a dragon who stole his heart. On his way, the man is brought back to life as an \"Arisen.\" An action adventure about a man challenged by demons who represent the seven deadly sins of humans. (Source: Netflix)", Colors: DynamicColors())
+        LongText(text: "Based on a world-famous action RPG set in an open world, Dragon's Dogma from Capcom will be brought to life as a Netflix original anime series. The story follows a man's journey seeking revenge on a dragon who stole his heart. On his way, the man is brought back to life as an \"Arisen.\" An action adventure about a man challenged by demons who represent the seven deadly sins of humans. (Source: Netflix)")
             .padding(.horizontal, 20)
     }
 }

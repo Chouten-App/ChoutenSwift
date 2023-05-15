@@ -52,7 +52,7 @@ private class DebounceState<Value>: ObservableObject {
 }
 
 struct Search: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     @StateObject var viewModel: SearchViewModel = SearchViewModel()
     @StateObject private var debounceState: DebounceState = DebounceState(initialValue: "")
     @StateObject var globalData = GlobalData.shared
@@ -112,7 +112,7 @@ struct Search: View {
                 }
             } else {
                 VStack {
-                    Text("Nothing to see yet .-.")
+                    Text("nothing-text")
                         .font(.title2)
                         .fontWeight(.semibold)
                 }
@@ -175,6 +175,6 @@ struct Search: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        Search(Colors: DynamicColors())
+        Search()
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct More: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -37,9 +37,9 @@ struct More: View {
                         } label: {
                             HStack {
                                 VStack(alignment: .leading) {
-                                    Text("Toggle Downloaded Only")
+                                    Text("downloaded-only-title")
                                         .fontWeight(.semibold)
-                                    Text("Sets the mode of the app to offline")
+                                    Text("downloaded-only-description")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                         .opacity(0.7)
@@ -57,9 +57,9 @@ struct More: View {
                         } label: {
                             HStack {
                                 VStack(alignment: .leading) {
-                                    Text("Toggle Incognito Mode")
+                                    Text("incognito-title")
                                         .fontWeight(.semibold)
-                                    Text("For the naughty naughty")
+                                    Text("incognito-description")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                         .opacity(0.7)
@@ -81,7 +81,7 @@ struct More: View {
                                 .font(.title2)
                             
                             VStack(alignment: .leading) {
-                                Text("Settings")
+                                Text("settings-title")
                                     .font(.title3)
                                     .fontWeight(.semibold)
                             }
@@ -164,6 +164,6 @@ struct More: View {
 
 struct More_Previews: PreviewProvider {
     static var previews: some View {
-        More(Colors: DynamicColors())
+        More()
     }
 }

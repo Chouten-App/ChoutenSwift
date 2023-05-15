@@ -94,35 +94,27 @@ struct WatchPage: View {
             }
         }
         .onAppear {
+            print(self.url)
             if mediaConsumeData.sources.count > 0 {
                 return
             }
             htmlString = ""
             if globalData.newModule != nil {
-                //globalData.isLoading = true
                 htmlString = ""
-                
-                // moduleManager.selectedModuleName
                 
                 // get search js file data
                 if returnData == nil {
                     returnData = moduleManager.getJsForType("media", num: currentJsIndex)
                     jsString = returnData!.js
                 }
-                
-                print(returnData)
-                
-                
                 if returnData != nil {
                     Task {
-                        
                         if returnData!.request != nil {
                             let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url)!)
                             do {
                                 guard let httpResponse = response as? HTTPURLResponse,
                                       httpResponse.statusCode == 200,
                                       let html = String(data: data, encoding: .utf8) else {
-                                    print("Invalid response")
                                     let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url)", error: true, action: nil)]
                                     NotificationCenter.default
                                         .post(name:           NSNotification.Name("floaty"),
@@ -130,9 +122,6 @@ struct WatchPage: View {
                                     return
                                 }
                                 if returnData!.usesApi {
-                                    print("API!!!")
-                                    
-                                    
                                     let regexPattern = "&#\\d+;"
                                     let regex = try! NSRegularExpression(pattern: regexPattern)
                                     
@@ -141,7 +130,6 @@ struct WatchPage: View {
                                     let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
                                     
                                     let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
-                                    //print(cleaned)
                                     htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
                                 } else {
                                     htmlString = html
@@ -151,13 +139,10 @@ struct WatchPage: View {
                             }
                         } else {
                             let (data, response) = try await URLSession.shared.data(from: URL(string: self.url)!)
-                            
-                            print(self.url)
                             do {
                                 guard let httpResponse = response as? HTTPURLResponse,
                                       httpResponse.statusCode == 200,
                                       let html = String(data: data, encoding: .utf8) else {
-                                    print("Invalid response")
                                     let data = ["data": FloatyData(message: "Failed to load data from \(self.url)", error: true, action: nil)]
                                     NotificationCenter.default
                                         .post(name:           NSNotification.Name("floaty"),
@@ -165,9 +150,6 @@ struct WatchPage: View {
                                     return
                                 }
                                 if returnData!.usesApi {
-                                    print("API!!!")
-                                    
-                                    
                                     let regexPattern = "&#\\d+;"
                                     let regex = try! NSRegularExpression(pattern: regexPattern)
                                     
@@ -176,7 +158,6 @@ struct WatchPage: View {
                                     let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
                                     
                                     let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
-                                    //print(cleaned)
                                     htmlString = "<div id=\"json-result\" data-json=\"\(cleaned)\">UNRELATED</div>"
                                 } else {
                                     htmlString = html
@@ -199,10 +180,6 @@ struct WatchPage: View {
                 Task {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                         if globalData.newModule != nil {
-                            //globalData.isLoading = true
-                            
-                            // moduleManager.selectedModuleName
-                            
                             if currentJsIndex < moduleManager.getJsCount("media") {
                                 if currentJsIndex == 0 {
                                     currentJsIndex = 2
@@ -210,16 +187,12 @@ struct WatchPage: View {
                                     currentJsIndex += 1
                                 }
                             }
-                            
-                            print("index is \(currentJsIndex)")
-                            
                             // get search js file data
                             returnData = moduleManager.getJsForType("media", num: currentJsIndex)
+                            print("Current JS File: \(currentJsIndex)")
                             
                             if returnData != nil {
                                 jsString = returnData!.js
-                                
-                                print(returnData)
                                 Task {
                                     if returnData!.request != nil {
                                         let (data, response) = try await URLSession.shared.data(from: URL(string: returnData!.request!.url)!)
@@ -227,7 +200,6 @@ struct WatchPage: View {
                                             guard let httpResponse = response as? HTTPURLResponse,
                                                   httpResponse.statusCode == 200,
                                                   let html = String(data: data, encoding: .utf8) else {
-                                                print("Invalid response")
                                                 let data = ["data": FloatyData(message: "Failed to load data from \(returnData!.request!.url)", error: true, action: nil)]
                                                 NotificationCenter.default
                                                     .post(name:           NSNotification.Name("floaty"),
@@ -235,9 +207,6 @@ struct WatchPage: View {
                                                 return
                                             }
                                             if returnData!.usesApi {
-                                                print("API!!!")
-                                                
-                                                
                                                 let regexPattern = "&#\\d+;"
                                                 let regex = try! NSRegularExpression(pattern: regexPattern)
                                                 
@@ -246,8 +215,6 @@ struct WatchPage: View {
                                                 let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
                                                 
                                                 let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
-                                                //print(cleaned)
-                                                
                                                 if returnData!.imports.isNotEmpty {
                                                     var scripts = ""
                                                     
@@ -282,7 +249,6 @@ struct WatchPage: View {
                                             guard let httpResponse = response as? HTTPURLResponse,
                                                   httpResponse.statusCode == 200,
                                                   let html = String(data: data, encoding: .utf8) else {
-                                                print("Invalid response")
                                                 let data = ["data": FloatyData(message: "Failed to load data from \(nextUrl)", error: true, action: nil)]
                                                 NotificationCenter.default
                                                     .post(name:           NSNotification.Name("floaty"),
@@ -290,9 +256,6 @@ struct WatchPage: View {
                                                 return
                                             }
                                             if returnData!.usesApi {
-                                                print("API!!!")
-                                                
-                                                
                                                 let regexPattern = "&#\\d+;"
                                                 let regex = try! NSRegularExpression(pattern: regexPattern)
                                                 
@@ -301,7 +264,6 @@ struct WatchPage: View {
                                                 let modifiedString = regex.stringByReplacingMatches(in: html, options: [], range: range, withTemplate: "")
                                                 
                                                 let cleaned = modifiedString.replacingOccurrences(of: "'", with: "").replacingOccurrences(of: "\"", with: "'")
-                                                //print(cleaned)
                                                 if returnData!.imports.isNotEmpty {
                                                     var scripts = ""
                                                     
@@ -337,8 +299,6 @@ struct WatchPage: View {
                         }
                     }
                 }
-            } else {
-                print("hm")
             }
         }
     }
@@ -390,7 +350,6 @@ struct CustomView: View {
                             .onChanged({ value in
                                     self.isDragging = true
                                     self.barHeight = isMacos ? 18 : 10
-                                    print(value)
                                     // TODO: - maybe use other logic here
                                     self.percentage = min(max(0, Double(value.location.x / geometry.size.width * total)), total)
                                 })
@@ -430,7 +389,6 @@ struct VolumeView: View {
                             .onChanged({ value in
                                 self.isDragging = true
                                 self.barWidth = 10
-                                print(value)
                                 // TODO: - maybe use other logic here
                                 self.percentage = Float(min(max(0, Double(value.location.y / geometry.size.height * total)), total))
                                 
@@ -456,7 +414,6 @@ struct VolumeView: View {
                         .onChanged({ value in
                             self.isDragging = true
                             self.barWidth = 10
-                            print(value)
                             // TODO: - maybe use other logic here
                             self.percentage = Float(min(max(0, Double(value.location.y / geometry.size.height * total)), total))
                             playerVM.setVolume(newVolume: self.percentage)

@@ -9,29 +9,29 @@ import SwiftUI
 
 struct Navbar: View {
     @Binding var selectedTab: Int
-    @ObservedObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     @StateObject var globalData: GlobalData = GlobalData.shared
     
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack(spacing: 8) {
-            NavbarItem(label: "Home", icon: "house.fill", selected: selectedTab == 0, hasNotification: false, Colors: Colors)
+            NavbarItem(label: "navitem-home", icon: "house.fill", selected: selectedTab == 0, hasNotification: false)
                 .onTapGesture {
                     selectedTab = 0
                     globalData.showModuleSelector = false
                 }
-            NavbarItem(label: "Search", icon: "magnifyingglass",selected: selectedTab == 1, hasNotification: false, Colors: Colors)
+            NavbarItem(label: "navitem-search", icon: "magnifyingglass",selected: selectedTab == 1, hasNotification: false)
                 .onTapGesture {
                     selectedTab = 1
                     globalData.showModuleSelector = false
                 }
-            NavbarItem(label: "History", icon: "clock.arrow.circlepath",selected: selectedTab == 2, hasNotification: true, Colors: Colors)
+            NavbarItem(label: "navitem-history", icon: "clock.arrow.circlepath",selected: selectedTab == 2, hasNotification: true)
                 .onTapGesture {
                     selectedTab = 2
                     globalData.showModuleSelector = false
                 }
-            NavbarItem(label: "More", icon: "ellipsis",selected: selectedTab == 3, hasNotification: false, Colors: Colors)
+            NavbarItem(label: "navitem-more", icon: "ellipsis",selected: selectedTab == 3, hasNotification: false)
                 .onTapGesture {
                     selectedTab = 3
                     globalData.showModuleSelector = false
@@ -46,11 +46,11 @@ struct Navbar: View {
 }
 
 struct NavbarItem: View {
-    let label: String
+    let label: LocalizedStringKey
     let icon: String
     let selected: Bool
     let hasNotification: Bool
-    @ObservedObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @StateObject var globalData: GlobalData = GlobalData.shared
     
@@ -149,13 +149,26 @@ struct NavbarItem: View {
 
 struct Navbar_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            Navbar(selectedTab: .constant(0), Colors: DynamicColors())
+        Group {
+            VStack {
+                Navbar(selectedTab: .constant(0))
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .background {
+                Color("Surface")
+            }
+            .ignoresSafeArea()
+            
+            VStack {
+                Navbar(selectedTab: .constant(0))
+                    .environment(\.locale,
+                                  Locale.init(identifier: "de"))
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .background {
+                Color("Surface")
+            }
+            .ignoresSafeArea()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-        .background {
-            Color("Surface")
-        }
-        .ignoresSafeArea()
     }
 }

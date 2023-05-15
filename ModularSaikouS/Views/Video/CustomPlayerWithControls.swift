@@ -73,11 +73,15 @@ struct CustomPlayerWithControls: View {
     @State var doneLoading = false
     @State var showUI: Bool = true
     @State var resIndex: Int = 0
+    @State var animateBackward: Bool = false
+    @State var animateForward: Bool = false
     
     @StateObject private var playerVM = PlayerViewModel()
     @StateObject var globalData = GlobalData.shared
     
     init(streamData: Binding<VideoData>, number: Int) {
+        print("CREATING VIDEO PLAYER")
+        print(streamData)
         self._streamData = streamData
         self.number = number
         // we need this to use Picture in Picture
@@ -109,39 +113,60 @@ struct CustomPlayerWithControls: View {
                         .overlay(
                             HStack {
                                 Color.clear
-                                    .frame(width: proxy.size.width, height: proxy.size.height)
+                                    .frame(width: proxy.size.width / 3, height: proxy.size.height)
                                     .contentShape(Rectangle())
                                     .gesture(
-                                        TapGesture(count: 2)
-                                            .onEnded({ playerVM.player.seek(to: CMTime(seconds: playerVM.currentTime - 15, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)})
-                                            .exclusively(before:
-                                                            TapGesture()
-                                                .onEnded({showUI = true})
-                                                        )
+                                        TapGesture(count: 1)
+                                            .onEnded {
+                                                showUI = true
+                                            }
+                                            .sequenced(before: TapGesture(count: 2).onEnded {
+                                                Task {
+                                                    if playerVM.player.currentItem != nil {
+                                                        await playerVM.player.seek(to: CMTime(seconds: playerVM.currentTime - 15, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)
+                                                    }
+                                                    // add crunchy animation
+                                                    animateBackward = true
+                                                    showUI = true
+                                                    try? await Task.sleep(nanoseconds: 400_000_000)
+                                                    animateBackward = false
+                                                    showUI = false
+                                                }
+                                            })
                                     )
                                 
                                 Color.clear
-                                    .frame(width: proxy.size.width, height: proxy.size.height)
+                                    .frame(width: proxy.size.width / 3, height: proxy.size.height)
                                     .contentShape(Rectangle())
                                     .onTapGesture {
                                         showUI = true
                                     }
                                 
                                 Color.clear
-                                    .frame(width: proxy.size.width, height: proxy.size.height)
+                                    .frame(width: proxy.size.width / 3, height: proxy.size.height)
                                     .contentShape(Rectangle())
                                     .gesture(
-                                        TapGesture(count: 2)
-                                            .onEnded({ playerVM.player.seek(to: CMTime(seconds: playerVM.currentTime + 15, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)})
-                                            .exclusively(before:
-                                                            TapGesture()
-                                                .onEnded({showUI = true})
-                                                        )
+                                        TapGesture(count: 1)
+                                            .onEnded {
+                                                showUI = true
+                                            }
+                                            .sequenced(before: TapGesture(count: 2).onEnded {
+                                                Task {
+                                                    if playerVM.player.currentItem != nil {
+                                                        await playerVM.player.seek(to: CMTime(seconds: playerVM.currentTime + 15, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)
+                                                    }
+                                                    // add crunchy animation
+                                                    animateForward = true
+                                                    showUI = true
+                                                    try? await Task.sleep(nanoseconds: 400_000_000)
+                                                    animateForward = false
+                                                    showUI = false
+                                                }
+                                            })
                                     )
-                                
                             }
                         )
-                        .overlay(CustomControlsView(streamData: $streamData, showUI: $showUI, playerVM: playerVM, number: $number)
+                        .overlay(CustomControlsView(streamData: $streamData, showUI: $showUI, playerVM: playerVM, number: $number, animateBackward: $animateBackward, animateForward: $animateForward)
                             .padding(.horizontal, 20), alignment: .bottom)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
@@ -149,7 +174,8 @@ struct CustomPlayerWithControls: View {
                 .ignoresSafeArea(.all)
                 .prefersHomeIndicatorAutoHidden(true)
                 .task {
-                    playerVM.setCurrentItem(AVPlayerItem(url:  URL(string: streamData.sources[0].file)!))
+                    playerVM.setCurrentItem(AVPlayerItem(url: URL(string: streamData.sources[0].file)!))
+                    print("Default quality: \(streamData.sources[0].file)")
                     if(streamData.subtitles.count > 0) {
                         var content: String
                         var index = 0
@@ -165,7 +191,6 @@ struct CustomPlayerWithControls: View {
                         if let url = URL(string: streamData.subtitles[index].url) {
                             do {
                                 content = try String(contentsOf: url)
-                                //print(content)
                             } catch {
                                 // contents could not be loaded
                                 content = ""
@@ -183,6 +208,7 @@ struct CustomPlayerWithControls: View {
                     playerVM.player.play()
                 }
                 .onDisappear {
+                    print("bye")
                     playerVM.player.pause()
                     
                     playerVM.player.replaceCurrentItem(with: nil)

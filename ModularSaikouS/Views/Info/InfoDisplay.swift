@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct InfoDisplay: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     let proxy: GeometryProxy
     @Binding var showHeader: Bool
@@ -17,8 +17,15 @@ struct InfoDisplay: View {
     @Binding var showFullDescription: Bool
     @Binding var isOn: Bool
     @Binding var navigating: Bool
+    @Binding var htmlString: String
+    @Binding var jsString: String
+    @Binding var currentJsIndex: Int
     var animation: Namespace.ID?
     @StateObject var globalData = GlobalData.shared
+    
+    @State var paginationIndex = 0
+    @State var startEpisodeList = 0
+    @State var endEpisodeList = 50
     
     func forTrailingZero(temp: Double) -> String {
         return String(format: "%g", temp)
@@ -190,9 +197,22 @@ struct InfoDisplay: View {
                         .padding(.vertical, 6)
                     
                     if globalData.infoData!.seasons.count > 0 {
-                        Dropdown(Colors: Colors, options: globalData.infoData!.seasons)
+                        Dropdown(Colors: Colors, options: globalData.infoData!.seasons, htmlString: $htmlString, jsString: $jsString, currentJsIndex: $currentJsIndex)
                             .zIndex(100)
                             .padding(.top, 12)
+                    }
+                    
+                    if(globalData.infoData!.mediaList.count > 0 && globalData.infoData!.mediaList[0].count > 50) {
+                        ScrollView(.horizontal) {
+                            HStack(spacing: 20) {
+                                ForEach(0..<Int(ceil(Float(globalData.infoData!.mediaList[0].count)/50))) { index in
+                                    PaginationChip(paginationIndex: $paginationIndex, startEpisodeList: $startEpisodeList, endEpisodeList: $endEpisodeList, episodeCount: globalData.infoData!.mediaList[0].count, index: index, Colors: Colors)
+                                }
+                            }
+                        }
+                        .frame(maxWidth: proxy.size.width - 20, alignment: .leading)
+                        .padding(.leading, 20)
+                        .padding(.bottom, 20)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -204,7 +224,7 @@ struct InfoDisplay: View {
                         .padding(.horizontal, 100)
                         .frame(maxWidth: proxy.size.width)
                 } else if globalData.infoData!.mediaList.count > 0 && globalData.infoData!.mediaList[0].count > 0 {
-                    EpisodeDisplay(proxy: proxy, Colors: Colors, navigating: $navigating)
+                    EpisodeDisplay(proxy: proxy, Colors: Colors, navigating: $navigating, startEpisodeList: $startEpisodeList, endEpisodeList: $endEpisodeList)
                         .animation(.spring(response: 0.3), value: showFullDescription)
                         .padding(.horizontal, 20)
                 } else {

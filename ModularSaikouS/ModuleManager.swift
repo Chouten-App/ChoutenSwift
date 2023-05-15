@@ -67,7 +67,6 @@ class ModuleManager: ObservableObject {
     }
     
     func getMetadata(folderUrl: URL) -> Module? {
-        print(folderUrl)
         // get metadata.json
         do {
             let metadataData = try Data(contentsOf: folderUrl.appendingPathComponent("metadata.json"))
@@ -87,6 +86,19 @@ class ModuleManager: ObservableObject {
     
     func getJsCount(_ type: String) -> Int {
         switch type {
+        case "home":
+            if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                let infoDirectory = documentsDirectory.appendingPathComponent("Modules").appendingPathComponent(selectedModuleName).appendingPathComponent("Home")
+                do {
+                    let fileUrls = try FileManager.default.contentsOfDirectory(at: infoDirectory, includingPropertiesForKeys: nil)
+                    let jsFileUrls = fileUrls.filter { $0.pathExtension == "js" }
+                    return jsFileUrls.count
+                } catch {
+                    print("Error while enumerating files: \(error.localizedDescription)")
+                    return 0
+                }
+            }
+            return 0
         case "search":
             if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                 let infoDirectory = documentsDirectory.appendingPathComponent("Modules").appendingPathComponent(selectedModuleName).appendingPathComponent("Search")
@@ -133,13 +145,70 @@ class ModuleManager: ObservableObject {
     
     func getJsForType(_ type: String, num: Int) -> ReturnedData? {
         switch type {
+        case "home":
+            if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                do {
+                    let searchDirectory = documentsDirectory.appendingPathComponent("Modules").appendingPathComponent(selectedModuleName).appendingPathComponent("Home")
+                    let jsData = try Data(contentsOf: searchDirectory.appendingPathComponent(num == 0 ? "code.js" : "code\(num).js"))
+                    let jsString = String(data: jsData, encoding: .utf8)
+                    
+                    // split js into logic and vars
+                    let vars = jsString?.components(separatedBy: "function logic() {")[0]
+                    var logic = jsString?.components(separatedBy: "function logic() {")[1].trimmingCharacters(in: .whitespaces)
+                    if logic != nil {
+                        logic = "function logic() {" + logic! + "logic()"
+                    }
+                    let context = JSContext()
+
+                    context?.evaluateScript(vars)
+
+                    var request: Request?
+                    var usesApi: Bool = false
+                    var allowExternalScripts: Bool = false
+                    var removeScripts: Bool = false
+                    var imports: [String] = []
+                    
+                    if let requestVar = context?.objectForKeyedSubscript("Request") {
+                        let url = requestVar.objectForKeyedSubscript("url").toString()
+                        let method = requestVar.objectForKeyedSubscript("method").toString()
+                        //let headers = requestVar.objectForKeyedSubscript("headers").toArray()
+                        let body = requestVar.objectForKeyedSubscript("body").toString()
+                        
+                        request = Request(url: url ?? "", type: method ?? "GET", headers: [], body: body)
+                    }
+                    
+                    if let usesApiVar = context?.objectForKeyedSubscript("usesApi") {
+                        usesApi = usesApiVar.toBool()
+                    }
+                    
+                    if let allowExternalScriptsVar = context?.objectForKeyedSubscript("usesApi") {
+                        allowExternalScripts = allowExternalScriptsVar.toBool()
+                    }
+                    
+                    if let removeScriptsVar = context?.objectForKeyedSubscript("usesApi") {
+                        removeScripts = removeScriptsVar.toBool()
+                    }
+                    
+                    if let importsVar = context?.objectForKeyedSubscript("imports") {
+                        imports = importsVar.toArray() as? [String] ?? []
+                    }
+                    
+                    if logic != nil {
+                        return ReturnedData(request: request, usesApi: usesApi, allowExternalScripts: allowExternalScripts, removeScripts: removeScripts, imports: imports, js: logic!)
+                    }
+                    
+                } catch {
+                    print("Error loading metadata: \(error)")
+                }
+            }
+            
+            return nil
         case "search":
             if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                 do {
                     let searchDirectory = documentsDirectory.appendingPathComponent("Modules").appendingPathComponent(selectedModuleName).appendingPathComponent("Search")
                     let jsData = try Data(contentsOf: searchDirectory.appendingPathComponent("code.js"))
                     let jsString = String(data: jsData, encoding: .utf8)
-                    //print(jsString)
                     
                     // split js into logic and vars
                     let vars = jsString?.components(separatedBy: "function logic() {")[0]
@@ -198,7 +267,6 @@ class ModuleManager: ObservableObject {
                     let searchDirectory = documentsDirectory.appendingPathComponent("Modules").appendingPathComponent(selectedModuleName).appendingPathComponent("Info")
                     let jsData = try Data(contentsOf: searchDirectory.appendingPathComponent(num == 0 ? "code.js" : "code\(num).js"))
                     let jsString = String(data: jsData, encoding: .utf8)
-                    //print(jsString)
                     
                     // split js into logic and vars
                     let vars = jsString?.components(separatedBy: "function logic() {")[0]
@@ -228,7 +296,6 @@ class ModuleManager: ObservableObject {
                             request = Request(url: url ?? "", type: method ?? "GET", headers: [], body: body)
                         }
                     }
-                    print(request)
                     
                     if let usesApiVar = context?.objectForKeyedSubscript("usesApi") {
                         usesApi = usesApiVar.toBool()
@@ -261,7 +328,6 @@ class ModuleManager: ObservableObject {
                     let searchDirectory = documentsDirectory.appendingPathComponent("Modules").appendingPathComponent(selectedModuleName).appendingPathComponent("Media")
                     let jsData = try Data(contentsOf: searchDirectory.appendingPathComponent(num == 0 ? "code.js" : "code\(num).js"))
                     let jsString = String(data: jsData, encoding: .utf8)
-                    //print(jsString)
                     
                     // split js into logic and vars
                     let vars = jsString?.components(separatedBy: "function logic() {")[0]
@@ -291,7 +357,6 @@ class ModuleManager: ObservableObject {
                             request = Request(url: url ?? "", type: method ?? "GET", headers: [], body: body)
                         }
                     }
-                    print(request)
                     
                     if let usesApiVar = context?.objectForKeyedSubscript("usesApi") {
                         usesApi = usesApiVar.toBool()

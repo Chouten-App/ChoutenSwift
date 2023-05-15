@@ -1,0 +1,38 @@
+"nothing-text" = "Nothing to see yet .-.";
+"downloaded-only" = "Downloaded only";
+"incognito" = "Incognito";
+
+// navbar
+"navitem-home" = "Home";
+"navitem-search" = "Search";
+"navitem-history" = "History";
+"navitem-more" = "More";
+
+// more view
+"downloaded-only-title" = "Toggle Downloaded Only";
+"downloaded-only-description" = "Sets the mode of the app to offline";
+"incognito-title" = "Toggle Incognito Mode";
+"incognito-description" = "For the naughty naughty";
+
+// settings view
+"settings-title" = "Settings";
+"save-theme-title" = "Save Theme to JSON";
+"export-theme-title" = "Export Theme to JSON";
+"export-theme-description" = "Copy your theme in JSON format";
+"appearance-title" = "Appearance";
+"appearance-description" = "Light/Dark/System";
+"theme-navigation-title" = "Theme";
+"theme-navigation-description" = "Change the Colors of the app.";
+"developer-navigation-title" = "Developer";
+"developer-navigation-description" = "Only Dev Stuff. Dont Touch!";
+
+// search view
+"search-placeholder %@" = "Search on %@";
+"select-module" = "Select a module";
+"no-module" = "No Module";
+
+// home view
+
+// history view
+
+// info view

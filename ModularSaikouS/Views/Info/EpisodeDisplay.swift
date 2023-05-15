@@ -10,9 +10,12 @@ import Kingfisher
 
 struct EpisodeDisplay: View {
     let proxy: GeometryProxy
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     @Binding var navigating: Bool
+    @Binding var startEpisodeList: Int
+    @Binding var endEpisodeList: Int
     @StateObject var globalData = GlobalData.shared
+    
     
     func forTrailingZero(temp: Double) -> String {
         return String(format: "%g", temp)
@@ -24,9 +27,9 @@ struct EpisodeDisplay: View {
         if globalData.infoData != nil && globalData.infoData!.mediaList.count > 0 {
             ScrollView {
                 VStack(spacing: 20) {
-                    ForEach(0..<globalData.infoData!.mediaList[0].count, id: \.self) {index in
+                    ForEach(startEpisodeList..<min(endEpisodeList, globalData.infoData!.mediaList[0].count), id: \.self) {index in
                         NavigationLink(destination: globalData.infoData!.mediaType.lowercased() == "episodes" ? AnyView(WatchPage(url: globalData.infoData!.mediaList[0][index].url, number: index)) : AnyView(Reader(url: globalData.infoData!.mediaList[0][index].url, selectedMediaIndex: index))) {
-                            ZStack {
+                            ZStack(alignment: .top) {
                                 Color(hex:
                                         globalData.appearance == .system
                                       ? (
@@ -102,7 +105,6 @@ struct EpisodeDisplay: View {
                                                   ))
                             
                         }.simultaneousGesture(TapGesture().onEnded {
-                            print("Hello world!")
                             navigating = true
                         })
                     }
@@ -110,7 +112,7 @@ struct EpisodeDisplay: View {
                 .padding(.bottom, 60)
             }
             .padding(.top, 12)
-            .frame(maxHeight: 690)
+            .frame(minHeight: 480, maxHeight: 690)
         }
     }
 }

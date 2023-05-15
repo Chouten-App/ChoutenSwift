@@ -1,0 +1,38 @@
+"nothing-text" = "Rien à voir ici .-.";
+"downloaded-only" = "Downloaded only";
+"incognito" = "Incognito";
+
+// navbar
+"navitem-home" = "Accueil";
+"navitem-search" = "Recherche";
+"navitem-history" = "Historique";
+"navitem-more" = "Plus";
+
+// more view
+"downloaded-only-title" = "Affiche que les titres téléchargés";
+"downloaded-only-description" = "Permet de d’activer/désactiver le mode hors-ligne";
+"incognito-title" = "Activer le mode Anonyme";
+"incognito-description" = "Pour les petits coquinous";
+
+// settings view
+"settings-title" = "Paramètres";
+"save-theme-title" = "Enregistre le thème en JSON";
+"export-theme-title" = "Exporter le thème en JSON";
+"export-theme-description" = "Copie ton thème au format JSON";
+"appearance-title" = "Apparence";
+"appearance-description" = "Clair/Sombre/Système";
+"theme-navigation-title" = "Theme";
+"theme-navigation-description" = "Change les couleurs de l’application";
+"developer-navigation-title" = "Développeur";
+"developer-navigation-description" = "Si tu n’es pas un dev, pas touche !";
+
+// search view
+"search-placeholder %@" = " Rechercher sur %@";
+"select-module" = "Select a module";
+"no-module" = "No Module";
+
+// home view
+
+// history view
+
+// info view

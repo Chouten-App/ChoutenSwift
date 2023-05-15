@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CheckBoxToggleStyle: ToggleStyle {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -84,7 +84,7 @@ struct CheckBoxToggleStyle: ToggleStyle {
 }
 
 struct SharedAlert: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @State var dontShowAgain: Bool = false
     
@@ -188,7 +188,7 @@ struct SharedAlert: View {
 struct SharedAlert_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            SharedAlert(Colors: DynamicColors())
+            SharedAlert()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(hex: DynamicColors().Surface.dark))

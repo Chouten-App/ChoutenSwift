@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UrlPopup: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     @Binding var showPopup: Bool
     @State var fileUrl: String = ""
     
@@ -31,7 +31,7 @@ struct UrlPopup: View {
             
             let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(url.lastPathComponent.contains(".json") ? url.lastPathComponent : "\(url.lastPathComponent).json")
             
-            print(fileURL)
+            (fileURL)
             
             do {
                 try data.write(to: fileURL)
@@ -125,7 +125,7 @@ struct UrlPopup: View {
 struct UrlPopup_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            UrlPopup(Colors: DynamicColors(), showPopup: .constant(true))
+            UrlPopup(showPopup: .constant(true))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(hex: DynamicColors().Surface.dark))

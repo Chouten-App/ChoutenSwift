@@ -1,0 +1,38 @@
+"nothing-text" = ".-. ما من محتوى بعد";
+"downloaded-only" = "Downloaded only";
+"incognito" = "Incognito";
+
+// navbar
+"navitem-home" = "الرئيسية";
+"navitem-search" = "البحث";
+"navitem-history" = "السجل";
+"navitem-more" = "المزيد";
+
+// more view
+"downloaded-only-title" = "مُنزَّل";
+"downloaded-only-description" = "حال انقطاع الاتصال.";
+"incognito-title" = "التصفح الخفيّ";
+"incognito-description" = "لتتصفح بسرية.";
+
+// settings view
+"settings-title" = "الإعدادات ";
+"save-theme-title" = " JSON حفظ المظهر بصيغة";
+"export-theme-title" = "JSON تصدير المظهر لصيغة ";
+"export-theme-description" = "JSON نسخ المظهر بصيغة ";
+"appearance-title" = "المظهر";
+"appearance-description" = "فاتح/داكن/تلقائي ";
+"theme-navigation-title" = "مظهر";
+"theme-navigation-description" = "تغيير ألوان التطبيق.";
+"developer-navigation-title" = "نافذة المطورين";
+"developer-navigation-description" = "نافذة للمطورين فحسب! على العموم اجتنابها.";
+
+// search view
+"search-placeholder %@" = "%@ البحث عن";
+"select-module" = "Select a module";
+"no-module" = "No Module";
+
+// home view
+
+// history view
+
+// info view

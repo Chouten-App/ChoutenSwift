@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct ButtonLarge: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     var label: String
     var image: String?
     var developer: String?
@@ -93,13 +93,6 @@ struct ButtonLarge: View {
                     Spacer()
                     
                     Button {
-                        /*
-                         do {
-                         try FileManager.default.removeItem(at: fileurl)
-                         } catch let error {
-                         print(error)
-                         }
-                         */
                         withAnimation(.spring(response: 0.3)) {
                             showDetails.toggle()
                         }
@@ -174,7 +167,7 @@ struct ButtonLarge: View {
 struct ButtonLarge_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            ButtonLarge(Colors: DynamicColors(), label: "Zoro.to", image: "https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/qe7kzhh0bo1qt9ohrxwb", developer: "Inumaki", version: "0.1.0", action: {
+            ButtonLarge(label: "Zoro.to", image: "https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/qe7kzhh0bo1qt9ohrxwb", developer: "Inumaki", version: "0.1.0", action: {
                 
             })
             .padding(.horizontal, 20)

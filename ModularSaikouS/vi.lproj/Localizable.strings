@@ -1,0 +1,38 @@
+"nothing-text" = "Không có gì ở đây hết .-.";
+"downloaded-only" = "Downloaded only";
+"incognito" = "Incognito";
+
+// navbar
+"navitem-home" = "Trang chủ";
+"navitem-search" = "Tìm kiếm";
+"navitem-history" = "Lịch sử";
+"navitem-more" = "Xem thêm";
+
+// more view
+"downloaded-only-title" = "Bật/Tắt chỉ tải xuống";
+"downloaded-only-description" = "Chuyển ứng dụng thành chế độ offline";
+"incognito-title" = "Bật/Tắt chế độ ẩn danh";
+"incognito-description" = "Chuẩn bị khăn giấy để hành sự";
+
+// settings view
+"settings-title" = "Cài đặt";
+"save-theme-title" = "Lưu Theme thành JSON";
+"export-theme-title" = "Xuất Theme thành JSON";
+"export-theme-description" = "Sao chép Theme ở dạng JSON";
+"appearance-title" = "Giao diện";
+"appearance-description" = "Light/Dark/System";
+"theme-navigation-title" = "Theme";
+"theme-navigation-description" = "Đổi màu ứng dụng.";
+"developer-navigation-title" = "Developer";
+"developer-navigation-description" = "Only Dev Stuff. Dont Touch!";
+
+// search view
+"search-placeholder %@" = "Tìm kiếm %@";
+"select-module" = "Select a module";
+"no-module" = "No Module";
+
+// home view
+
+// history view
+
+// info view

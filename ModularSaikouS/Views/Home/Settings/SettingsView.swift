@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AppearanceSelector: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     @Binding var showSelector: Bool
     
     @Environment(\.colorScheme) var colorScheme
@@ -88,7 +88,6 @@ struct AppearanceSelector: View {
                     globalData.appearance = .light
                     
                     if userInfo.count > 0 {
-                        print("updating")
                         do {
                             userInfo[0].selectedAppearance = 0
                             try moc.save()
@@ -96,7 +95,6 @@ struct AppearanceSelector: View {
                             print(error)
                         }
                     } else {
-                        print("adding")
                         do {
                             let info = UserInfo(context: moc)
                             info.selectedAppearance = 0
@@ -168,7 +166,6 @@ struct AppearanceSelector: View {
                     globalData.appearance = .dark
                     
                     if userInfo.count > 0 {
-                        print("updating")
                         do {
                             userInfo[0].selectedAppearance = 1
                             try moc.save()
@@ -176,7 +173,6 @@ struct AppearanceSelector: View {
                             print(error)
                         }
                     } else {
-                        print("adding")
                         do {
                             let info = UserInfo(context: moc)
                             info.selectedAppearance = 1
@@ -248,7 +244,6 @@ struct AppearanceSelector: View {
                     globalData.appearance = .system
                     
                     if userInfo.count > 0 {
-                        print("updating")
                         do {
                             userInfo[0].selectedAppearance = 2
                             try moc.save()
@@ -256,7 +251,6 @@ struct AppearanceSelector: View {
                             print(error)
                         }
                     } else {
-                        print("adding")
                         do {
                             let info = UserInfo(context: moc)
                             info.selectedAppearance = 2
@@ -337,7 +331,7 @@ struct AppearanceSelector: View {
 }
 
 struct SettingsView: View {
-    @StateObject var Colors: DynamicColors
+    @StateObject var Colors = DynamicColors.shared
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.presentationMode) var presentationMode
@@ -350,9 +344,9 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Export Theme to JSON")
+                        Text("export-theme-title")
                             .fontWeight(.semibold)
-                        Text("Copy your theme in JSON format")
+                        Text("export-theme-description")
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .opacity(0.7)
@@ -400,16 +394,14 @@ struct SettingsView: View {
                 .onTapGesture {
                     let json = Colors.getAsJson()
                     
-                    print(json)
-                    
                     UIPasteboard.general.setValue(json, forPasteboardType: "public.json")
                 }
                 
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Appearance")
+                        Text("appearance-title")
                             .fontWeight(.semibold)
-                        Text("Light/Dark/System")
+                        Text("appearance-description")
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .opacity(0.7)
@@ -424,9 +416,9 @@ struct SettingsView: View {
                 NavigationLink(destination: Appearance(Colors: Colors)) {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Theme")
+                            Text("theme-navigation-title")
                                 .fontWeight(.semibold)
-                            Text("Change the Colors of the app.")
+                            Text("theme-navigation-description")
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .opacity(0.7)
@@ -440,7 +432,7 @@ struct SettingsView: View {
                 Button {
                     Colors.storeToJson()
                 } label: {
-                    Text("Save Theme to JSON.")
+                    Text("save-theme-title")
                         .fontWeight(.bold)
                         .foregroundColor(
                             Color(hex:
@@ -481,9 +473,9 @@ struct SettingsView: View {
                 NavigationLink(destination: Developer(Colors: Colors)) {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Developer")
+                            Text("developer-navigation-title")
                                 .fontWeight(.semibold)
-                            Text("Only Dev Stuff. Dont Touch!")
+                            Text("developer-navigation-description")
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .opacity(0.7)
@@ -535,7 +527,7 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "chevron.left")
                     
-                    Text("Settings")
+                    Text("settings-title")
                         .font(.title)
                         .fontWeight(.semibold)
                 }
@@ -589,6 +581,6 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(Colors: DynamicColors())
+        SettingsView()
     }
 }

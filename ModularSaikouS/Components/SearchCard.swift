@@ -25,7 +25,7 @@ struct SearchCard: View {
     let type: SearchCardType
     let cover: String?
     
-    @ObservedObject var Colors: DynamicColors
+    @ObservedObject var Colors = DynamicColors.shared
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -264,7 +264,7 @@ struct SearchCard_Previews: PreviewProvider {
     
     static var previews: some View {
         VStack {
-            SearchCard(image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98659-sH5z5RfMuyMr.png", title: "Classroom of the Elite", hasIndicator: true, indicatorText: "DUB", currentCount: 7, totalCount: 12, type: .LIST, cover: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/98659-u46B5RCNl9il.jpg", Colors: DynamicColors())
+            SearchCard(image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98659-sH5z5RfMuyMr.png", title: "Classroom of the Elite", hasIndicator: true, indicatorText: "DUB", currentCount: 7, totalCount: 12, type: .LIST, cover: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/98659-u46B5RCNl9il.jpg")
                 .padding(.horizontal, 20)
             
         }
