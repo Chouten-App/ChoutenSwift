@@ -192,6 +192,10 @@ struct Dropdown: View {
                                 }
                             } catch let error {
                                 print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                             }
                         } else {
                             let (data, response) = try await URLSession.shared.data(from: URL(string: selectedOptionData.url)!)
@@ -223,6 +227,10 @@ struct Dropdown: View {
                                 print(htmlString)
                             } catch let error {
                                 print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                             }
                         }
                         
@@ -286,6 +294,10 @@ struct Dropdown: View {
                                             }
                                         } catch let error {
                                             print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                                         }
                                     } else {
                                         let (data, response) = try await URLSession.shared.data(from: URL(string: next!)!)
@@ -316,6 +328,10 @@ struct Dropdown: View {
                                             currentJsIndex += 1
                                         } catch let error {
                                             print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                                         }
                                     }
                                     

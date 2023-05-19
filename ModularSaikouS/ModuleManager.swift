@@ -44,6 +44,10 @@ class ModuleManager: ObservableObject {
                 try FileManager.default.removeItem(at: fileUrl)
             } catch let error {
                 print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
             }
         }
     }
@@ -156,7 +160,18 @@ class ModuleManager: ObservableObject {
                     let vars = jsString?.components(separatedBy: "function logic() {")[0]
                     var logic = jsString?.components(separatedBy: "function logic() {")[1].trimmingCharacters(in: .whitespaces)
                     if logic != nil {
-                        logic = "function logic() {" + logic! + "logic()"
+                        logic = """
+                        try {
+                        function logic() {
+                            \(logic!)
+                        logic()
+                        } catch (error) {
+                            const stacktrace = error.stack;
+                            const linesTemp = stacktrace.split("\\nglobal")[0];
+                            const lines = linesTemp.replace("logic@user-script:", "");
+                            console.error(`Uncaught ${error.name}: ${error.message}-----${lines}`);
+                        }
+                        """
                     }
                     let context = JSContext()
 
@@ -167,6 +182,12 @@ class ModuleManager: ObservableObject {
                     var allowExternalScripts: Bool = false
                     var removeScripts: Bool = false
                     var imports: [String] = []
+                    
+                    /*
+                    context?.objectForKeyedSubscript("console").setObject({ value in
+                        print("JSContext LOG - \(value.toString() ?? "")")
+                    } as @convention(block) (JSValue) -> Void, forKeyedSubscript: "log")
+                     */
                     
                     if let requestVar = context?.objectForKeyedSubscript("Request") {
                         let url = requestVar.objectForKeyedSubscript("url").toString()
@@ -214,7 +235,15 @@ class ModuleManager: ObservableObject {
                     let vars = jsString?.components(separatedBy: "function logic() {")[0]
                     var logic = jsString?.components(separatedBy: "function logic() {")[1].trimmingCharacters(in: .whitespaces)
                     if logic != nil {
-                        logic = "function logic() {" + logic! + "logic()"
+                        logic = """
+                        try {
+                        function logic() {
+                            \(logic!)
+                        logic()
+                        } catch (error) {
+                            console.error(error.message)
+                        }
+                        """
                     }
                     let context = JSContext()
 
@@ -272,7 +301,15 @@ class ModuleManager: ObservableObject {
                     let vars = jsString?.components(separatedBy: "function logic() {")[0]
                     var logic = jsString?.components(separatedBy: "function logic() {")[1].trimmingCharacters(in: .whitespaces)
                     if logic != nil {
-                        logic = "function logic() {" + logic! + "logic()"
+                        logic = """
+                        try {
+                        function logic() {
+                            \(logic!)
+                        logic()
+                        } catch (error) {
+                            console.error(error.message)
+                        }
+                        """
                     }
                     let context = JSContext()
 
@@ -333,7 +370,15 @@ class ModuleManager: ObservableObject {
                     let vars = jsString?.components(separatedBy: "function logic() {")[0]
                     var logic = jsString?.components(separatedBy: "function logic() {")[1].trimmingCharacters(in: .whitespaces)
                     if logic != nil {
-                        logic = "function logic() {" + logic! + "logic()"
+                        logic = """
+                        try {
+                        function logic() {
+                            \(logic!)
+                        logic()
+                        } catch (error) {
+                            console.error(error.message)
+                        }
+                        """
                     }
                     let context = JSContext()
 

@@ -436,6 +436,10 @@ struct Main: View {
                             globalData.availableJsons.append(fileURL)
                         } catch let error {
                             print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                         }
                     }
                     

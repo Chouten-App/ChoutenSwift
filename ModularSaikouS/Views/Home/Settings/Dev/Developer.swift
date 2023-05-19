@@ -138,6 +138,10 @@ struct Developer: View {
                                     globalData.availableJsons.append(fileURL)
                                 } catch let error {
                                     print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                                 }
                             }
                         } catch {
@@ -174,6 +178,43 @@ struct Developer: View {
                         }
                         
                         Spacer()
+                    }
+                }
+                
+                Button {
+                    globalData.downloadedOnly.toggle()
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Toggle Log Button")
+                                .fontWeight(.semibold)
+                            Text("Toggle a left aligned button to go to Logs")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .opacity(0.7)
+                        }
+                        
+                        Spacer()
+                        
+                        Toggle(isOn: $globalData.showLogsButton, label: {})
+                            .toggleStyle(M3ToggleStyle(Colors: Colors))
+                    }
+                }
+                
+                NavigationLink(destination: LogsDisplay()) {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Logs")
+                                .fontWeight(.semibold)
+                            Text("See logs modules")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .opacity(0.7)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
                     }
                 }
             }

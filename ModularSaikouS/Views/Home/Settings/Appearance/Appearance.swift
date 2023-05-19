@@ -124,6 +124,10 @@ struct Appearance: View {
                             themesFileNames.append(fileURL.lastPathComponent.replacingOccurrences(of: ".theme", with: ""))
                         } catch let error {
                             print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                         }
                     }
                 } catch {

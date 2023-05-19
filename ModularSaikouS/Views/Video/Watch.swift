@@ -136,6 +136,10 @@ struct WatchPage: View {
                                 }
                             } catch let error {
                                 print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                             }
                         } else {
                             let (data, response) = try await URLSession.shared.data(from: URL(string: self.url)!)
@@ -164,6 +168,10 @@ struct WatchPage: View {
                                 }
                             } catch let error {
                                 print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                             }
                         }
                         
@@ -242,6 +250,10 @@ struct WatchPage: View {
                                             }
                                         } catch let error {
                                             print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                                         }
                                     } else {
                                         let (data, response) = try await URLSession.shared.data(from: URL(string: nextUrl)!)
@@ -291,6 +303,10 @@ struct WatchPage: View {
                                             }
                                         } catch let error {
                                             print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
                                         }
                                     }
                                     

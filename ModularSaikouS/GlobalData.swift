@@ -46,6 +46,11 @@ class GlobalData: ObservableObject {
     @Published var isLoading = false
     @Published var isLoadingHomepage = false
     @Published var mediaFailedToLoad = false
+    @Published var showLogsButton = false
+    
+    @Published var currentFileExecuted = ""
+    
+    @Published var logs: [ConsoleData] = []
     
     @objc private func handleSharedJson(_ notification: Notification) {
         if let url = notification.userInfo?["url"] as? URL {
@@ -63,6 +68,10 @@ class GlobalData: ObservableObject {
                 }
             } catch let error {
                 print(error.localizedDescription)
+                                let data = ["data": FloatyData(message: "\(error)", error: true, action: nil)]
+                                NotificationCenter.default
+                                    .post(name:           NSNotification.Name("floaty"),
+                                          object: nil, userInfo: data)
             }
         }
     }

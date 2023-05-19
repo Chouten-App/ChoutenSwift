@@ -376,6 +376,55 @@ struct CustomControlsView: View {
                                                 showServers.toggle()
                                             }
                                         }
+                                        .overlay(alignment: .bottom) {
+                                            VStack(spacing: 20) {
+                                                HStack {
+                                                    Text("Vidstreaming (Sub)")
+                                                        .font(.title2)
+                                                        .fontWeight(.semibold)
+                                                    
+                                                    Spacer()
+                                                }
+                                                .padding(.horizontal, 16)
+                                                .padding(.vertical, 8)
+                                                .background {
+                                                    Capsule()
+                                                        .fill(
+                                                            Color(hex:
+                                                                    globalData.appearance == .system
+                                                                  ? (
+                                                                    colorScheme == .dark
+                                                                    ? Colors.SecondaryContainer.dark
+                                                                    : Colors.SecondaryContainer.light
+                                                                  ) : (
+                                                                    globalData.appearance == .dark
+                                                                    ? Colors.SecondaryContainer.dark
+                                                                    : Colors.SecondaryContainer.light
+                                                                  )
+                                                                 )
+                                                        )
+                                                }
+                                            }
+                                            .padding(.vertical, 12)
+                                            .padding(.horizontal, 16)
+                                            .frame(minWidth: 280, maxWidth: 280, maxHeight: 220, alignment: .top)
+                                            .background {
+                                                Color(hex:
+                                                        globalData.appearance == .system
+                                                      ? (
+                                                        colorScheme == .dark
+                                                        ? Colors.SurfaceContainer.dark
+                                                        : Colors.SurfaceContainer.light
+                                                      ) : (
+                                                        globalData.appearance == .dark
+                                                        ? Colors.SurfaceContainer.dark
+                                                        : Colors.SurfaceContainer.light
+                                                      )
+                                                     )
+                                            }
+                                            .clipped()
+                                            .cornerRadius(16)
+                                        }
                                     
                                     Image(systemName: "rectangle.stack.fill")
                                         .fontSize(20)
@@ -580,196 +629,6 @@ struct CustomControlsView: View {
                 // rectangle.stack.fill for episodes
             }
             .overlay {
-                // servers ui
-                BottomSheet(isShowing: $showServers, content: AnyView(
-                    VStack(spacing: 20) {
-                        HStack {
-                            Circle()
-                                .fill(
-                                    Color(hex:
-                                            globalData.appearance == .system
-                                          ? (
-                                            colorScheme == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          ) : (
-                                            globalData.appearance == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          )
-                                         )
-                                )
-                                .frame(width: 10)
-                            
-                            Text("Vidstreaming (Sub)")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            
-                            Spacer()
-                        }
-                        HStack {
-                            Circle()
-                                .fill(
-                                    Color(hex:
-                                            globalData.appearance == .system
-                                          ? (
-                                            colorScheme == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          ) : (
-                                            globalData.appearance == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          )
-                                         )
-                                )
-                                .frame(width: 10)
-                                .opacity(0.0)
-                            
-                            Text("Vidstreaming (Dub)")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            
-                            Spacer()
-                        }
-                        HStack {
-                            Circle()
-                                .fill(
-                                    Color(hex:
-                                            globalData.appearance == .system
-                                          ? (
-                                            colorScheme == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          ) : (
-                                            globalData.appearance == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          )
-                                         )
-                                )
-                                .frame(width: 10)
-                                .opacity(0.0)
-                            
-                            Text("Vidcloud (Sub)")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            
-                            Spacer()
-                        }
-                        HStack {
-                            Circle()
-                                .fill(
-                                    Color(hex:
-                                            globalData.appearance == .system
-                                          ? (
-                                            colorScheme == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          ) : (
-                                            globalData.appearance == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          )
-                                         )
-                                )
-                                .frame(width: 10)
-                                .opacity(0.0)
-                            
-                            Text("Vidcloud (Dub)")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            
-                            Spacer()
-                        }
-                        HStack {
-                            Circle()
-                                .fill(
-                                    Color(hex:
-                                            globalData.appearance == .system
-                                          ? (
-                                            colorScheme == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          ) : (
-                                            globalData.appearance == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          )
-                                         )
-                                )
-                                .frame(width: 10)
-                                .opacity(0.0)
-                            
-                            Text("Streamtape (Sub)")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            
-                            Spacer()
-                        }
-                        HStack {
-                            Circle()
-                                .fill(
-                                    Color(hex:
-                                            globalData.appearance == .system
-                                          ? (
-                                            colorScheme == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          ) : (
-                                            globalData.appearance == .dark
-                                            ? Colors.Primary.dark
-                                            : Colors.Primary.light
-                                          )
-                                         )
-                                )
-                                .frame(width: 10)
-                                .opacity(0.0)
-                            
-                            Text("Streamtape (Dub)")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            
-                            Spacer()
-                        }
-                    }
-                    .padding(20)
-                    .padding(.leading, 60)
-                    .padding(.trailing, 16)
-                    .fixedSize(horizontal: true, vertical: false)
-                    .frame(maxHeight: .infinity, alignment: .top)
-                    .foregroundColor(
-                        Color(hex:
-                                globalData.appearance == .system
-                              ? (
-                                colorScheme == .dark
-                                ? Colors.onSurface.dark
-                                : Colors.onSurface.light
-                              ) : (
-                                globalData.appearance == .dark
-                                ? Colors.onSurface.dark
-                                : Colors.onSurface.light
-                              )
-                             )
-                    )
-                    .background {
-                        Color(hex:
-                                globalData.appearance == .system
-                              ? (
-                                colorScheme == .dark
-                                ? Colors.SurfaceContainer.dark
-                                : Colors.SurfaceContainer.light
-                              ) : (
-                                globalData.appearance == .dark
-                                ? Colors.SurfaceContainer.dark
-                                : Colors.SurfaceContainer.light
-                              )
-                        )
-                    }
-                    
-                ), fromLeft: true)
-            }
-            .overlay {
                 // settings ui
                 BottomSheet(isShowing: $showSettings, content: AnyView(
                     ZStack {
@@ -960,123 +819,125 @@ struct CustomControlsView: View {
                 // medialist ui
                 BottomSheet(isShowing: $showMediaList, content: AnyView(
                     VStack(spacing: 20) {
-                        ScrollView {
-                            VStack {
-                                ForEach(startEpisodeList..<min(endEpisodeList, globalData.infoData!.mediaList[0].count), id: \.self) { index in
-                                    ZStack(alignment: .top) {
-                                        Color(hex:
-                                                globalData.appearance == .system
-                                              ? (
-                                                colorScheme == .dark
-                                                ? Colors.SurfaceContainer.dark
-                                                : Colors.SurfaceContainer.light
-                                              ) : (
-                                                globalData.appearance == .dark
-                                                ? Colors.SurfaceContainer.dark
-                                                : Colors.SurfaceContainer.light
-                                              )
-                                        )
-                                        
-                                        VStack(spacing: 0) {
-                                            HStack(spacing: 8) {
-                                                KFImage(URL(string: globalData.infoData!.mediaList[0][index].image ?? globalData.infoData!.poster))
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(maxWidth: 150, maxHeight: 90)
-                                                    .cornerRadius(12)
-                                                
-                                                VStack(alignment: .leading) {
-                                                    Spacer()
+                        if globalData.infoData != nil && globalData.infoData!.mediaList.count > 0 {
+                            ScrollView {
+                                VStack {
+                                    ForEach(startEpisodeList..<min(endEpisodeList, globalData.infoData!.mediaList[0].count), id: \.self) { index in
+                                        ZStack(alignment: .top) {
+                                            Color(hex:
+                                                    globalData.appearance == .system
+                                                  ? (
+                                                    colorScheme == .dark
+                                                    ? Colors.SurfaceContainer.dark
+                                                    : Colors.SurfaceContainer.light
+                                                  ) : (
+                                                    globalData.appearance == .dark
+                                                    ? Colors.SurfaceContainer.dark
+                                                    : Colors.SurfaceContainer.light
+                                                  )
+                                            )
+                                            
+                                            VStack(spacing: 0) {
+                                                HStack(spacing: 8) {
+                                                    KFImage(URL(string: globalData.infoData!.mediaList[0][index].image ?? globalData.infoData!.poster))
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                        .frame(maxWidth: 150, maxHeight: 90)
+                                                        .cornerRadius(12)
                                                     
-                                                    HStack {
-                                                        Text(globalData.infoData!.mediaList[0][index].title ?? "Episode \(globalData.infoData!.mediaList[0][index].number)")
-                                                            .font(.subheadline)
-                                                            .fontWeight(.semibold)
-                                                            .lineLimit(2)
-                                                            .multilineTextAlignment(.leading)
-                                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                                    }
-                                                    Spacer()
-                                                    
-                                                    HStack {
-                                                        Text("Episode \(forTrailingZero(temp: globalData.infoData!.mediaList[0][index].number))")
-                                                            .font(.caption)
-                                                            .fontWeight(.semibold)
-                                                        
+                                                    VStack(alignment: .leading) {
                                                         Spacer()
                                                         
-                                                        Text("24 mins")
-                                                            .font(.caption)
-                                                            .fontWeight(.semibold)
+                                                        HStack {
+                                                            Text(globalData.infoData!.mediaList[0][index].title ?? "Episode \(globalData.infoData!.mediaList[0][index].number)")
+                                                                .font(.subheadline)
+                                                                .fontWeight(.semibold)
+                                                                .lineLimit(2)
+                                                                .multilineTextAlignment(.leading)
+                                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                        }
+                                                        Spacer()
+                                                        
+                                                        HStack {
+                                                            Text("Episode \(forTrailingZero(temp: globalData.infoData!.mediaList[0][index].number))")
+                                                                .font(.caption)
+                                                                .fontWeight(.semibold)
+                                                            
+                                                            Spacer()
+                                                            
+                                                            Text("24 mins")
+                                                                .font(.caption)
+                                                                .fontWeight(.semibold)
+                                                        }
+                                                        .opacity(0.7)
+                                                        .padding(.bottom, 6)
                                                     }
-                                                    .opacity(0.7)
-                                                    .padding(.bottom, 6)
+                                                    .padding(.trailing, 8)
+                                                    .frame(maxWidth: .infinity, maxHeight: 90, alignment: .leading)
                                                 }
-                                                .padding(.trailing, 8)
-                                                .frame(maxWidth: .infinity, maxHeight: 90, alignment: .leading)
-                                            }
-                                            if globalData.infoData!.mediaList[0][index].description != nil {
-                                                Text(globalData.infoData!.mediaList[0][index].description!)
-                                                    .font(.caption)
-                                                    .lineLimit(4)
-                                                    .opacity(0.7)
-                                                    .padding(12)
+                                                if globalData.infoData!.mediaList[0][index].description != nil {
+                                                    Text(globalData.infoData!.mediaList[0][index].description!)
+                                                        .font(.caption)
+                                                        .lineLimit(4)
+                                                        .opacity(0.7)
+                                                        .padding(12)
+                                                }
                                             }
                                         }
-                                    }
-                                    .cornerRadius(12)
-                                    .foregroundColor(Color(hex:
-                                                            globalData.appearance == .system
-                                                           ? (
-                                                            colorScheme == .dark
-                                                            ? Colors.onSurface.dark
-                                                            : Colors.onSurface.light
-                                                           ) : (
-                                                            globalData.appearance == .dark
-                                                            ? Colors.onSurface.dark
-                                                            : Colors.onSurface.light
-                                                           )
-                                                          ))
-                                    .onTapGesture {
-                                        withAnimation(.spring(response: 0.3)) {
-                                            selectedMediaItem = index
-                                            
-                                            
+                                        .cornerRadius(12)
+                                        .foregroundColor(Color(hex:
+                                                                globalData.appearance == .system
+                                                               ? (
+                                                                colorScheme == .dark
+                                                                ? Colors.onSurface.dark
+                                                                : Colors.onSurface.light
+                                                               ) : (
+                                                                globalData.appearance == .dark
+                                                                ? Colors.onSurface.dark
+                                                                : Colors.onSurface.light
+                                                               )
+                                                              ))
+                                        .onTapGesture {
+                                            withAnimation(.spring(response: 0.3)) {
+                                                selectedMediaItem = index
+                                                
+                                                
+                                            }
                                         }
                                     }
                                 }
+                                .padding(.bottom, 64)
                             }
-                            .padding(.bottom, 64)
-                        }
-                        .padding(20)
-                        .padding(.leading, 16)
-                        .overlay(alignment: .bottom) {
-                            ZStack {
-                                Color(hex:
-                                        globalData.appearance == .system
-                                      ? (
-                                        colorScheme == .dark
-                                        ? Colors.SurfaceContainer.dark
-                                        : Colors.SurfaceContainer.light
-                                      ) : (
-                                        globalData.appearance == .dark
-                                        ? Colors.SurfaceContainer.dark
-                                        : Colors.SurfaceContainer.light
-                                      )
-                                )
-                                
-                                if(globalData.infoData!.mediaList.count > 0 && globalData.infoData!.mediaList[0].count > 50) {
-                                    ScrollView(.horizontal) {
-                                        HStack(spacing: 20) {
-                                            ForEach(0..<Int(ceil(Float(globalData.infoData!.mediaList[0].count)/50))) { index in
-                                                PaginationChip(paginationIndex: $paginationIndex, startEpisodeList: $startEpisodeList, endEpisodeList: $endEpisodeList, episodeCount: globalData.infoData!.mediaList[0].count, index: index, Colors: Colors, small: true)
+                            .padding(20)
+                            .padding(.leading, 16)
+                            .overlay(alignment: .bottom) {
+                                ZStack {
+                                    Color(hex:
+                                            globalData.appearance == .system
+                                          ? (
+                                            colorScheme == .dark
+                                            ? Colors.SurfaceContainer.dark
+                                            : Colors.SurfaceContainer.light
+                                          ) : (
+                                            globalData.appearance == .dark
+                                            ? Colors.SurfaceContainer.dark
+                                            : Colors.SurfaceContainer.light
+                                          )
+                                    )
+                                    
+                                    if(globalData.infoData!.mediaList.count > 0 && globalData.infoData!.mediaList[0].count > 50) {
+                                        ScrollView(.horizontal) {
+                                            HStack(spacing: 20) {
+                                                ForEach(0..<Int(ceil(Float(globalData.infoData!.mediaList[0].count)/50))) { index in
+                                                    PaginationChip(paginationIndex: $paginationIndex, startEpisodeList: $startEpisodeList, endEpisodeList: $endEpisodeList, episodeCount: globalData.infoData!.mediaList[0].count, index: index, Colors: Colors, small: true)
+                                                }
                                             }
                                         }
+                                        .padding(.leading, 20)
                                     }
-                                    .padding(.leading, 20)
                                 }
+                                .frame(maxWidth: .infinity, maxHeight: 52)
                             }
-                            .frame(maxWidth: .infinity, maxHeight: 52)
                         }
                     }
                     .frame(maxWidth: 350, maxHeight: .infinity)

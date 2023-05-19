@@ -444,6 +444,8 @@ struct Home: View {
                     }
                     
                     jsString = returnData!.js
+                    
+                    globalData.currentFileExecuted = "Home/code.js"
                 }
                 
                 if returnData != nil {
