@@ -376,55 +376,6 @@ struct CustomControlsView: View {
                                                 showServers.toggle()
                                             }
                                         }
-                                        .overlay(alignment: .bottom) {
-                                            VStack(spacing: 20) {
-                                                HStack {
-                                                    Text("Vidstreaming (Sub)")
-                                                        .font(.title2)
-                                                        .fontWeight(.semibold)
-                                                    
-                                                    Spacer()
-                                                }
-                                                .padding(.horizontal, 16)
-                                                .padding(.vertical, 8)
-                                                .background {
-                                                    Capsule()
-                                                        .fill(
-                                                            Color(hex:
-                                                                    globalData.appearance == .system
-                                                                  ? (
-                                                                    colorScheme == .dark
-                                                                    ? Colors.SecondaryContainer.dark
-                                                                    : Colors.SecondaryContainer.light
-                                                                  ) : (
-                                                                    globalData.appearance == .dark
-                                                                    ? Colors.SecondaryContainer.dark
-                                                                    : Colors.SecondaryContainer.light
-                                                                  )
-                                                                 )
-                                                        )
-                                                }
-                                            }
-                                            .padding(.vertical, 12)
-                                            .padding(.horizontal, 16)
-                                            .frame(minWidth: 280, maxWidth: 280, maxHeight: 220, alignment: .top)
-                                            .background {
-                                                Color(hex:
-                                                        globalData.appearance == .system
-                                                      ? (
-                                                        colorScheme == .dark
-                                                        ? Colors.SurfaceContainer.dark
-                                                        : Colors.SurfaceContainer.light
-                                                      ) : (
-                                                        globalData.appearance == .dark
-                                                        ? Colors.SurfaceContainer.dark
-                                                        : Colors.SurfaceContainer.light
-                                                      )
-                                                     )
-                                            }
-                                            .clipped()
-                                            .cornerRadius(16)
-                                        }
                                     
                                     Image(systemName: "rectangle.stack.fill")
                                         .fontSize(20)
@@ -972,6 +923,44 @@ struct CustomControlsView: View {
                     
                 ), fromRight: true)
             }
+            .overlay {
+                // medialist ui
+                BottomSheet(isShowing: $showServers, content: AnyView(
+                    ServerSelector()
+                        .padding(.leading, 64)
+                        .padding(.trailing, 32)
+                        .frame(maxWidth: 350, maxHeight: .infinity)
+                        .foregroundColor(
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.onSurface.dark
+                                    : Colors.onSurface.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.onSurface.dark
+                                    : Colors.onSurface.light
+                                  )
+                                 )
+                        )
+                        .background {
+                            Color(hex:
+                                    globalData.appearance == .system
+                                  ? (
+                                    colorScheme == .dark
+                                    ? Colors.SurfaceContainer.dark
+                                    : Colors.SurfaceContainer.light
+                                  ) : (
+                                    globalData.appearance == .dark
+                                    ? Colors.SurfaceContainer.dark
+                                    : Colors.SurfaceContainer.light
+                                  )
+                            )
+                        }
+                    
+                ), fromLeft: true)
+            }
             .onAppear {
                 isMacos = proxy.size.width > 900
                 print("Source: \(streamData.sources[0].file)")
@@ -990,10 +979,12 @@ struct CustomControlsViewPreviewBridge: View {
             Source(file: "https://c-an-ca4.betterstream.cc:2223/hls-playback/6bad66e945c851b0ce0cda2d993bd6ab0f177e531d132d4b68d66ba95f6fbabf0193efeb286abd5cef6b6344c610b3df67e9e3fdbad7faa8fec72d9aa1d253dbf51a48f8f7f1fad161ef18f18104a2ceff11ff9fec071992db22522567cac5cec8686b8810cfc02819df1c51fd6b24c1201de7497d845a5cde09a25a0da02e0d5ecc73e577a68553f79136cab7785906/index-f1-v1-a1.m3u8", type: "hls", quality: "auto")
         ], subtitles: [], skips: [
             SkipTime(start: 0.0, end: 100.0, type: "Opening")
-        ])), showUI: $showUI, playerVM: playerVM, number: .constant(1), animateBackward: .constant(false), animateForward: .constant(false))
+        ])), showUI: .constant(true), playerVM: playerVM, number: .constant(1), animateBackward: .constant(false), animateForward: .constant(false))
         .onAppear {
             playerVM.isLoading = false
         }
+        .padding(.horizontal, 20)
+        .ignoresSafeArea()
     }
 }
 

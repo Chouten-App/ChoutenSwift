@@ -13,7 +13,7 @@ struct DecodableResult<T: Codable>: Codable {
     let nextUrl: String?
 }
 
-struct Server: Codable {
+struct Server: Codable, Hashable {
     let name: String
     let url: String
 }

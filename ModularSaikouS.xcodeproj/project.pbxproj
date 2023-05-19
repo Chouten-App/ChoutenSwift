@@ -24,6 +24,9 @@
 		E9A3835429F9C5580098A3D5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A3835329F9C5580098A3D5 /* SettingsView.swift */; };
 		E9A3835629F9C5E60098A3D5 /* Developer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A3835529F9C5E60098A3D5 /* Developer.swift */; };
 		E9B601222A17DDF7009E6EFE /* ServerSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B601212A17DDF7009E6EFE /* ServerSelector.swift */; };
+		E9B601282A17F2B6009E6EFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B601252A17F2B6009E6EFE /* AppDelegate.swift */; };
+		E9B601292A17F2B6009E6EFE /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B601262A17F2B6009E6EFE /* DataController.swift */; };
+		E9B6012A2A17F2B6009E6EFE /* HostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B601272A17F2B6009E6EFE /* HostingController.swift */; };
 		E9C05FE02A04034D00134B67 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C05FDF2A04034C00134B67 /* SearchBar.swift */; };
 		E9C05FE22A04153200134B67 /* M3ToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C05FE12A04153200134B67 /* M3ToggleStyle.swift */; };
 		E9C05FE42A041C7400134B67 /* More.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C05FE32A041C7400134B67 /* More.swift */; };
@@ -62,9 +65,6 @@
 		E9DB91A829C67BD5000D283C /* JXKit in Frameworks */ = {isa = PBXBuildFile; productRef = E9DB91A729C67BD5000D283C /* JXKit */; };
 		E9DB91B029C76251000D283C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E9DB91AF29C76251000D283C /* Kingfisher */; };
 		E9DB91B329C76314000D283C /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = E9DB91B229C76314000D283C /* Shimmer */; };
-		E9DB91B929C76B23000D283C /* HostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DB91B529C76B22000D283C /* HostingController.swift */; };
-		E9DB91BA29C76B23000D283C /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DB91B629C76B23000D283C /* DataController.swift */; };
-		E9DB91BB29C76B23000D283C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DB91B729C76B23000D283C /* AppDelegate.swift */; };
 		E9DB91BE29C77440000D283C /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DB91BD29C77440000D283C /* Color.swift */; };
 		E9DB91C129C77458000D283C /* SearchData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DB91C029C77458000D283C /* SearchData.swift */; };
 		E9DB91C329C7746C000D283C /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DB91C229C7746C000D283C /* WebView.swift */; };
@@ -121,6 +121,9 @@
 		E9A3835329F9C5580098A3D5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E9A3835529F9C5E60098A3D5 /* Developer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Developer.swift; sourceTree = "<group>"; };
 		E9B601212A17DDF7009E6EFE /* ServerSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSelector.swift; sourceTree = "<group>"; };
+		E9B601252A17F2B6009E6EFE /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E9B601262A17F2B6009E6EFE /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		E9B601272A17F2B6009E6EFE /* HostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostingController.swift; sourceTree = "<group>"; };
 		E9C05FDF2A04034C00134B67 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		E9C05FE12A04153200134B67 /* M3ToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = M3ToggleStyle.swift; sourceTree = "<group>"; };
 		E9C05FE32A041C7400134B67 /* More.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = More.swift; sourceTree = "<group>"; };
@@ -156,9 +159,6 @@
 		E9DB919B29C6532C000D283C /* ModuleSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleSelector.swift; sourceTree = "<group>"; };
 		E9DB919E29C65354000D283C /* ButtonLarge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLarge.swift; sourceTree = "<group>"; };
 		E9DB91A029C6554D000D283C /* GlobalData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalData.swift; sourceTree = "<group>"; };
-		E9DB91B529C76B22000D283C /* HostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HostingController.swift; path = ../../AppleMusic/AppleMusic/HostingController.swift; sourceTree = "<group>"; };
-		E9DB91B629C76B23000D283C /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataController.swift; path = ../../AppleMusic/AppleMusic/DataController.swift; sourceTree = "<group>"; };
-		E9DB91B729C76B23000D283C /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ../../AppleMusic/AppleMusic/AppDelegate.swift; sourceTree = "<group>"; };
 		E9DB91BC29C76DD9000D283C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E9DB91BD29C77440000D283C /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		E9DB91C029C77458000D283C /* SearchData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchData.swift; sourceTree = "<group>"; };
@@ -336,9 +336,9 @@
 				E9FB1CE729E1B6BD008CA269 /* SceneDelegate.swift */,
 				E9DB917029C64B09000D283C /* ModularSaikouS.entitlements */,
 				E9DB91A029C6554D000D283C /* GlobalData.swift */,
-				E9DB91B729C76B23000D283C /* AppDelegate.swift */,
-				E9DB91B629C76B23000D283C /* DataController.swift */,
-				E9DB91B529C76B22000D283C /* HostingController.swift */,
+				E9B601252A17F2B6009E6EFE /* AppDelegate.swift */,
+				E9B601262A17F2B6009E6EFE /* DataController.swift */,
+				E9B601272A17F2B6009E6EFE /* HostingController.swift */,
 				E9C125E629CA5A2D00CDA396 /* MacosEntry.swift */,
 				E9D8C6ED29E9B1470080DF72 /* UserData.xcdatamodeld */,
 				E923848A29F2FC9F0084B7CA /* Colors.swift */,
@@ -594,16 +594,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9DB91BB29C76B23000D283C /* AppDelegate.swift in Sources */,
 				E9EADD4F2A095B99003671BB /* SkipButton.swift in Sources */,
 				E9DB919C29C6532C000D283C /* ModuleSelector.swift in Sources */,
 				E9DB91C329C7746C000D283C /* WebView.swift in Sources */,
+				E9B601292A17F2B6009E6EFE /* DataController.swift in Sources */,
 				E9EADD632A117072003671BB /* Home.swift in Sources */,
 				E9DB91BE29C77440000D283C /* Color.swift in Sources */,
 				E9DB91C129C77458000D283C /* SearchData.swift in Sources */,
 				E9F65CAE29E36BC7004E4BE2 /* MyCollectionViewController.swift in Sources */,
 				E9D8C6EF29E9B1470080DF72 /* UserData.xcdatamodeld in Sources */,
 				E9C05FE02A04034D00134B67 /* SearchBar.swift in Sources */,
+				E9B6012A2A17F2B6009E6EFE /* HostingController.swift in Sources */,
 				E9DB919A29C652A0000D283C /* RoundedCorners.swift in Sources */,
 				E91C145E2A04767F00D99E35 /* NetworkMonitor.swift in Sources */,
 				E9C125EB29CB9C1500CDA396 /* Info.swift in Sources */,
@@ -642,8 +643,8 @@
 				E9D8C6DC29E572270080DF72 /* Watch.swift in Sources */,
 				E9EADD612A1019C6003671BB /* HomeData.swift in Sources */,
 				E923848B29F2FC9F0084B7CA /* Colors.swift in Sources */,
-				E9DB91BA29C76B23000D283C /* DataController.swift in Sources */,
 				E9D8C6D929E572270080DF72 /* CustomControlsView.swift in Sources */,
+				E9B601282A17F2B6009E6EFE /* AppDelegate.swift in Sources */,
 				E9C125E529CA394D00CDA396 /* LogsDisplay.swift in Sources */,
 				E9FB1CF129E33055008CA269 /* Reader.swift in Sources */,
 				E9FB1CE829E1B6BD008CA269 /* SceneDelegate.swift in Sources */,
@@ -651,7 +652,6 @@
 				E91C14812A06DEC700D99E35 /* Dropdown.swift in Sources */,
 				E91C147F2A06B30E00D99E35 /* LongText.swift in Sources */,
 				E9DB919729C65258000D283C /* CustomBottomSheet.swift in Sources */,
-				E9DB91B929C76B23000D283C /* HostingController.swift in Sources */,
 				E923849129F480630084B7CA /* Appearance.swift in Sources */,
 				E9C1262A29CE32D800CDA396 /* Main.swift in Sources */,
 				E9668B5E29C885AD00085A47 /* ThemePreview.swift in Sources */,

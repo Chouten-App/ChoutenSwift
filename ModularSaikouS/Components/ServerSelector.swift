@@ -7,17 +7,57 @@
 
 import SwiftUI
 
+struct ServerData: Codable {
+    let title: String
+    let list: [Server]
+}
+
 struct ServerSelector: View {
+    // TEMP
+    @State var servers: [ServerData] = [
+        ServerData(title: "Sub", list: [
+            Server(name: "Vidstreaming", url: ""),
+            Server(name: "Vidcloud", url: ""),
+            Server(name: "Streamtape", url: ""),
+        ]),
+        ServerData(title: "Dub", list: [
+            Server(name: "Vidstreaming", url: ""),
+            Server(name: "Vidcloud", url: ""),
+            Server(name: "Streamtape", url: ""),
+        ]),
+    ]
+    
+    @State var selectedServerData: Int = 0
+    @State var selectedServer: Int = 0
+    
     var body: some View {
         VStack {
-            ServerCard(selected: true)
-            ServerCard(selected: false)
-            ServerCard(selected: false)
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 20) {
+                    ForEach(0..<servers.count, id: \.self) { index in
+                        Text(servers[index].title)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        
+                        VStack(spacing: 12) {
+                            ForEach(0..<servers[index].list.count) { listIndex in
+                                ServerCard(title: servers[index].list[listIndex].name, selected: selectedServerData == index && selectedServer == listIndex)
+                                    .onTapGesture {
+                                        selectedServerData = index
+                                        selectedServer = listIndex
+                                    }
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 20)
+            }
         }
     }
 }
 
 struct ServerCard: View {
+    let title: String
     let selected: Bool
     
     @StateObject var Colors = DynamicColors()
@@ -27,7 +67,7 @@ struct ServerCard: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text("Vidstreaming (Sub)")
+                Text(title)
                     .font(.title3)
                     .fontWeight(.bold)
                 Text("MULTI QUALITY")
@@ -105,10 +145,18 @@ struct ServerSelector_Previews: PreviewProvider {
         HStack {
             ServerSelector()
                 .padding(.leading, 64)
-                .padding(.trailing, 16)
-                .frame(maxWidth: 340, maxHeight: .infinity)
+                .padding(.trailing, 32)
+                .frame(maxWidth: 350, maxHeight: .infinity)
                 .background {
                     Color(hex: DynamicColors().SurfaceContainer.dark)
+                }
+                .overlay(alignment: .trailing) {
+                    RoundedRectangle(4)
+                        .fill(
+                            Color(hex: DynamicColors().Outline.dark)
+                        )
+                        .frame(maxWidth: 4, maxHeight: 32)
+                        .offset(x: -8)
                 }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
